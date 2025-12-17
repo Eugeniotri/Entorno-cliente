@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Desarrollo web en entorno cliente - Índice</title>
+  <style>
+    :root { color-scheme: light; }
+    body {
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin: 0;
+      line-height: 1.5;
+      background: #f6f7fb;
+      color: #111827;
+    }
+    header {
+      background: #0b5aa6;
+      color: white;
+      padding: 24px 16px;
+    }
+    header h1 { margin: 0 0 6px; font-size: 1.4rem; }
+    header p { margin: 0; opacity: 0.9; }
+    main {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 18px 16px 40px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 14px;
+      margin-top: 14px;
+    }
+    .card {
+      background: white;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      padding: 14px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.04);
+    }
+    .card h2 {
+      font-size: 1.05rem;
+      margin: 0 0 6px;
+    }
+    .card p { margin: 0 0 10px; color: #374151; }
+    .card a {
+      display: inline-block;
+      text-decoration: none;
+      background: #0b5aa6;
+      color: white;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-weight: 600;
+    }
+    .card a:hover { filter: brightness(1.05); }
+    footer {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 0 16px 24px;
+      color: #6b7280;
+      font-size: 0.95rem;
+    }
+    .note {
+      background: #fff7ed;
+      border: 1px solid #fed7aa;
+      color: #9a3412;
+      padding: 10px 12px;
+      border-radius: 12px;
+      margin-top: 14px;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <h1>Desarrollo web en entorno cliente</h1>
+    <p>Índice de unidades (resúmenes + cuestionarios)</p>
+  </header>
+
+  <main>
+    <div class="note">
+      <strong>Nota:</strong> Los enlaces apuntan a archivos que iremos creando (uf1.html, uf2.html, etc.).
+    </div>
+
+    <section class="grid" aria-label="Unidades del curso">
+      <article class="card">
+        <h2>UF1. Introducción al desarrollo web en entorno cliente</h2>
+        <p>Fundamentos, entorno, conceptos base y primeras prácticas.</p>
+        <a href="uf1.html">Abrir UF1</a>
+      </article>
+
+      <article class="card">
+        <h2>UF2. JavaScript</h2>
+        <p>Sintaxis, variables, control de flujo, funciones, objetos, etc.</p>
+        <a href="uf2.html">Abrir UF2</a>
+      </article>
+
+      <article class="card">
+        <h2>UF3. JavaScript y HTML</h2>
+        <p>DOM, eventos, manipulación de elementos, formularios, interacción.</p>
+        <a href="uf3.html">Abrir UF3</a>
+      </article>
+
+      <article class="card">
+        <h2>UF4. Programación asíncrona</h2>
+        <p>Callbacks, Promises, async/await, fetch, APIs, manejo de errores.</p>
+        <a href="uf4.html">Abrir UF4</a>
+      </article>
+
+      <article class="card">
+        <h2>UF5. Frameworks JavaScript</h2>
+        <p>Conceptos, patrones, ecosistema y comparativas.</p>
+        <a href="uf5.html">Abrir UF5</a>
+      </article>
+
+      <article class="card">
+        <h2>UF6. Desarrollo con VueJS</h2>
+        <p>Componentes, estado, rutas, formularios, consumo de APIs, build.</p>
+        <a href="uf6.html">Abrir UF6</a>
+      </article>
+
+      <article class="card">
+        <h2>UF7. Autenticación y despliegue de aplicaciones en entorno cliente</h2>
+        <p>Auth, tokens, seguridad básica, despliegue, buenas prácticas.</p>
+        <a href="uf7.html">Abrir UF7</a>
+      </article>
+
+      <article class="card">
+        <h2>Evaluación</h2>
+        <p>Repaso general, checklist y preguntas clave para el examen.</p>
+        <a href="evaluacion.html">Abrir Evaluación</a>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    <p>Consejo: crea una carpeta del proyecto y guarda este archivo como <strong>index.html</strong>. Luego iremos generando cada unidad.</p>
+  </footer>
+</body>
+</html>

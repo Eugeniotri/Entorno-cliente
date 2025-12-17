@@ -1,0 +1,1352 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UF2 — JavaScript (UAX · DAW 2º)</title>
+  <style>
+    :root { color-scheme: light; }
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin:0; line-height:1.6; background:#f6f7fb; color:#111827;
+    }
+    header{ background:#0b5aa6; color:#fff; padding:22px 16px; }
+    header .top{
+      max-width:1100px; margin:0 auto; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    }
+    header h1{ margin:0; font-size:1.35rem; }
+    header p{ margin:4px 0 0; opacity:.9; }
+    .btnlink{
+      display:inline-block; text-decoration:none; background:#ffffff; color:#0b5aa6;
+      padding:10px 12px; border-radius:12px; font-weight:700;
+    }
+    main{ max-width:1100px; margin:0 auto; padding:16px 16px 42px; }
+    .tabs{ display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 6px; }
+    .tabbtn{
+      border:1px solid #e5e7eb; background:#fff; padding:10px 12px;
+      border-radius:12px; font-weight:700; cursor:pointer;
+    }
+    .tabbtn[aria-selected="true"]{ border-color:#0b5aa6; box-shadow:0 1px 2px rgba(0,0,0,.05); }
+    section.panel{ display:none; }
+    section.panel.active{ display:block; }
+
+    .card{
+      background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+      padding:14px; box-shadow:0 1px 2px rgba(0,0,0,.04);
+      margin:12px 0;
+    }
+    .card h2{ margin:0 0 6px; font-size:1.15rem; }
+    .card h3{ margin:12px 0 6px; font-size:1.02rem; }
+    .muted{ color:#4b5563; margin:6px 0 0; }
+    .key{
+      background:#fef3c7; border:1px solid #fde68a; color:#92400e;
+      padding:10px 12px; border-radius:12px; margin:10px 0;
+    }
+    .exam{
+      background:#ecfeff; border:1px solid #a5f3fc; color:#155e75;
+      padding:10px 12px; border-radius:12px; margin:10px 0;
+    }
+    ul{ margin:8px 0 8px 20px; }
+    li{ margin:6px 0; }
+    code, kbd{
+      background:#f3f4f6; border:1px solid #e5e7eb; padding:1px 6px; border-radius:8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:.95em;
+    }
+    .two{ display:grid; grid-template-columns:1fr; gap:12px; }
+    @media (min-width: 900px){ .two{ grid-template-columns:1fr 1fr; } }
+
+    /* Quiz */
+    .quizTop{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      background:#f3f4f6; border:1px solid #e5e7eb; padding:8px 10px; border-radius:999px;
+      font-weight:650;
+    }
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .btn{
+      border:1px solid #e5e7eb; background:#fff; padding:10px 12px; border-radius:12px;
+      cursor:pointer; font-weight:750;
+    }
+    .btn.primary{ background:#0b5aa6; border-color:#0b5aa6; color:#fff; }
+    .btn.danger{ background:#fff1f2; border-color:#fecdd3; color:#9f1239; }
+    .qbox h2{ font-size:1.1rem; margin:0 0 10px; }
+    .choices{ display:grid; gap:10px; }
+    .choice{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 12px; border-radius:12px; border:1px solid #e5e7eb;
+      background:#fff; cursor:pointer;
+    }
+    .choice input{ margin-top:3px; }
+    .choice:hover{ box-shadow:0 1px 2px rgba(0,0,0,.05); }
+    .feedback{
+      margin-top:12px; padding:10px 12px; border-radius:12px; border:1px solid #e5e7eb;
+      background:#f9fafb; color:#111827;
+    }
+    .feedback.ok{ background:#ecfdf5; border-color:#a7f3d0; color:#065f46; }
+    .feedback.bad{ background:#fff1f2; border-color:#fecdd3; color:#9f1239; }
+    .explain{ margin-top:8px; color:#111827; }
+    .mini{ font-size:.95rem; color:#374151; }
+    .divider{ height:1px; background:#e5e7eb; margin:12px 0; }
+    .progressbar{
+      width:100%; height:10px; border-radius:999px; background:#e5e7eb; overflow:hidden;
+    }
+    .progressbar > div{ height:100%; width:0%; background:#0b5aa6; }
+    .footerNote{ color:#6b7280; font-size:.95rem; margin-top:8px; }
+
+    /* Repaso interactivo */
+    .practice{
+      border:1px dashed #cbd5e1;
+      background:#f8fafc;
+      border-radius:14px;
+      padding:12px;
+      margin-top:12px;
+    }
+    .practice h3{ margin:0 0 8px; font-size:1.02rem; }
+    .pRow{ display:grid; gap:10px; }
+    .pPrompt{ color:#111827; }
+    .pControls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+    .pInput{
+      border:1px solid #e5e7eb;
+      border-radius:12px;
+      padding:10px 12px;
+      background:#fff;
+      min-width: 220px;
+      font: inherit;
+    }
+    .pSmall{ font-size:.92rem; color:#374151; }
+    .pCode{
+      white-space:pre-wrap;
+      background:#0b1220;
+      color:#e5e7eb;
+      border-radius:12px;
+      padding:10px 12px;
+      border:1px solid #111827;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:.92rem;
+      margin:8px 0;
+    }
+    .pFeedback{
+      margin-top:10px;
+      border-radius:12px;
+      padding:10px 12px;
+      border:1px solid #e5e7eb;
+      background:#fff;
+      display:none;
+    }
+    .pFeedback.ok{ background:#ecfdf5; border-color:#a7f3d0; color:#065f46; display:block; }
+    .pFeedback.bad{ background:#fff1f2; border-color:#fecdd3; color:#9f1239; display:block; }
+    .pTag{
+      display:inline-flex; gap:8px; align-items:center;
+      background:#fff; border:1px solid #e5e7eb;
+      border-radius:999px; padding:6px 10px;
+      font-weight:650;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="top">
+      <div>
+        <h1>UF2 — JavaScript</h1>
+        <p>Resumen completo (todos los puntos) + Repaso interactivo + Quiz tipo test (28 preguntas) con explicación.</p>
+      </div>
+      <a class="btnlink" href="index.html">← Volver al índice</a>
+    </div>
+  </header>
+
+  <main>
+    <nav class="tabs" role="tablist" aria-label="Navegación UF2">
+      <button class="tabbtn" role="tab" id="tab-resumen" aria-controls="panel-resumen" aria-selected="true">Resumen + Repaso interactivo</button>
+      <button class="tabbtn" role="tab" id="tab-quiz" aria-controls="panel-quiz" aria-selected="false">Quiz final (28 tipo test)</button>
+    </nav>
+
+    <!-- ================= RESUMEN ================= -->
+    <section id="panel-resumen" class="panel active" role="tabpanel" aria-labelledby="tab-resumen">
+
+      <article class="card">
+        <h2>1) Dónde se ejecuta JavaScript (entorno de ejecución)</h2>
+        <ul>
+          <li><strong>Navegador:</strong> JS se ejecuta en el cliente (con DOM, <code>alert()</code>, <code>document</code>, etc.).</li>
+          <li><strong>Node.js:</strong> JS se ejecuta en terminal/servidor (sin DOM, sin <code>alert()</code>).</li>
+          <li><strong>Idea clave:</strong> <code>console.log</code> existe en ambos; <code>alert/prompt/confirm</code> son del navegador.</li>
+        </ul>
+        <div class="key">
+          <strong>Examen:</strong> mismo lenguaje, entornos distintos → APIs disponibles distintas.
+        </div>
+        <div class="practice" data-practice="p1"></div>
+      </article>
+
+      <article class="card">
+        <h2>2) Variables: var, let, const (y ámbito léxico)</h2>
+        <ul>
+          <li><strong>var:</strong> ámbito de función (comportamiento “antiguo”).</li>
+          <li><strong>let:</strong> ámbito de bloque (<code>{ }</code>).</li>
+          <li><strong>const:</strong> como <code>let</code>, pero no reasignas el identificador.</li>
+          <li><strong>Ámbito léxico:</strong> JS busca una variable del ámbito más cercano hacia fuera.</li>
+        </ul>
+        <div class="exam">
+          Usa <code>let</code> por defecto y <code>const</code> si no reasignas. Evita “globales accidentales”.
+        </div>
+        <div class="practice" data-practice="p2"></div>
+      </article>
+
+      <article class="card">
+        <h2>3) Operadores y conversiones (el “+” engañoso)</h2>
+        <ul>
+          <li><code>+</code> suma o concatena. Si uno es string, el otro suele convertirse a string.</li>
+          <li><code>-</code>, <code>*</code>, <code>/</code> suelen forzar conversión numérica si pueden.</li>
+          <li><strong>Plantilla literal:</strong> backticks <code>`...${var}...`</code> (mejor que concatenar con <code>+</code>).</li>
+        </ul>
+        <div class="practice" data-practice="p3"></div>
+      </article>
+
+      <article class="card">
+        <h2>4) Tipos de datos y “métodos” en primitivas (auto-boxing)</h2>
+        <div class="two">
+          <div class="card" style="margin:0;">
+            <h3>Primitivos (base)</h3>
+            <ul>
+              <li><strong>string</strong>, <strong>number</strong>, <strong>boolean</strong> (y otros).</li>
+              <li>Los primitivos no son objetos… pero parecen tener métodos.</li>
+            </ul>
+            <div class="key">
+              <strong>Auto-boxing:</strong> JS envuelve temporalmente un primitivo (p.ej. string) en un objeto para acceder a <code>.length</code> o métodos.
+            </div>
+          </div>
+          <div class="card" style="margin:0;">
+            <h3>Objetos predefinidos</h3>
+            <ul>
+              <li><strong>String</strong>, <strong>Number</strong>, <strong>Boolean</strong> (objetos “envoltorio”).</li>
+              <li>En la práctica: usa primitivas y sus métodos (no “new String()”).</li>
+              <li>Ej.: <code>"hola".toUpperCase()</code>, <code>(12.345).toFixed(2)</code>.</li>
+            </ul>
+            <div class="exam">
+              En examen puede caer como: “¿por qué un primitivo tiene métodos?” → auto-boxing + prototipos.
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>5) Estructuras de control y bucles</h2>
+        <div class="two">
+          <div class="card" style="margin:0;">
+            <h3>if / else if / else</h3>
+            <ul>
+              <li>Evalúas condiciones en orden; cuando una es <code>true</code>, entra y el resto se “ignora”.</li>
+              <li>Ojo con condiciones solapadas: orden importa.</li>
+            </ul>
+            <div class="key">
+              Si pones “notable” antes que “sobresaliente” con <code>&gt;=7</code>, el 9 nunca llega a “sobresaliente”.
+            </div>
+          </div>
+          <div class="card" style="margin:0;">
+            <h3>Operador ternario</h3>
+            <div class="pCode">condicion ? valorSiTrue : valorSiFalse</div>
+            <ul>
+              <li>Úsalo para decisiones simples y claras.</li>
+              <li>Evita ternarios anidados si se pierde legibilidad (mejor if/else).</li>
+              <li>Con AND/OR: decide condiciones compuestas como “mayor y con carnet”.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="two">
+          <div class="card" style="margin:0;">
+            <h3>Bucles</h3>
+            <ul>
+              <li><strong>for</strong> clásico: control total (índices).</li>
+              <li><strong>for...of</strong>: recorre valores de iterables (ideal para arrays).</li>
+              <li><strong>for...in</strong>: recorre claves (propiedades) de objetos (NO recomendado para arrays).</li>
+            </ul>
+            <div class="exam">
+              Examen típico: “¿cuál usar para arrays?” → <code>for...of</code>, <code>map</code>, <code>forEach</code>… No <code>for...in</code>.
+            </div>
+          </div>
+          <div class="card" style="margin:0;">
+            <h3>Regla práctica DAW</h3>
+            <ul>
+              <li>Array + transformación → <code>map</code>.</li>
+              <li>Array + filtro → <code>filter</code>.</li>
+              <li>Array + buscar 1 → <code>find</code>.</li>
+              <li>Array + “hacer algo” → <code>forEach</code>.</li>
+              <li>Objeto + propiedades → <code>for...in</code> (con control).</li>
+            </ul>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>6) Interacción básica (API del navegador)</h2>
+        <ul>
+          <li><code>alert("...")</code>: muestra un mensaje (bloquea la UI).</li>
+          <li><code>prompt("...")</code>: pide texto (devuelve string o <code>null</code> si cancelas).</li>
+          <li><code>confirm("...")</code>: pregunta sí/no (devuelve <code>true/false</code>).</li>
+        </ul>
+        <div class="exam">
+          <strong>Examen:</strong> son APIs del navegador (objeto <code>window</code>). En Node no existen.
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>7) Funciones (de verdad): first-class, return y flecha</h2>
+        <div class="two">
+          <div class="card" style="margin:0;">
+            <h3>First-class (funciones como valor)</h3>
+            <ul>
+              <li>Asignar a variables, pasar como parámetro, devolver desde otra función.</li>
+              <li>Esto explica callbacks, eventos, programación funcional, etc.</li>
+            </ul>
+            <div class="exam">
+              Diferencia clave: <code>console.log</code> “muestra”; <code>return</code> “devuelve un valor reutilizable”.
+            </div>
+          </div>
+          <div class="card" style="margin:0;">
+            <h3>Función flecha: llaves y return</h3>
+            <div class="key">
+              Sin <code>{}</code> → return implícito. Con <code>{}</code> → debes escribir <code>return</code>.
+            </div>
+            <div class="practice" data-practice="p4"></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>8) Ámbitos y closures (muy importante para UF4)</h2>
+        <p>
+          Un <strong>closure</strong> ocurre cuando una función “recuerda” variables de su ámbito externo incluso después de que
+          ese ámbito haya terminado. Es la base de contadores, encapsulación y también aparece muchísimo con asíncrono.
+        </p>
+        <div class="pCode">
+function crearContador(){
+  let c = 0;
+  return function(){
+    c++;
+    return c;
+  };
+}
+const contador = crearContador();
+contador(); // 1
+contador(); // 2
+        </div>
+        <div class="key">
+          <strong>Idea clave:</strong> <code>c</code> no es global, pero se mantiene “viva” dentro de la función devuelta.
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>9) Arrays: API funcional + API clásica (imprescindible)</h2>
+        <h3>9.1 Funcional (la que ya practicas)</h3>
+        <ul>
+          <li><strong>map</strong>, <strong>filter</strong>, <strong>find</strong>, <strong>forEach</strong>, <strong>reduce</strong>, <strong>includes</strong>.</li>
+        </ul>
+        <div class="practice" data-practice="p5"></div>
+        <div class="practice" data-practice="p6"></div>
+
+        <h3>9.2 Clásica (muy usada en práctica)</h3>
+        <div class="two">
+          <div class="card" style="margin:0;">
+            <h3>Mutan el array (cambian el original)</h3>
+            <ul>
+              <li><code>push</code> / <code>pop</code> (final)</li>
+              <li><code>shift</code> / <code>unshift</code> (inicio)</li>
+              <li><code>splice</code> (quita/mete en medio)</li>
+              <li><code>sort</code>, <code>reverse</code> (ojo: mutan)</li>
+            </ul>
+          </div>
+          <div class="card" style="margin:0;">
+            <h3>No mutan (devuelven nuevo)</h3>
+            <ul>
+              <li><code>slice</code> (copia parte)</li>
+              <li><code>concat</code> (une arrays)</li>
+              <li><code>join</code> (array → string)</li>
+              <li><code>indexOf</code> (índice o -1)</li>
+              <li><code>includes</code> (true/false)</li>
+            </ul>
+          </div>
+        </div>
+        <div class="exam">
+          <strong>Examen + práctica:</strong> distinguir “muta/no muta” te evita bugs (sobre todo en frameworks).
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>10) Objetos: punto vs corchetes (propiedad dinámica)</h2>
+        <ul>
+          <li><code>obj.prop</code>: nombre fijo.</li>
+          <li><code>obj[prop]</code>: nombre dinámico usando una variable.</li>
+        </ul>
+        <div class="key">
+          Esto explica tu frase: “o pongo <code>coche.marca</code> o pongo <code>coche[x]</code>”.
+        </div>
+        <div class="practice" data-practice="p7"></div>
+      </article>
+
+      <article class="card">
+        <h2>11) <code>this</code> y métodos (y por qué falla con flecha)</h2>
+        <ul>
+          <li>En método con <strong>función normal</strong>: <code>this</code> suele ser el objeto que invoca.</li>
+          <li>En <strong>flecha</strong>: <code>this</code> no se re-vincula; toma el <code>this</code> del contexto externo → puede dar <code>undefined</code>.</li>
+          <li><code>obj.metodo</code> NO ejecuta; <code>obj.metodo()</code> sí.</li>
+        </ul>
+        <div class="practice" data-practice="p8"></div>
+        <div class="practice" data-practice="p9"></div>
+      </article>
+
+      <article class="card">
+        <h2>12) Prototipos e herencia: el “motor” real de JS</h2>
+        <div class="two">
+          <div class="card" style="margin:0;">
+            <h3>¿Qué es un prototipo?</h3>
+            <ul>
+              <li>Un objeto “base” del que otros objetos heredan propiedades/métodos.</li>
+              <li>Cuando accedes a <code>obj.algo</code> y no existe, JS lo busca en su cadena de prototipos.</li>
+            </ul>
+            <div class="key">
+              <strong>Idea:</strong> “herencia” en JS es “delegación” por prototipos.
+            </div>
+          </div>
+          <div class="card" style="margin:0;">
+            <h3>Técnicas de creación (elige 1 y sé coherente)</h3>
+            <ul>
+              <li><strong>Función constructora + new</strong> (clásico): propiedades en <code>this</code>, métodos en <code>prototype</code>.</li>
+              <li><strong>Object.create(proto)</strong>: creas un objeto con prototipo elegido.</li>
+              <li><strong>class</strong>: azúcar sintáctico moderno sobre prototipos.</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="pCode">
+// Constructora
+function Coche(marca){
+  this.marca = marca;
+}
+Coche.prototype.info = function(){
+  return "Marca: " + this.marca;
+};
+const c1 = new Coche("Toyota");
+
+// Object.create
+const proto = { saluda(){ return "hola"; } };
+const o = Object.create(proto);
+        </div>
+        <div class="exam">
+          Examen típico: “¿class crea un sistema nuevo?” → No: sigue siendo prototipos por debajo.
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>13) Prototipos nativos (Object/Function/Array/Date…)</h2>
+        <ul>
+          <li><code>Array.prototype</code>: <code>map</code>, <code>filter</code>, <code>push</code>, etc.</li>
+          <li><code>Function.prototype</code>: <code>call</code>, <code>apply</code>, <code>bind</code>.</li>
+          <li><code>Object.prototype</code>: base común (casi todo “hereda de Object”).</li>
+          <li><code>Date.prototype</code>: métodos de fechas.</li>
+        </ul>
+        <div class="key">
+          Truco de práctica: inspecciona en consola: <code>Object.getPrototypeOf([])</code> para ver prototipos.
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>14) Módulos: ordenar el código “como profesional”</h2>
+        <ul>
+          <li><strong>ES Modules:</strong> <code>export</code>/<code>import</code>.</li>
+          <li>En HTML: <code>&lt;script type="module" src="..."&gt;</code>.</li>
+          <li>Necesitas servir por <strong>HTTP</strong> (Live Server), no <code>file://</code>.</li>
+          <li><strong>CDN:</strong> carga librerías desde terceros (pros: rapidez/caché; contras: dependencia).</li>
+        </ul>
+        <div class="exam">
+          Pregunta típica: “¿por qué no funciona import al abrir con doble clic?” → porque es <code>file://</code>.
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>15) Programación funcional (arrays): el núcleo del día a día</h2>
+        <div class="key">
+          Pregúntate: ¿quiero transformar (<code>map</code>), filtrar (<code>filter</code>), buscar 1 (<code>find</code>), ejecutar algo (<code>forEach</code>), acumular (<code>reduce</code>)?
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>16) Modo estricto</h2>
+        <ul>
+          <li><strong>Strict mode</strong> hace que errores silenciosos se vuelvan errores explícitos.</li>
+          <li>Se activa con <code>"use strict"</code>.</li>
+          <li>En módulos ES6 ya viene activado.</li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <h2>17) Manejo de errores</h2>
+        <ul>
+          <li><code>try/catch</code> captura errores en tiempo de ejecución (flujo síncrono).</li>
+          <li><code>throw</code> lanza errores personalizados.</li>
+          <li><code>finally</code> se ejecuta “pase lo que pase”.</li>
+        </ul>
+        <div class="exam">
+          En UF4 verás cómo se combina esto con asíncrono (promesas / async-await).
+        </div>
+      </article>
+
+      <article class="card">
+        <h2>18) Evolución y futuro</h2>
+        <p>
+          JavaScript evoluciona continuamente (sintaxis, módulos, APIs, etc.). Como DAW, tu ventaja es aprender “bases”
+          (variables, control, funciones, objetos, prototipos, arrays) y luego adaptarte a frameworks.
+        </p>
+      </article>
+
+      <article class="card">
+        <h2>Checklist UF2 (nivel examen)</h2>
+        <ul>
+          <li>Navegador vs Node (APIs).</li>
+          <li>var/let/const + ámbito.</li>
+          <li>Operadores y conversiones (+).</li>
+          <li>Tipos, auto-boxing y objetos predefinidos.</li>
+          <li>If/else, ternario, bucles (for/of/in).</li>
+          <li>Interacción básica: alert/prompt/confirm.</li>
+          <li>Funciones: return, flecha, callbacks.</li>
+          <li>Closures.</li>
+          <li>Arrays: funcional + clásica, muta/no muta.</li>
+          <li>Objetos: punto/corchetes; this; ejecutar métodos.</li>
+          <li>Prototipos: constructoras, Object.create, prototipos nativos; class como azúcar.</li>
+          <li>Módulos + HTTP (Live Server).</li>
+          <li>Strict mode y errores.</li>
+        </ul>
+      </article>
+    </section>
+
+    <!-- ================= QUIZ FINAL ================= -->
+    <section id="panel-quiz" class="panel" role="tabpanel" aria-labelledby="tab-quiz">
+      <article class="card">
+        <div class="quizTop">
+          <div class="pill" title="Progreso del test">
+            <span id="qCounter">Pregunta 1/28</span>
+            <span>·</span>
+            <span id="scorePill">Aciertos: 0 · Fallos: 0</span>
+          </div>
+
+          <div class="controls">
+            <button class="btn" id="btnShuffle" type="button">Mezclar preguntas</button>
+            <button class="btn danger" id="btnReset" type="button">Reiniciar</button>
+            <button class="btn primary" id="btnShowAnswer" type="button">Mostrar solución</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+        <div class="progressbar" aria-label="Barra de progreso">
+          <div id="barFill"></div>
+        </div>
+        <p class="footerNote">
+          Modo aprendizaje: corrige al momento y explica el porqué. Repite hasta clavar 28/28.
+        </p>
+      </article>
+
+      <article class="card qbox" id="quizBox" aria-live="polite"></article>
+
+      <article class="card" id="summaryBox" style="display:none;">
+        <h2>Resultados</h2>
+        <p id="finalLine" class="mini"></p>
+        <div class="key">
+          <strong>Consejo docente:</strong> si fallas siempre lo mismo, es un hueco de base. Vuelve a teoría + repaso interactivo y repite mezclado.
+        </div>
+        <button class="btn primary" id="btnRepeat" type="button">Repetir (mezclado)</button>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    // =========================
+    // Tabs
+    // =========================
+    const tabResumen = document.getElementById('tab-resumen');
+    const tabQuiz = document.getElementById('tab-quiz');
+    const panelResumen = document.getElementById('panel-resumen');
+    const panelQuiz = document.getElementById('panel-quiz');
+
+    function setTab(which){
+      const isResumen = which === 'resumen';
+      tabResumen.setAttribute('aria-selected', String(isResumen));
+      tabQuiz.setAttribute('aria-selected', String(!isResumen));
+      panelResumen.classList.toggle('active', isResumen);
+      panelQuiz.classList.toggle('active', !isResumen);
+      if(!isResumen) renderQuiz();
+    }
+    tabResumen.addEventListener('click', ()=>setTab('resumen'));
+    tabQuiz.addEventListener('click', ()=>setTab('quiz'));
+
+    // ==========================================================
+    // REPASO INTERACTIVO
+    // ==========================================================
+    const practiceDefs = {
+      p1: {
+        title: "Repaso 1 — Navegador vs Node (mini-test)",
+        prompt: "Elige la afirmación correcta:",
+        type: "mc",
+        options: [
+          "En Node existe document y alert por defecto.",
+          "En el navegador no se puede ejecutar JavaScript.",
+          "Node ejecuta JS fuera del navegador y no tiene DOM/alert por defecto.",
+          "TypeScript se ejecuta directamente en el navegador sin compilar."
+        ],
+        correctIndex: 2,
+        explainOk: "Exacto: Node ejecuta JS fuera del navegador, así que no incluye DOM ni alert().",
+        explainBad: "DOM/alert/document son del navegador. Node es un entorno distinto (terminal/servidor)."
+      },
+      p2: {
+        title: "Repaso 2 — let/const/var (mini-test)",
+        prompt: "¿Cuál es la regla recomendada para escribir JS moderno?",
+        type: "mc",
+        options: [
+          "Usar var siempre.",
+          "Usar let por defecto y const si no reasignas.",
+          "No declarar variables para ir más rápido.",
+          "Solo se puede usar const en Node."
+        ],
+        correctIndex: 1,
+        explainOk: "Bien: let por defecto y const cuando no reasignas. var solo si sabes por qué.",
+        explainBad: "La recomendación hoy: let/const por ámbito y seguridad. var tiene comportamientos antiguos."
+      },
+      p3: {
+        title: "Repaso 3 — + (concatenación vs suma)",
+        prompt: "¿Qué imprime este código?",
+        type: "input",
+        code: "console.log('1' + 2);",
+        placeholder: "Ej: 12",
+        normalize: v => String(v).trim().replace(/^["']|["']$/g, ""),
+        check: v => v === "12",
+        ok: "Correcto: al haber un string, + concatena y convierte el otro operando a string → \"12\".",
+        bad: "No es 3. Con +, si uno es string, hay concatenación: '1' + '2' → '12'."
+      },
+      p4: {
+        title: "Repaso 4 — Flecha, llaves y return",
+        prompt: "Completa la forma correcta para que devuelva el doble (elige una):",
+        type: "mc",
+        options: [
+          "nums.map(n => { n * 2 })",
+          "nums.map(n => n * 2)",
+          "nums.map(n => { return })",
+          "nums.map(n => { n * 2; return; })"
+        ],
+        correctIndex: 1,
+        explainOk: "Perfecto: sin llaves hay return implícito. Con llaves necesitarías return.",
+        explainBad: "Con llaves { } necesitas return. La forma más limpia aquí es: n => n * 2."
+      },
+      p5: {
+        title: "Repaso 5 — forEach vs map (mini-test)",
+        prompt: "¿Qué método usarías para obtener un NUEVO array con el doble de cada número?",
+        type: "mc",
+        options: ["forEach","map","find","includes"],
+        correctIndex: 1,
+        explainOk: "Exacto: map transforma y devuelve un array nuevo.",
+        explainBad: "forEach recorre pero devuelve undefined. Para transformar y obtener un nuevo array: map."
+      },
+      p6: {
+        title: "Repaso 6 — includes (booleano)",
+        prompt: "¿Qué devuelve includes()?",
+        type: "mc",
+        options: [
+          "Un array con los elementos encontrados",
+          "Un número con el índice",
+          "true/false si existe el elemento",
+          "El último elemento del array"
+        ],
+        correctIndex: 2,
+        explainOk: "Correcto: includes responde sí/no → boolean.",
+        explainBad: "includes no devuelve un array. Devuelve true/false indicando si el elemento está."
+      },
+      p7: {
+        title: "Repaso 7 — Objeto: punto vs corchetes (dinámico)",
+        prompt: "Dado este código, ¿qué muestra en consola?",
+        type: "input",
+        code:
+`let coche = { marca: "Seat" };
+let x = "marca";
+console.log(coche[x]);`,
+        placeholder: "Escribe el valor mostrado",
+        normalize: v => String(v).trim().toLowerCase(),
+        check: v => v === "seat",
+        ok: "Correcto: x vale \"marca\" y coche[\"marca\"] → \"Seat\".",
+        bad: "Recuerda: coche[x] usa el valor de x como nombre de propiedad. x='marca' → coche['marca'] → 'Seat'."
+      },
+      p8: {
+        title: "Repaso 8 — this en métodos",
+        prompt: "¿Qué imprime este código?",
+        type: "input",
+        code:
+`let alumno = {
+  nombre: "Eugenio",
+  saludar: function () {
+    console.log("Hola " + this.nombre);
+  }
+};
+alumno.saludar();`,
+        placeholder: "Ej: Hola Eugenio",
+        normalize: v => String(v).trim().toLowerCase(),
+        check: v => v === "hola eugenio",
+        ok: "Correcto: this apunta al objeto que invoca el método → alumno.nombre.",
+        bad: "Dentro de un método con función normal, this apunta al objeto que lo llama: alumno.saludar()."
+      },
+      p9: {
+        title: "Repaso 9 — Ejecutar un método (paréntesis)",
+        prompt: "¿Cuál ejecuta el método saludar?",
+        type: "mc",
+        options: ["obj.saludar","obj.saludar()","saludar.obj()","obj->saludar()"],
+        correctIndex: 1,
+        explainOk: "Exacto: los paréntesis ejecutan la función/método.",
+        explainBad: "obj.saludar sin () es solo la referencia. Para ejecutar: obj.saludar()."
+      }
+    };
+
+    function renderPractice(){
+      document.querySelectorAll('[data-practice]').forEach(box => {
+        const id = box.getAttribute('data-practice');
+        const def = practiceDefs[id];
+        if(!def) return;
+
+        const tag = `<span class="pTag">Repaso interactivo</span>`;
+        const code = def.code ? `<div class="pCode">${escapeHtml(def.code)}</div>` : "";
+
+        if(def.type === "mc"){
+          const options = def.options.map((t, i) => {
+            const oid = `${id}_opt_${i}`;
+            return `
+              <label class="choice" for="${oid}">
+                <input type="radio" id="${oid}" name="${id}_mc" value="${i}">
+                <div><strong>${String.fromCharCode(65+i)}.</strong> ${escapeHtml(t)}</div>
+              </label>
+            `;
+          }).join("");
+
+          box.innerHTML = `
+            <h3>${tag} ${escapeHtml(def.title)}</h3>
+            <div class="pPrompt">${escapeHtml(def.prompt)}</div>
+            ${code}
+            <div class="choices">${options}</div>
+            <div class="pControls">
+              <button class="btn primary" type="button" data-action="check" data-id="${id}">Corregir</button>
+              <button class="btn" type="button" data-action="show" data-id="${id}">Ver explicación</button>
+              <button class="btn danger" type="button" data-action="reset" data-id="${id}">Reintentar</button>
+            </div>
+            <div class="pFeedback" id="${id}_fb"></div>
+            <div class="pSmall">Consejo: responde y lee la explicación aunque aciertes.</div>
+          `;
+        } else if(def.type === "input"){
+          box.innerHTML = `
+            <h3>${tag} ${escapeHtml(def.title)}</h3>
+            <div class="pPrompt">${escapeHtml(def.prompt)}</div>
+            ${code}
+            <div class="pRow">
+              <input class="pInput" id="${id}_in" placeholder="${escapeHtml(def.placeholder || '')}" />
+              <div class="pControls">
+                <button class="btn primary" type="button" data-action="check" data-id="${id}">Corregir</button>
+                <button class="btn" type="button" data-action="show" data-id="${id}">Ver explicación</button>
+                <button class="btn danger" type="button" data-action="reset" data-id="${id}">Reintentar</button>
+              </div>
+            </div>
+            <div class="pFeedback" id="${id}_fb"></div>
+            <div class="pSmall">Tip: escribe el resultado que verías en consola.</div>
+          `;
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-action][data-id]');
+        if(!btn) return;
+        const action = btn.getAttribute('data-action');
+        const id = btn.getAttribute('data-id');
+        const def = practiceDefs[id];
+        if(!def) return;
+
+        if(action === "reset") resetPractice(id);
+        if(action === "show") showPractice(id);
+        if(action === "check") checkPractice(id);
+      });
+    }
+
+    function fbEl(id){ return document.getElementById(`${id}_fb`); }
+
+    function resetPractice(id){
+      const def = practiceDefs[id];
+      const fb = fbEl(id);
+      fb.className = "pFeedback";
+      fb.style.display = "none";
+      fb.textContent = "";
+      if(def.type === "mc"){
+        document.querySelectorAll(`input[name="${id}_mc"]`).forEach(r => { r.checked = false; });
+      } else {
+        const inp = document.getElementById(`${id}_in`);
+        if(inp) inp.value = "";
+      }
+    }
+
+    function showPractice(id){
+      const def = practiceDefs[id];
+      const fb = fbEl(id);
+      fb.className = "pFeedback";
+      fb.style.display = "block";
+      const msg = def.type === "mc" ? (def.explainOk || def.explainBad) : (def.ok || def.bad);
+      fb.innerHTML = `<strong>Explicación:</strong> ${escapeHtml(msg || "Revisa la teoría de este bloque.")}`;
+    }
+
+    function checkPractice(id){
+      const def = practiceDefs[id];
+      const fb = fbEl(id);
+
+      if(def.type === "mc"){
+        const selected = document.querySelector(`input[name="${id}_mc"]:checked`);
+        if(!selected){
+          fb.className = "pFeedback bad";
+          fb.innerHTML = `<strong>Falta responder.</strong><div class="explain">Elige una opción antes de corregir.</div>`;
+          return;
+        }
+        const sel = Number(selected.value);
+        const ok = sel === def.correctIndex;
+        if(ok){
+          fb.className = "pFeedback ok";
+          fb.innerHTML = `<strong>Correcto ✅</strong><div class="explain">${escapeHtml(def.explainOk)}</div>`;
+        }else{
+          const letter = String.fromCharCode(65 + def.correctIndex);
+          fb.className = "pFeedback bad";
+          fb.innerHTML = `
+            <strong>Incorrecto ❌</strong>
+            <div class="explain">
+              <strong>Correcta:</strong> ${letter}. ${escapeHtml(def.options[def.correctIndex])}<br/>
+              <strong>Por qué:</strong> ${escapeHtml(def.explainBad)}
+            </div>
+          `;
+        }
+        return;
+      }
+
+      const inp = document.getElementById(`${id}_in`);
+      const raw = inp ? inp.value : "";
+      const norm = def.normalize ? def.normalize(raw) : String(raw).trim();
+      const ok = def.check ? def.check(norm) : false;
+
+      if(!String(raw).trim()){
+        fb.className = "pFeedback bad";
+        fb.innerHTML = `<strong>Falta responder.</strong><div class="explain">Escribe una respuesta antes de corregir.</div>`;
+        return;
+      }
+      if(ok){
+        fb.className = "pFeedback ok";
+        fb.innerHTML = `<strong>Correcto ✅</strong><div class="explain">${escapeHtml(def.ok || "Bien.")}</div>`;
+      }else{
+        fb.className = "pFeedback bad";
+        fb.innerHTML = `<strong>Incorrecto ❌</strong><div class="explain">${escapeHtml(def.bad || "Revisa la teoría del bloque.")}</div>`;
+      }
+    }
+
+    function escapeHtml(str){
+      return String(str)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+
+    renderPractice();
+
+    // ==========================================================
+    // QUIZ FINAL (28 preguntas)
+    // ==========================================================
+    const baseQuestions = [
+      // --- 20 originales ---
+      {
+        q: "¿Cuál es una diferencia correcta entre ejecutar JavaScript en navegador y en Node.js?",
+        a: [
+          "En Node.js existe el DOM y window por defecto.",
+          "En el navegador no se puede usar JavaScript.",
+          "En Node.js se ejecuta JS fuera del navegador y no están las APIs del navegador (DOM/alert).",
+          "En el navegador solo se ejecuta TypeScript."
+        ],
+        correct: 2,
+        why: "Node.js ejecuta JavaScript fuera del navegador, así que no incluye APIs propias del navegador como DOM o alert()."
+      },
+      {
+        q: "¿Qué forma de declarar variables recomienda el temario para JavaScript moderno?",
+        a: [
+          "var, porque siempre es más segura",
+          "let, porque sigue reglas de ámbito más parecidas a otros lenguajes",
+          "global (sin declarar), para ir más rápido",
+          "function, porque crea variables automáticamente"
+        ],
+        correct: 1,
+        why: "En JS moderno se tiende a usar let por defecto (y const cuando no hay reasignación)."
+      },
+      {
+        q: "¿Qué significa “ámbito léxico” (lexical scope) en JavaScript?",
+        a: [
+          "Que JS busca variables desde el ámbito más cercano hacia fuera hasta llegar a global/módulo",
+          "Que las variables solo existen dentro de if",
+          "Que todas las variables son globales por defecto",
+          "Que el navegador decide el ámbito según la URL"
+        ],
+        correct: 0,
+        why: "JavaScript resuelve identificadores subiendo niveles de ámbito: local → exterior → ... → global o módulo."
+      },
+      {
+        q: "¿Qué pasa si usas una variable sin declararla (sin let/const/var) en modo NO estricto?",
+        a: [
+          "Siempre da error y se para el programa",
+          "JavaScript puede crear una variable accidental en el objeto global",
+          "Se compila a WebAssembly",
+          "Se convierte automáticamente en const"
+        ],
+        correct: 1,
+        why: "En modo no estricto, asignar sin declarar puede crear globales accidentales; el modo estricto lo evita."
+      },
+      {
+        q: "¿Cuál es el comportamiento típico del operador + si uno de los operandos es string?",
+        a: [
+          "Convierte ambos a number y suma",
+          "Convierte el otro operando a string y concatena",
+          "Lanza un error de tipos",
+          "Devuelve siempre NaN"
+        ],
+        correct: 1,
+        why: "Con +, si hay un string, suele ocurrir concatenación y el otro operando se convierte a cadena."
+      },
+      {
+        q: "¿Por qué funciona cadena.length si cadena es un tipo primitivo?",
+        a: [
+          "Porque los primitivos tienen métodos nativos reales",
+          "Porque JS convierte temporalmente el primitivo a objeto String para acceder a esa propiedad",
+          "Porque length lo añade el navegador al HTML",
+          "Porque length es una variable global"
+        ],
+        correct: 1,
+        why: "Auto-boxing: JS envuelve temporalmente el primitivo en un objeto para acceder a propiedades/métodos."
+      },
+      {
+        q: "En JavaScript, ¿qué describe mejor que las funciones sean “como valor” (first-class)?",
+        a: [
+          "Que solo se pueden escribir en HTML",
+          "Que pueden asignarse a variables y pasarse como parámetros",
+          "Que siempre se ejecutan en servidor",
+          "Que no pueden ser anónimas"
+        ],
+        correct: 1,
+        why: "First-class: puedes asignar funciones a variables, pasarlas como parámetros (callbacks) y devolverlas."
+      },
+      {
+        q: "Una “función predicado” es, normalmente…",
+        a: [
+          "Una función que devuelve un número",
+          "Una función que devuelve true o false",
+          "Una función que siempre lanza errores",
+          "Una función que convierte JSON a XML"
+        ],
+        correct: 1,
+        why: "Un predicado es una función que devuelve true/false (muy usada en filter/find)."
+      },
+      {
+        q: "¿Qué hace find en un array?",
+        a: [
+          "Devuelve el primer elemento que cumpla la condición",
+          "Devuelve todos los elementos que cumplan la condición",
+          "Transforma el array elemento a elemento",
+          "Acumula el array en un único valor"
+        ],
+        correct: 0,
+        why: "find devuelve el primer elemento que cumple el predicado; si no hay, devuelve undefined."
+      },
+      {
+        q: "¿Cuál de estas afirmaciones sobre forEach es correcta?",
+        a: [
+          "Es una función predicado (devuelve true/false)",
+          "Recorre el array y ejecuta una callback en cada elemento",
+          "Devuelve siempre un array nuevo con elementos transformados",
+          "Sirve solo para ordenar arrays"
+        ],
+        correct: 1,
+        why: "forEach recorre y ejecuta una callback por elemento. No devuelve un array nuevo (devuelve undefined)."
+      },
+      {
+        q: "¿Qué hace map normalmente?",
+        a: [
+          "Filtra elementos y devuelve solo los que cumplen",
+          "Busca un elemento concreto y lo devuelve",
+          "Transforma elementos y devuelve un nuevo array",
+          "Lanza errores si el array tiene objetos"
+        ],
+        correct: 2,
+        why: "map transforma cada elemento y devuelve un nuevo array con los resultados."
+      },
+      {
+        q: "¿Qué idea importante aporta reduce?",
+        a: [
+          "Que es muy potente: puede reducir un array a un solo valor y expresar acumulaciones complejas",
+          "Que es inútil en JavaScript",
+          "Que solo funciona con strings",
+          "Que siempre modifica el array original"
+        ],
+        correct: 0,
+        why: "reduce acumula valores (por ejemplo suma total) y es muy potente para resumir colecciones."
+      },
+      {
+        q: "Sobre objetos, ¿qué es correcto?",
+        a: [
+          "Las variables guardan objetos completos, no referencias",
+          "Asignar un objeto a otra variable crea una copia independiente",
+          "Las variables guardan referencias; para copiar se puede usar Object.assign o spread",
+          "Los objetos no se pueden copiar nunca"
+        ],
+        correct: 2,
+        why: "Las variables guardan referencias. Para una copia superficial (shallow) puedes usar Object.assign o {...obj}."
+      },
+      {
+        q: "¿Qué detalle importante hay con la desestructuración cuando NO declaras variables en la misma línea?",
+        a: [
+          "Siempre hay que usar var",
+          "Las llaves { } pueden interpretarse como un bloque; se recomienda envolver en paréntesis",
+          "Hay que usar JSON",
+          "Solo funciona si estás en Node.js"
+        ],
+        correct: 1,
+        why: "En reasignación, { } puede interpretarse como bloque. Se suele escribir: ({x, y} = obj)."
+      },
+      {
+        q: "¿Qué es el modo estricto (strict mode)?",
+        a: [
+          "Un framework para CSS",
+          "Un modo que convierte errores silenciosos en errores explícitos",
+          "Un modo para que JS se ejecute más lento pero seguro",
+          "Una API del navegador para WebSocket"
+        ],
+        correct: 1,
+        why: "El strict mode convierte ciertas “malas prácticas” en errores para evitar bugs (por ejemplo globales accidentales)."
+      },
+      {
+        q: "¿Cómo se activa el modo estricto?",
+        a: [
+          "Con <script strict>",
+          "Con 'use strict' al principio del script o de una función",
+          "Activando un CDN",
+          "Con import/export"
+        ],
+        correct: 1,
+        why: "Se activa con \"use strict\". En módulos ES6 ya está activo por defecto."
+      },
+      {
+        q: "Para usar import en una página HTML, ¿qué debes hacer?",
+        a: [
+          "Nada, import funciona siempre en cualquier script",
+          "Usar <script type='module'>",
+          "Solo funciona si abres el HTML con doble clic",
+          "Hay que usar var en todo el archivo"
+        ],
+        correct: 1,
+        why: "Para ES Modules en navegador necesitas <script type=\"module\">."
+      },
+      {
+        q: "¿Qué afirmación es correcta sobre módulos en el navegador para hacer pruebas?",
+        a: [
+          "Se cargan por file:// sin problema",
+          "Solo se cargan a través de HTTP; conviene usar un servidor (Live Server)",
+          "Solo funcionan en Safari antiguo",
+          "No necesitan rutas, basta con el nombre del archivo"
+        ],
+        correct: 1,
+        why: "En práctica, los módulos funcionan bien servidos por HTTP. Con file:// suele fallar. Usa Live Server."
+      },
+      {
+        q: "Sobre try...catch en JavaScript, ¿qué remarca la unidad?",
+        a: [
+          "Captura solo errores de compilación",
+          "El parámetro de catch suele ser un Error con name, message y stack, y funciona de forma síncrona",
+          "Sirve para hacer peticiones HTTP directamente",
+          "Solo funciona dentro de módulos"
+        ],
+        correct: 1,
+        why: "try/catch captura errores de ejecución en flujo síncrono. El Error suele tener name/message/stack."
+      },
+      {
+        q: "En un método de un objeto (función normal), ¿qué describe mejor a this?",
+        a: [
+          "Siempre es el objeto global",
+          "Apunta al objeto que invoca el método",
+          "Nunca se puede usar en objetos",
+          "Solo existe en Node.js"
+        ],
+        correct: 1,
+        why: "En métodos con función normal, this suele referirse al objeto que llama al método (obj.metodo())."
+      },
+
+      // --- 8 nuevas (para cubrir los puntos que faltaban) ---
+      {
+        q: "¿Cuál es el bucle más adecuado para recorrer los VALORES de un array en JS moderno?",
+        a: [
+          "for...in",
+          "for...of",
+          "while(true)",
+          "switch"
+        ],
+        correct: 1,
+        why: "for...of recorre valores (ideal para arrays). for...in recorre claves/propiedades (mejor para objetos)."
+      },
+      {
+        q: "¿Qué describe correctamente el operador ternario?",
+        a: [
+          "Es un bucle que recorre arrays",
+          "Es una forma corta de if/else: condicion ? valorSiTrue : valorSiFalse",
+          "Sirve para declarar variables",
+          "Es lo mismo que try/catch"
+        ],
+        correct: 1,
+        why: "El ternario es un if/else expresado como expresión: cond ? A : B. Útil si es simple y claro."
+      },
+      {
+        q: "¿Qué función pertenece a la interacción básica del navegador (window) y NO existe en Node por defecto?",
+        a: [
+          "alert()",
+          "console.log()",
+          "Array.prototype.map()",
+          "JSON.parse()"
+        ],
+        correct: 0,
+        why: "alert/prompt/confirm son APIs del navegador (window). console.log existe en Node y navegador."
+      },
+      {
+        q: "¿Qué es un closure (cierre) en JavaScript?",
+        a: [
+          "Una forma de ordenar arrays",
+          "Una función que recuerda variables de un ámbito externo y las mantiene accesibles",
+          "Un error del modo estricto",
+          "Un tipo especial de bucle"
+        ],
+        correct: 1,
+        why: "Un closure ocurre cuando una función mantiene acceso a variables externas aunque el ámbito externo haya terminado."
+      },
+      {
+        q: "¿Cuál de estas operaciones MUTA (cambia) el array original?",
+        a: [
+          "slice()",
+          "concat()",
+          "push()",
+          "map()"
+        ],
+        correct: 2,
+        why: "push modifica el array original. slice/concat/map devuelven nuevos resultados sin mutar el original."
+      },
+      {
+        q: "¿Para qué sirve Object.create(proto)?",
+        a: [
+          "Para copiar arrays",
+          "Para crear un objeto cuyo prototipo es proto",
+          "Para convertir JSON a objeto",
+          "Para ejecutar un método del objeto"
+        ],
+        correct: 1,
+        why: "Object.create(proto) crea un objeto que delega en proto (proto queda como su prototipo)."
+      },
+      {
+        q: "¿Qué afirmación sobre class en JavaScript es correcta?",
+        a: [
+          "class crea un sistema de herencia distinto a prototipos",
+          "class es azúcar sintáctico sobre prototipos",
+          "class solo existe en Node",
+          "class elimina la necesidad de this"
+        ],
+        correct: 1,
+        why: "class es una sintaxis moderna que sigue usando prototipos por debajo (no cambia el modelo base)."
+      },
+      {
+        q: "¿Qué prototipo contiene métodos como call/apply/bind?",
+        a: [
+          "Array.prototype",
+          "Function.prototype",
+          "Object.prototype",
+          "Date.prototype"
+        ],
+        correct: 1,
+        why: "call/apply/bind son métodos de funciones → están en Function.prototype."
+      }
+    ];
+
+    // =========================
+    // Quiz state
+    // =========================
+    let questions = [];
+    let idx = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let answered = false;
+
+    const quizBox = document.getElementById('quizBox');
+    const qCounter = document.getElementById('qCounter');
+    const scorePill = document.getElementById('scorePill');
+    const barFill = document.getElementById('barFill');
+    const btnReset = document.getElementById('btnReset');
+    const btnShuffle = document.getElementById('btnShuffle');
+    const btnShowAnswer = document.getElementById('btnShowAnswer');
+    const summaryBox = document.getElementById('summaryBox');
+    const finalLine = document.getElementById('finalLine');
+    const btnRepeat = document.getElementById('btnRepeat');
+
+    function deepCopy(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+    function shuffleArray(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function resetQuiz({shuffle=false}={}){
+      questions = deepCopy(baseQuestions);
+      if(shuffle) shuffleArray(questions);
+      idx = 0;
+      correctCount = 0;
+      wrongCount = 0;
+      answered = false;
+      summaryBox.style.display = "none";
+      quizBox.style.display = "block";
+      updateTopQuiz();
+      renderQuiz();
+    }
+
+    function updateTopQuiz(){
+      qCounter.textContent = `Pregunta ${Math.min(idx+1, questions.length)}/${questions.length}`;
+      scorePill.textContent = `Aciertos: ${correctCount} · Fallos: ${wrongCount}`;
+      const progress = (idx / questions.length) * 100;
+      barFill.style.width = `${progress}%`;
+    }
+
+    function renderQuiz(){
+      if(!questions.length) resetQuiz({shuffle:false});
+      updateTopQuiz();
+
+      if(idx >= questions.length){
+        quizBox.style.display = "none";
+        summaryBox.style.display = "block";
+        barFill.style.width = "100%";
+        finalLine.textContent =
+          `Has terminado: ${correctCount}/${questions.length} correctas. Fallos: ${wrongCount}. ` +
+          (wrongCount === 0 ? "Perfecto: nivel examen." : "Repite el test mezclado hasta reducir fallos a 0.");
+        return;
+      }
+
+      answered = false;
+      const item = questions[idx];
+
+      const optionsHtml = item.a.map((opt, i) => {
+        const id = `opt_${idx}_${i}`;
+        return `
+          <label class="choice" for="${id}">
+            <input type="radio" id="${id}" name="choice" value="${i}" />
+            <div>
+              <div><strong>${String.fromCharCode(65+i)}.</strong> ${escapeHtml(opt)}</div>
+            </div>
+          </label>
+        `;
+      }).join("");
+
+      quizBox.innerHTML = `
+        <h2>${escapeHtml(item.q)}</h2>
+        <div class="choices" id="choices">${optionsHtml}</div>
+        <div class="divider"></div>
+        <div class="controls">
+          <button class="btn primary" id="btnCheck" type="button">Corregir</button>
+          <button class="btn" id="btnNext" type="button" disabled>Siguiente</button>
+        </div>
+        <div id="fb" class="feedback" style="display:none;"></div>
+      `;
+
+      document.getElementById('btnCheck').addEventListener('click', checkAnswerQuiz);
+      document.getElementById('btnNext').addEventListener('click', nextQuestionQuiz);
+    }
+
+    function getSelectedQuiz(){
+      const checked = quizBox.querySelector('input[name="choice"]:checked');
+      return checked ? Number(checked.value) : null;
+    }
+
+    function checkAnswerQuiz(){
+      if(answered) return;
+      const sel = getSelectedQuiz();
+      const fb = document.getElementById('fb');
+      if(sel === null){
+        fb.style.display = "block";
+        fb.className = "feedback bad";
+        fb.innerHTML = `<strong>Falta responder.</strong><div class="explain">Elige una opción antes de corregir.</div>`;
+        return;
+      }
+      answered = true;
+
+      const item = questions[idx];
+      const isOk = sel === item.correct;
+
+      quizBox.querySelectorAll('input[name="choice"]').forEach(r => r.disabled = true);
+
+      if(isOk){
+        correctCount++;
+        fb.style.display = "block";
+        fb.className = "feedback ok";
+        fb.innerHTML = `
+          <strong>Correcto ✅</strong>
+          <div class="explain"><strong>Razón:</strong> ${escapeHtml(item.why)}</div>
+        `;
+      }else{
+        wrongCount++;
+        const correctLetter = String.fromCharCode(65 + item.correct);
+        fb.style.display = "block";
+        fb.className = "feedback bad";
+        fb.innerHTML = `
+          <strong>Incorrecto ❌</strong>
+          <div class="explain">
+            <strong>Solución correcta:</strong> ${correctLetter}. ${escapeHtml(item.a[item.correct])}<br/>
+            <strong>Por qué:</strong> ${escapeHtml(item.why)}
+          </div>
+          <div class="mini" style="margin-top:8px;">
+            Consejo: no memorices la letra. Memoriza la idea (definición, diferencia o motivo).
+          </div>
+        `;
+      }
+
+      document.getElementById('btnNext').disabled = false;
+      updateTopQuiz();
+    }
+
+    function nextQuestionQuiz(){
+      idx++;
+      updateTopQuiz();
+      renderQuiz();
+    }
+
+    function showAnswerQuiz(){
+      if(!questions.length) return;
+      const item = questions[idx];
+      const correctLetter = String.fromCharCode(65 + item.correct);
+
+      if(!document.getElementById('fb')) renderQuiz();
+
+      const radios = quizBox.querySelectorAll('input[name="choice"]');
+      radios.forEach((r, i) => { if(i === item.correct) r.checked = true; });
+
+      const fb2 = document.getElementById('fb');
+      fb2.style.display = "block";
+      fb2.className = "feedback";
+      fb2.innerHTML = `
+        <strong>Modo estudio:</strong> la correcta es <strong>${correctLetter}</strong>.
+        <div class="explain"><strong>Razón:</strong> ${escapeHtml(item.why)}</div>
+      `;
+    }
+
+    btnReset.addEventListener('click', ()=>resetQuiz({shuffle:false}));
+    btnShuffle.addEventListener('click', ()=>resetQuiz({shuffle:true}));
+    btnShowAnswer.addEventListener('click', showAnswerQuiz);
+    btnRepeat.addEventListener('click', ()=>resetQuiz({shuffle:true}));
+
+    resetQuiz({shuffle:false});
+  </script>
+</body>
+</html>

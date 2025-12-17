@@ -1,0 +1,818 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UF1 — Introducción al desarrollo web en entorno cliente</title>
+  <style>
+    :root { color-scheme: light; }
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin:0; line-height:1.6; background:#f6f7fb; color:#111827;
+    }
+    header{
+      background:#0b5aa6; color:#fff; padding:22px 16px;
+    }
+    header .top{
+      max-width:1100px; margin:0 auto; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    }
+    header h1{ margin:0; font-size:1.35rem; }
+    header p{ margin:4px 0 0; opacity:.9; }
+    .btnlink{
+      display:inline-block; text-decoration:none; background:#ffffff; color:#0b5aa6;
+      padding:10px 12px; border-radius:12px; font-weight:700;
+    }
+    main{ max-width:1100px; margin:0 auto; padding:16px 16px 42px; }
+
+    .card{
+      background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+      padding:14px; box-shadow:0 1px 2px rgba(0,0,0,.04);
+      margin:12px 0;
+    }
+    .card h2{ margin:0 0 6px; font-size:1.15rem; }
+    .card h3{ margin:12px 0 6px; font-size:1.02rem; }
+    .muted{ color:#4b5563; margin:6px 0 0; }
+    .key{
+      background:#fef3c7; border:1px solid #fde68a; color:#92400e;
+      padding:10px 12px; border-radius:12px; margin:10px 0;
+    }
+    .exam{
+      background:#ecfeff; border:1px solid #a5f3fc; color:#155e75;
+      padding:10px 12px; border-radius:12px; margin:10px 0;
+    }
+    ul{ margin:8px 0 8px 20px; }
+    li{ margin:6px 0; }
+    code, kbd{
+      background:#f3f4f6; border:1px solid #e5e7eb; padding:1px 6px; border-radius:8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:.95em;
+    }
+    .two{
+      display:grid; grid-template-columns:1fr; gap:12px;
+    }
+    @media (min-width: 900px){
+      .two{ grid-template-columns:1fr 1fr; }
+    }
+
+    /* Quiz */
+    .quizTop{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center; justify-content:space-between;
+    }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      background:#f3f4f6; border:1px solid #e5e7eb; padding:8px 10px; border-radius:999px;
+      font-weight:650;
+    }
+    .controls{
+      display:flex; gap:10px; flex-wrap:wrap; align-items:center;
+    }
+    .btn{
+      border:1px solid #e5e7eb; background:#fff; padding:10px 12px; border-radius:12px;
+      cursor:pointer; font-weight:750;
+    }
+    .btn.primary{
+      background:#0b5aa6; border-color:#0b5aa6; color:#fff;
+    }
+    .btn.danger{
+      background:#fff1f2; border-color:#fecdd3; color:#9f1239;
+    }
+    .qbox h2{ font-size:1.1rem; margin:0 0 10px; }
+    .choices{ display:grid; gap:10px; }
+    .choice{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 12px; border-radius:12px; border:1px solid #e5e7eb;
+      background:#fff; cursor:pointer;
+    }
+    .choice input{ margin-top:3px; }
+    .choice:hover{ box-shadow:0 1px 2px rgba(0,0,0,.05); }
+    .feedback{
+      margin-top:12px; padding:10px 12px; border-radius:12px; border:1px solid #e5e7eb;
+      background:#f9fafb; color:#111827;
+    }
+    .feedback.ok{ background:#ecfdf5; border-color:#a7f3d0; color:#065f46; }
+    .feedback.bad{ background:#fff1f2; border-color:#fecdd3; color:#9f1239; }
+    .explain{ margin-top:8px; color:#111827; }
+    .mini{ font-size:.95rem; color:#374151; }
+    .divider{ height:1px; background:#e5e7eb; margin:12px 0; }
+    .progressbar{
+      width:100%; height:10px; border-radius:999px; background:#e5e7eb; overflow:hidden;
+    }
+    .progressbar > div{ height:100%; width:0%; background:#0b5aa6; }
+    .footerNote{ color:#6b7280; font-size:.95rem; margin-top:8px; }
+
+    /* anchor */
+    .toc a{ text-decoration:none; }
+    .toc a:hover{ text-decoration:underline; }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="top">
+      <div>
+        <h1>UF1 — Introducción al desarrollo web en entorno cliente</h1>
+        <p>Teoría (primero) + Quiz tipo test (20 preguntas) con explicación para aprender.</p>
+      </div>
+      <a class="btnlink" href="index.html">← Volver al índice</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- ====== TEORÍA ====== -->
+    <section class="card toc" aria-label="Índice de la unidad">
+      <h2>Índice rápido</h2>
+      <ul>
+        <li><a href="#p1">1. Qué significa “entorno cliente”</a></li>
+        <li><a href="#p2">2. Terminología clave: página web, sitio web, aplicación web (MPA/SPA)</a></li>
+        <li><a href="#p3">3. Características del desarrollo en cliente</a></li>
+        <li><a href="#p4">4. Estructura: front-end vs back-end</a></li>
+        <li><a href="#p5">5. Tecnologías base (HTML/CSS/JS)</a></li>
+        <li><a href="#p6">6. Conceptos web (WWW, URL, HTTP, WebSocket, AJAX, Web API, CMS)</a></li>
+        <li><a href="#p7">7. Formatos y estilos de API (JSON/XML/Markdown/YAML/REST/SOAP/GraphQL)</a></li>
+        <li><a href="#p8">8. Lenguajes en cliente (JS, TypeScript, WebAssembly)</a></li>
+        <li><a href="#p9">9. Entorno de desarrollo (VS Code, Emmet, Live Server, Node, NPM)</a></li>
+        <li><a href="#p10">10. DevTools y REPL</a></li>
+        <li><a href="#p11">11. Calidad: validadores, Git, TDD, CI/CD</a></li>
+        <li><a href="#quiz">Quiz UF1 (20 preguntas)</a></li>
+      </ul>
+    </section>
+
+    <section id="p1" class="card">
+      <h2>1. Qué significa “entorno cliente”</h2>
+      <p>
+        En <strong>desarrollo web en entorno cliente</strong>, el “cliente” es el <strong>navegador</strong> del usuario.
+        Tu programa (la parte cliente) se ejecuta ahí, no en el servidor.
+      </p>
+      <div class="key">
+        <strong>Idea clave:</strong> el navegador es el <strong>entorno de ejecución</strong> del front-end. Por eso existen límites
+        (compatibilidad, APIs disponibles, seguridad) y ventajas (universalidad y despliegue fácil).
+      </div>
+    </section>
+
+    <section id="p2" class="card">
+      <h2>2. Terminología que NO puedes confundir</h2>
+
+      <div class="two">
+        <div class="card" style="margin:0;">
+          <h3>2.1 Página web</h3>
+          <p>Una <strong>página web</strong> es un archivo <code>.html</code> (con HTML y opcionalmente CSS y JavaScript).</p>
+          <ul>
+            <li><strong>Estática:</strong> el servidor entrega el archivo tal cual (no genera HTML con lógica de servidor).</li>
+            <li><strong>Dinámica:</strong> el servidor genera el HTML ejecutando código (plantillas + lógica de servidor).</li>
+          </ul>
+          <div class="exam">
+            <strong>Trampa de examen:</strong> “estática” <strong>NO</strong> significa “sin JS”. Significa “no generada por lógica de servidor”.
+          </div>
+        </div>
+
+        <div class="card" style="margin:0;">
+          <h3>2.2 Sitio web</h3>
+          <p>
+            Un <strong>sitio web</strong> es un <strong>conjunto de páginas</strong> alojadas en un servidor (estáticas o dinámicas),
+            normalmente de carácter <strong>informativo</strong>.
+          </p>
+          <ul>
+            <li>Puede tener login para contenido restringido.</li>
+            <li>No suele ofrecer lógica compleja de “aplicación” (tareas avanzadas).</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <h3>2.3 Aplicación web</h3>
+        <p>
+          Una <strong>aplicación web</strong> ofrece funcionalidades propias de software (correo, gestión, edición, redes sociales…).
+        </p>
+        <div class="two">
+          <div class="card" style="margin:0;">
+            <h3>Multipágina (MPA)</h3>
+            <ul>
+              <li>Cada sección carga una página completa.</li>
+              <li>Se descargan de nuevo recursos (HTML/CSS/JS + contenido).</li>
+              <li>Se percibe recarga al navegar.</li>
+            </ul>
+          </div>
+          <div class="card" style="margin:0;">
+            <h3>SPA</h3>
+            <ul>
+              <li>El cliente se carga una vez.</li>
+              <li>Luego se suelen pedir <strong>datos</strong> (no páginas completas).</li>
+              <li>Navegación sin recarga completa.</li>
+            </ul>
+          </div>
+        </div>
+        <div class="exam">
+          <strong>Ejemplos típicos:</strong> Gmail suele ser SPA; GitHub suele ser multipágina; Wikipedia se considera sitio web (dinámico).
+        </div>
+      </div>
+    </section>
+
+    <section id="p3" class="card">
+      <h2>3. Características del desarrollo en cliente</h2>
+      <ul>
+        <li><strong>Independencia relativa del SO:</strong> si funciona en un navegador/versión, suele funcionar en distintos SO, pero depende de APIs del dispositivo.</li>
+        <li><strong>Compatibilidad entre navegadores:</strong> no todos implementan estándares al mismo ritmo.</li>
+        <li><strong>Universalidad:</strong> no requiere instalación; basta un navegador.</li>
+        <li><strong>Actualización transparente:</strong> al recargar, el usuario obtiene la versión nueva.</li>
+      </ul>
+      <div class="key">
+        <strong>Examen:</strong> pueden pedir ventajas/desventajas y consecuencias (probar en varios navegadores, usar estándares, etc.).
+      </div>
+    </section>
+
+    <section id="p4" class="card">
+      <h2>4. Estructura de una aplicación web: front-end vs back-end</h2>
+      <div class="two">
+        <div class="card" style="margin:0;">
+          <h3>Back-end (servidor)</h3>
+          <ul>
+            <li><strong>Lógica de negocio</strong> (reglas).</li>
+            <li><strong>Persistencia</strong> (BD u otros sistemas).</li>
+            <li>Procesa datos y responde al cliente.</li>
+          </ul>
+          <div class="exam"><strong>Palabras clave:</strong> lógica de negocio + persistencia.</div>
+        </div>
+        <div class="card" style="margin:0;">
+          <h3>Front-end (cliente)</h3>
+          <ul>
+            <li>Interacción con usuario (UI).</li>
+            <li>Muestra datos y recoge entradas.</li>
+            <li>Se comunica con el servidor.</li>
+          </ul>
+          <div class="exam"><strong>Clave:</strong> validar en cliente mejora UX, pero validar en servidor es obligatorio por seguridad.</div>
+        </div>
+      </div>
+      <div class="key">
+        <strong>Idea clave:</strong> el cliente <strong>no</strong> accede directamente a la base de datos (seguridad).
+      </div>
+    </section>
+
+    <section id="p5" class="card">
+      <h2>5. Tecnologías base del entorno cliente</h2>
+      <ul>
+        <li><strong>HTML:</strong> estructura y contenido.</li>
+        <li><strong>CSS:</strong> estilos y diseño.</li>
+        <li><strong>JavaScript:</strong> lógica e interactividad.</li>
+      </ul>
+    </section>
+
+    <section id="p6" class="card">
+      <h2>6. Tecnologías y conceptos web</h2>
+
+      <h3>6.1 WWW, URL y protocolos</h3>
+      <ul>
+        <li><strong>WWW:</strong> sistema que conecta navegadores y servidores.</li>
+        <li><strong>URL:</strong> identifica recursos (páginas o endpoints de API).</li>
+        <li><strong>HTTP:</strong> petición–respuesta (half-duplex).</li>
+        <li><strong>WebSocket:</strong> comunicación bidireccional (full-duplex), útil para tiempo real.</li>
+      </ul>
+
+      <h3>6.2 AJAX y Web APIs</h3>
+      <ul>
+        <li><strong>AJAX:</strong> técnica (no “tecnología nueva”) para enviar/recibir datos sin recargar página completa.</li>
+        <li><strong>Web API:</strong> servicio que devuelve datos (JSON/XML), no páginas completas.</li>
+      </ul>
+      <div class="exam">
+        <strong>Clave:</strong> una API puede servir a web, móvil, escritorio y otros servicios.
+      </div>
+
+      <h3>6.3 CMS</h3>
+      <ul>
+        <li><strong>CMS:</strong> gestor de contenidos (usuarios, editor, plantillas).</li>
+        <li>WordPress suele generar páginas <strong>dinámicas</strong>.</li>
+      </ul>
+    </section>
+
+    <section id="p7" class="card">
+      <h2>7. Formatos y lenguajes relacionados</h2>
+      <div class="two">
+        <div class="card" style="margin:0;">
+          <h3>Intercambio de datos</h3>
+          <ul>
+            <li><strong>JSON / XML:</strong> datos para que los procese un programa (APIs).</li>
+            <li><strong>HTML:</strong> pensado para mostrarse al usuario.</li>
+          </ul>
+        </div>
+        <div class="card" style="margin:0;">
+          <h3>Marcado ligero</h3>
+          <ul>
+            <li><strong>Markdown:</strong> contenido/documentación → se convierte a HTML.</li>
+            <li><strong>YAML:</strong> configuración.</li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <h3>Estilos para APIs</h3>
+        <ul>
+          <li><strong>REST:</strong> estilo común en APIs web.</li>
+          <li><strong>SOAP:</strong> enfoque/protocolo de mensajería, más pesado.</li>
+          <li><strong>GraphQL:</strong> lenguaje de consulta para APIs.</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="p8" class="card">
+      <h2>8. Lenguajes de programación en cliente</h2>
+      <ul>
+        <li><strong>JavaScript:</strong> estándar en cliente (ECMAScript). Motores modernos usan <strong>JIT</strong>.</li>
+        <li><strong>TypeScript:</strong> superset con tipado; hay que <strong>transpilar a JavaScript</strong> para navegador.</li>
+        <li><strong>WebAssembly:</strong> formato binario para alto rendimiento; complementa a JS.</li>
+      </ul>
+    </section>
+
+    <section id="p9" class="card">
+      <h2>9. Entorno de desarrollo</h2>
+      <h3>VS Code</h3>
+      <ul>
+        <li>Workspace por carpeta.</li>
+        <li><strong>Emmet:</strong> atajos para escribir HTML rápido.</li>
+        <li><strong>Live Server:</strong> servidor local (ej. <code>http://localhost:5500</code>).</li>
+      </ul>
+      <div class="exam">
+        <strong>Pregunta típica:</strong> ¿por qué Live Server y no doble click? → evita problemas de <code>file://</code> y simula HTTP.
+      </div>
+
+      <h3>NodeJS + NPM</h3>
+      <ul>
+        <li><strong>NodeJS</strong> ejecuta JavaScript fuera del navegador (no hay DOM, <code>window</code>, <code>alert()</code>).</li>
+        <li><strong>NPM</strong> gestiona paquetes (dependencias de proyecto y herramientas).</li>
+      </ul>
+    </section>
+
+    <section id="p10" class="card">
+      <h2>10. DevTools y REPL</h2>
+      <ul>
+        <li><strong>F12</strong> abre DevTools.</li>
+        <li><strong>Console:</strong> logs y REPL en navegador.</li>
+        <li><strong>Network:</strong> peticiones HTTP/AJAX.</li>
+        <li><strong>Sources:</strong> depuración (breakpoints).</li>
+        <li><strong>Elements:</strong> inspección del DOM.</li>
+      </ul>
+      <h3>REPL en Node</h3>
+      <ul>
+        <li>Ejecuta <code>node</code> en terminal.</li>
+        <li>Usa <code>console.log()</code> (no existe <code>alert()</code>).</li>
+      </ul>
+    </section>
+
+    <section id="p11" class="card">
+      <h2>11. Calidad: validación, Git, TDD, CI/CD</h2>
+      <ul>
+        <li><strong>Validadores:</strong> W3C HTML/CSS, JSLint (concepto de validar calidad).</li>
+        <li><strong>Git:</strong> control de versiones.</li>
+        <li><strong>TDD:</strong> test → código mínimo → refactor.</li>
+        <li><strong>CI:</strong> integrar y testear automáticamente.</li>
+        <li><strong>CD:</strong> desplegar automáticamente tras pasar CI (según estrategia).</li>
+      </ul>
+    </section>
+
+    <!-- ====== QUIZ (20) ====== -->
+    <section id="quiz" class="card">
+      <h2>Quiz UF1 — 20 preguntas tipo test</h2>
+
+      <div class="quizTop">
+        <div class="pill" title="Progreso del test">
+          <span id="qCounter">Pregunta 1/20</span>
+          <span>·</span>
+          <span id="scorePill">Aciertos: 0 · Fallos: 0</span>
+        </div>
+
+        <div class="controls">
+          <button class="btn" id="btnShuffle" type="button">Mezclar</button>
+          <button class="btn danger" id="btnReset" type="button">Reiniciar</button>
+          <button class="btn primary" id="btnShowAnswer" type="button">Mostrar solución</button>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+      <div class="progressbar" aria-label="Barra de progreso">
+        <div id="barFill"></div>
+      </div>
+      <p class="footerNote">
+        Modo aprendizaje: corrige al momento y explica el porqué. Repite hasta hacer <strong>20/20</strong>.
+      </p>
+
+      <article class="card qbox" id="quizBox" aria-live="polite" style="margin-top:12px;">
+        <!-- JS inject -->
+      </article>
+
+      <article class="card" id="summaryBox" style="display:none;">
+        <h3>Resultados</h3>
+        <p id="finalLine" class="mini"></p>
+        <div class="key">
+          <strong>Consejo:</strong> apunta los conceptos que fallas y repite mezclado. Si fallas siempre lo mismo, hay hueco en la base.
+        </div>
+        <button class="btn primary" id="btnRepeat" type="button">Repetir (mezclado)</button>
+      </article>
+    </section>
+  </main>
+
+  <script>
+    // =========================
+    // Preguntas (20) — cubren TODOS los puntos clave de UF1
+    // =========================
+    const baseQuestions = [
+      {
+        q: "¿Qué es el cliente en una aplicación web?",
+        a: [
+          "El servidor que procesa las peticiones",
+          "El navegador del usuario donde se ejecuta el front-end",
+          "La base de datos",
+          "Internet"
+        ],
+        correct: 1,
+        why: "El cliente es el navegador, que ejecuta HTML, CSS y JavaScript (front-end)."
+      },
+      {
+        q: "¿Qué tecnologías forman la base del desarrollo en entorno cliente?",
+        a: [
+          "Java, PHP y SQL",
+          "HTML, CSS y JavaScript",
+          "HTTP, REST y JSON",
+          "Git, NodeJS y NPM"
+        ],
+        correct: 1,
+        why: "HTML (estructura), CSS (estilos) y JavaScript (lógica) son la base del entorno cliente."
+      },
+      {
+        q: "Una página web estática se caracteriza porque…",
+        a: [
+          "No puede usar JavaScript",
+          "El HTML no se genera mediante lógica de servidor",
+          "Siempre es una SPA",
+          "No puede comunicarse con un servidor"
+        ],
+        correct: 1,
+        why: "‘Estática’ se refiere a cómo se obtiene el HTML: el servidor lo entrega tal cual, sin generarlo con código."
+      },
+      {
+        q: "¿Puede una página web estática tener JavaScript?",
+        a: [
+          "No, nunca",
+          "Solo si es multipágina",
+          "Sí, el JavaScript se ejecuta en el navegador",
+          "Solo usando NodeJS"
+        ],
+        correct: 2,
+        why: "Que el HTML sea estático no impide que el navegador ejecute JavaScript y haga la página interactiva."
+      },
+      {
+        q: "¿Qué define mejor a una página web dinámica?",
+        a: [
+          "Que usa JavaScript",
+          "Que el HTML se genera ejecutando código en el servidor",
+          "Que es una SPA",
+          "Que siempre usa WebSocket"
+        ],
+        correct: 1,
+        why: "En dinámica, el servidor ejecuta lógica (plantillas, BD, etc.) y construye el HTML antes de enviarlo."
+      },
+      {
+        q: "¿Qué es un sitio web?",
+        a: [
+          "Una única página HTML",
+          "Un conjunto de páginas web alojadas en un servidor",
+          "Una API REST",
+          "Una aplicación de escritorio"
+        ],
+        correct: 1,
+        why: "Un sitio web es un conjunto de páginas; normalmente es informativo y se navega por enlaces."
+      },
+      {
+        q: "¿Qué diferencia principal hay entre un sitio web y una aplicación web?",
+        a: [
+          "El sitio web no usa HTML",
+          "La aplicación web ofrece funcionalidades propias de software",
+          "La aplicación web no tiene servidor",
+          "El sitio web siempre es dinámico"
+        ],
+        correct: 1,
+        why: "Aplicación web = permite hacer tareas (correo, gestión, etc.). Sitio web = principalmente información."
+      },
+      {
+        q: "Una SPA se caracteriza porque…",
+        a: [
+          "Recarga la página en cada navegación",
+          "No usa JavaScript",
+          "El cliente se carga una vez y luego se piden datos",
+          "No se comunica con el servidor"
+        ],
+        correct: 2,
+        why: "En SPA se evita recargar páginas completas; se actualiza la interfaz pidiendo datos (AJAX/fetch)."
+      },
+      {
+        q: "¿Por qué se dice que la independencia del sistema operativo es relativa?",
+        a: [
+          "Porque el navegador depende del hardware y de las APIs disponibles",
+          "Porque solo funciona en Windows",
+          "Porque JavaScript se compila en el servidor",
+          "Porque las webs no usan el sistema operativo"
+        ],
+        correct: 0,
+        why: "El acceso a cámara/GPS/almacenamiento depende del SO y de lo que el navegador permita."
+      },
+      {
+        q: "¿Qué problema principal existe con la compatibilidad entre navegadores?",
+        a: [
+          "Que solo existe Chrome",
+          "Que los estándares evolucionan y no todos los navegadores los implementan a la vez",
+          "Que JavaScript no es estándar",
+          "Que HTML no funciona en móviles"
+        ],
+        correct: 1,
+        why: "Una API o una característica nueva puede funcionar en un navegador y no estar soportada en otro."
+      },
+      {
+        q: "¿Qué ventaja tiene la actualización transparente de una web?",
+        a: [
+          "Que el usuario instala versiones manualmente",
+          "Que basta recargar la página para usar la versión nueva",
+          "Que no necesita servidor",
+          "Que evita usar JavaScript"
+        ],
+        correct: 1,
+        why: "En web, el usuario recibe la última versión al cargar/recargar, sin instalaciones."
+      },
+      {
+        q: "¿Cuál es una función típica del back-end?",
+        a: [
+          "Mostrar botones",
+          "Aplicar estilos CSS",
+          "Gestionar lógica de negocio y persistencia",
+          "Capturar eventos click"
+        ],
+        correct: 2,
+        why: "Back-end: reglas de negocio, procesamiento de datos y acceso a sistemas persistentes (BD)."
+      },
+      {
+        q: "¿Cuál es una función típica del front-end?",
+        a: [
+          "Gestionar la base de datos",
+          "Mostrar información y recoger datos del usuario",
+          "Definir índices SQL",
+          "Gestionar backups"
+        ],
+        correct: 1,
+        why: "Front-end: interfaz y experiencia de usuario; captura eventos y comunica con el servidor."
+      },
+      {
+        q: "HTTP es un protocolo half-duplex porque…",
+        a: [
+          "Cliente y servidor envían datos simultáneamente sin parar",
+          "El servidor responde a peticiones del cliente",
+          "Funciona solo con páginas estáticas",
+          "No permite enviar datos"
+        ],
+        correct: 1,
+        why: "HTTP funciona por petición–respuesta: el servidor no ‘empuja’ datos sin petición previa."
+      },
+      {
+        q: "¿Para qué se usa WebSocket?",
+        a: [
+          "Para validar HTML",
+          "Para comunicación en tiempo real full-duplex",
+          "Para compilar JavaScript",
+          "Para servir CSS"
+        ],
+        correct: 1,
+        why: "WebSocket permite comunicación bidireccional continua (chat, juegos, tiempo real)."
+      },
+      {
+        q: "AJAX es…",
+        a: [
+          "Un lenguaje",
+          "Un framework",
+          "Una técnica de programación",
+          "Un protocolo"
+        ],
+        correct: 2,
+        why: "AJAX es una técnica (con JavaScript) para pedir/enviar datos sin recargar la página completa."
+      },
+      {
+        q: "Una Web API normalmente devuelve…",
+        a: [
+          "HTML para mostrar directamente al usuario",
+          "Datos en JSON o XML",
+          "CSS",
+          "Imágenes"
+        ],
+        correct: 1,
+        why: "Una API expone endpoints y devuelve datos para que los procese una aplicación (web, móvil, etc.)."
+      },
+      {
+        q: "¿Por qué TypeScript no se ejecuta directamente en el navegador?",
+        a: [
+          "Porque es un lenguaje de servidor",
+          "Porque los navegadores solo ejecutan JavaScript",
+          "Porque no soporta HTML",
+          "Porque necesita WebSocket"
+        ],
+        correct: 1,
+        why: "TypeScript debe transpilarse a JavaScript, que es lo que ejecutan los navegadores."
+      },
+      {
+        q: "NodeJS es…",
+        a: [
+          "Un navegador",
+          "Un entorno de ejecución de JavaScript fuera del navegador",
+          "Un framework CSS",
+          "Una base de datos"
+        ],
+        correct: 1,
+        why: "NodeJS ejecuta JavaScript sin navegador (y por eso no tiene DOM, window o alert)."
+      },
+      {
+        q: "¿Por qué alert() no funciona en NodeJS?",
+        a: [
+          "Porque JavaScript no lo permite",
+          "Porque NodeJS no tiene APIs del navegador",
+          "Porque alert es CSS",
+          "Porque falta HTML"
+        ],
+        correct: 1,
+        why: "alert pertenece a las APIs del navegador (window). NodeJS no incluye esas APIs."
+      }
+    ];
+
+    // =========================
+    // Estado del quiz
+    // =========================
+    let questions = [];
+    let idx = 0;
+    let correctCount = 0;
+    let wrongCount = 0;
+    let answered = false;
+
+    const quizBox = document.getElementById('quizBox');
+    const qCounter = document.getElementById('qCounter');
+    const scorePill = document.getElementById('scorePill');
+    const barFill = document.getElementById('barFill');
+    const btnReset = document.getElementById('btnReset');
+    const btnShuffle = document.getElementById('btnShuffle');
+    const btnShowAnswer = document.getElementById('btnShowAnswer');
+    const summaryBox = document.getElementById('summaryBox');
+    const finalLine = document.getElementById('finalLine');
+    const btnRepeat = document.getElementById('btnRepeat');
+
+    function deepCopy(obj){ return JSON.parse(JSON.stringify(obj)); }
+
+    function shuffleArray(arr){
+      for(let i=arr.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    function resetState({shuffle=false}={}){
+      questions = deepCopy(baseQuestions);
+      if(shuffle) shuffleArray(questions);
+      idx = 0;
+      correctCount = 0;
+      wrongCount = 0;
+      answered = false;
+      summaryBox.style.display = "none";
+      quizBox.style.display = "block";
+      updateTop();
+      render();
+    }
+
+    function updateTop(){
+      qCounter.textContent = `Pregunta ${Math.min(idx+1, questions.length)}/${questions.length}`;
+      scorePill.textContent = `Aciertos: ${correctCount} · Fallos: ${wrongCount}`;
+      const progress = (idx / questions.length) * 100;
+      barFill.style.width = `${progress}%`;
+    }
+
+    function render(){
+      if(!questions.length) resetState({shuffle:false});
+      updateTop();
+
+      if(idx >= questions.length){
+        quizBox.style.display = "none";
+        summaryBox.style.display = "block";
+        barFill.style.width = "100%";
+        finalLine.textContent =
+          `Has terminado: ${correctCount}/${questions.length} correctas. Fallos: ${wrongCount}. ` +
+          (wrongCount === 0 ? "Perfecto: nivel examen." : "Repite mezclado hasta reducir fallos a 0.");
+        return;
+      }
+
+      answered = false;
+      const item = questions[idx];
+
+      const optionsHtml = item.a.map((opt, i) => {
+        const id = `opt_${idx}_${i}`;
+        return `
+          <label class="choice" for="${id}">
+            <input type="radio" id="${id}" name="choice" value="${i}" />
+            <div>
+              <div><strong>${String.fromCharCode(65+i)}.</strong> ${opt}</div>
+            </div>
+          </label>
+        `;
+      }).join("");
+
+      quizBox.innerHTML = `
+        <h2>${item.q}</h2>
+        <div class="choices" id="choices">${optionsHtml}</div>
+        <div class="divider"></div>
+        <div class="controls">
+          <button class="btn primary" id="btnCheck" type="button">Corregir</button>
+          <button class="btn" id="btnNext" type="button" disabled>Siguiente</button>
+        </div>
+        <div id="fb" class="feedback" style="display:none;"></div>
+      `;
+
+      document.getElementById('btnCheck').addEventListener('click', checkAnswer);
+      document.getElementById('btnNext').addEventListener('click', nextQuestion);
+    }
+
+    function getSelected(){
+      const checked = quizBox.querySelector('input[name="choice"]:checked');
+      return checked ? Number(checked.value) : null;
+    }
+
+    function checkAnswer(){
+      if(answered) return;
+      const sel = getSelected();
+      const fb = document.getElementById('fb');
+
+      if(sel === null){
+        fb.style.display = "block";
+        fb.className = "feedback bad";
+        fb.innerHTML = `<strong>Falta responder.</strong><div class="explain">Elige una opción antes de corregir.</div>`;
+        return;
+      }
+
+      answered = true;
+      const item = questions[idx];
+      const isOk = sel === item.correct;
+
+      // bloquear inputs
+      quizBox.querySelectorAll('input[name="choice"]').forEach(r => r.disabled = true);
+
+      if(isOk){
+        correctCount++;
+        fb.style.display = "block";
+        fb.className = "feedback ok";
+        fb.innerHTML = `
+          <strong>Correcto ✅</strong>
+          <div class="explain"><strong>Razón:</strong> ${item.why}</div>
+        `;
+      }else{
+        wrongCount++;
+        const correctLetter = String.fromCharCode(65 + item.correct);
+        fb.style.display = "block";
+        fb.className = "feedback bad";
+        fb.innerHTML = `
+          <strong>Incorrecto ❌</strong>
+          <div class="explain">
+            <strong>Solución correcta:</strong> ${correctLetter}. ${item.a[item.correct]}<br/>
+            <strong>Por qué:</strong> ${item.why}
+          </div>
+          <div class="mini" style="margin-top:8px;">
+            Consejo: no memorices la letra. Memoriza la idea.
+          </div>
+        `;
+      }
+
+      document.getElementById('btnNext').disabled = false;
+      updateTop();
+    }
+
+    function nextQuestion(){
+      idx++;
+      updateTop();
+      render();
+    }
+
+    function showAnswer(){
+      if(!questions.length) return;
+      const item = questions[idx];
+      const correctLetter = String.fromCharCode(65 + item.correct);
+
+      // marcar la correcta si no hay selección
+      const radios = quizBox.querySelectorAll('input[name="choice"]');
+      radios.forEach((r, i) => { if(i === item.correct) r.checked = true; });
+
+      const fb = document.getElementById('fb');
+      fb.style.display = "block";
+      fb.className = "feedback";
+      fb.innerHTML = `
+        <strong>Modo estudio:</strong> la correcta es <strong>${correctLetter}</strong>.
+        <div class="explain"><strong>Razón:</strong> ${item.why}</div>
+      `;
+    }
+
+    btnReset.addEventListener('click', ()=>resetState({shuffle:false}));
+    btnShuffle.addEventListener('click', ()=>resetState({shuffle:true}));
+    btnShowAnswer.addEventListener('click', showAnswer);
+    btnRepeat.addEventListener('click', ()=>resetState({shuffle:true}));
+
+    // init
+    resetState({shuffle:false});
+  </script>
+</body>
+</html>
