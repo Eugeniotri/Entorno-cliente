@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>UF3 · DOM y Formularios</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <h1 id="titulo">Práctica DOM UF3</h1>
+
+  <!-- TEXTO -->
+  <p id="mensaje" class="texto">
+    Texto principal
+  </p>
+
+  <p class="texto">
+    Segundo párrafo
+  </p>
+
+  <!-- LISTA (querySelectorAll) -->
+  <ul id="lista">
+    <li class="item">Elemento 1</li>
+    <li class="item">Elemento 2</li>
+    <li class="item">Elemento 3</li>
+  </ul>
+
+  <!-- BOTONES -->
+  <button id="btnCambiarTexto" class="btn">
+    Cambiar texto
+  </button>
+
+  <button class="btn">
+    Botón secundario
+  </button>
+
+  <!-- FORMULARIO (EXAMEN 100%) -->
+  <form id="formulario">
+    <label>
+      Nombre:
+      <input type="text" id="nombre">
+    </label>
+
+    <br><br>
+
+    <label>
+      Edad:
+      <input type="number" id="edad">
+    </label>
+
+    <br><br>
+
+    <button type="submit">
+      Enviar
+    </button>
+  </form>
+
+  <script src="script.js"></script>
+</body>
+</html>
