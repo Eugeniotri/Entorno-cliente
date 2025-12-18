@@ -1,0 +1,905 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UF3 — DOM y Formularios (DAW 2º · UAX)</title>
+  <style>
+    :root { color-scheme: light; }
+    body{
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      margin:0; line-height:1.6; background:#f6f7fb; color:#111827;
+    }
+    header{
+      background:#0b5aa6; color:#fff; padding:22px 16px;
+    }
+    header .top{
+      max-width:1100px; margin:0 auto; display:flex; gap:12px; align-items:center; justify-content:space-between; flex-wrap:wrap;
+    }
+    header h1{ margin:0; font-size:1.35rem; }
+    header p{ margin:6px 0 0; opacity:.92; }
+    .btnlink{
+      display:inline-block; text-decoration:none; background:#ffffff; color:#0b5aa6;
+      padding:10px 12px; border-radius:12px; font-weight:700;
+    }
+    main{ max-width:1100px; margin:0 auto; padding:16px 16px 46px; }
+    .card{
+      background:#fff; border:1px solid #e5e7eb; border-radius:14px;
+      padding:14px; box-shadow:0 1px 2px rgba(0,0,0,.04);
+      margin:12px 0;
+    }
+    .card h2{ margin:0 0 8px; font-size:1.15rem; }
+    .card h3{ margin:14px 0 8px; font-size:1.02rem; }
+    .muted{ color:#4b5563; margin:6px 0 0; }
+    .key{
+      background:#fef3c7; border:1px solid #fde68a; color:#92400e;
+      padding:10px 12px; border-radius:12px; margin:10px 0;
+    }
+    .exam{
+      background:#ecfeff; border:1px solid #a5f3fc; color:#155e75;
+      padding:10px 12px; border-radius:12px; margin:10px 0;
+    }
+    ul{ margin:8px 0 8px 20px; }
+    li{ margin:6px 0; }
+    code, kbd{
+      background:#f3f4f6; border:1px solid #e5e7eb; padding:1px 6px; border-radius:8px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:.95em;
+    }
+    .grid{
+      display:grid; grid-template-columns:1fr; gap:12px;
+    }
+    @media (min-width: 900px){
+      .grid{ grid-template-columns:1fr 1fr; }
+    }
+    .tabs{
+      display:flex; gap:10px; flex-wrap:wrap; margin:14px 0 6px;
+    }
+    .tabbtn{
+      border:1px solid #e5e7eb; background:#fff; padding:10px 12px;
+      border-radius:12px; font-weight:800; cursor:pointer;
+    }
+    .tabbtn[aria-selected="true"]{
+      border-color:#0b5aa6; box-shadow:0 1px 2px rgba(0,0,0,.05);
+    }
+    section.panel{ display:none; }
+    section.panel.active{ display:block; }
+
+    /* Quiz */
+    .q{
+      border:1px solid #e5e7eb; border-radius:14px; padding:12px; background:#fff;
+      margin:10px 0;
+    }
+    .qtitle{ margin:0 0 8px; font-weight:850; }
+    .choices{ display:grid; gap:10px; }
+    .choice{
+      display:flex; gap:10px; align-items:flex-start;
+      padding:10px 12px; border-radius:12px; border:1px solid #e5e7eb;
+      background:#fff; cursor:pointer;
+    }
+    .choice input{ margin-top:3px; }
+    .choice:hover{ box-shadow:0 1px 2px rgba(0,0,0,.05); }
+    .feedback{
+      margin-top:10px; padding:10px 12px; border-radius:12px; border:1px solid #e5e7eb;
+      background:#f9fafb; color:#111827;
+    }
+    .feedback.ok{ background:#ecfdf5; border-color:#a7f3d0; color:#065f46; }
+    .feedback.bad{ background:#fff1f2; border-color:#fecdd3; color:#9f1239; }
+    .divider{ height:1px; background:#e5e7eb; margin:12px 0; }
+
+    /* Practice validator */
+    textarea{
+      width:100%; min-height:140px; resize:vertical;
+      border:1px solid #e5e7eb; border-radius:12px; padding:10px 12px;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:.95rem; line-height:1.45;
+      background:#fbfbfd;
+    }
+    .controls{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; margin-top:10px; }
+    .btn{
+      border:1px solid #e5e7eb; background:#fff; padding:10px 12px; border-radius:12px;
+      cursor:pointer; font-weight:850;
+    }
+    .btn.primary{ background:#0b5aa6; border-color:#0b5aa6; color:#fff; }
+    .btn.ghost{ background:#f3f4f6; }
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      background:#f3f4f6; border:1px solid #e5e7eb; padding:8px 10px; border-radius:999px;
+      font-weight:750;
+    }
+    .mini{ font-size:.95rem; color:#374151; }
+    .hint{
+      background:#eef2ff; border:1px solid #c7d2fe; color:#3730a3;
+      padding:10px 12px; border-radius:12px; margin:10px 0;
+    }
+
+    /* Demo (optional) */
+    .demoWrap{
+      border:1px dashed #cbd5e1; border-radius:14px; padding:12px; background:#f8fafc;
+    }
+    .demoWrap h3{ margin-top:0; }
+    .demoUI{
+      display:grid; gap:10px;
+    }
+    .demoUI input{
+      border:1px solid #e5e7eb; border-radius:12px; padding:10px 12px; font-size:1rem;
+    }
+    .demoUI button{
+      border:1px solid #e5e7eb; background:#fff; padding:10px 12px; border-radius:12px;
+      cursor:pointer; font-weight:850;
+    }
+    .demoUI .ok{ color:#065f46; font-weight:850; }
+    .demoUI .error{ color:#9f1239; font-weight:850; }
+
+    footer{
+      max-width:1100px; margin:0 auto; padding:0 16px 30px;
+      color:#6b7280; font-size:.95rem;
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div class="top">
+      <div>
+        <h1>UF3 — DOM y Formularios</h1>
+        <p>Resumen práctico + test por bloques + mini-prácticas autocorregibles (para examen: 40% test · 60% práctica).</p>
+      </div>
+      <a class="btnlink" href="index.html">← Volver al índice</a>
+    </div>
+  </header>
+
+  <main>
+    <nav class="tabs" role="tablist" aria-label="Navegación UF3">
+      <button class="tabbtn" role="tab" id="tab-resumen" aria-controls="panel-resumen" aria-selected="true">Resumen útil</button>
+      <button class="tabbtn" role="tab" id="tab-bloques" aria-controls="panel-bloques" aria-selected="false">Bloques + test + práctica</button>
+      <button class="tabbtn" role="tab" id="tab-demo" aria-controls="panel-demo" aria-selected="false">Demo (opcional)</button>
+    </nav>
+
+    <!-- ================= RESUMEN ================= -->
+    <section id="panel-resumen" class="panel active" role="tabpanel" aria-labelledby="tab-resumen">
+      <article class="card">
+        <h2>Qué tienes que dominar para hacer la práctica del examen (UF3)</h2>
+        <div class="key">
+          <strong>Regla mental DAW:</strong> HTML = estructura · CSS = estilos (clases) · JS = comportamiento (seleccionar + eventos + classList).
+        </div>
+
+        <div class="grid">
+          <div class="card" style="margin:0;">
+            <h3>1) Selectores (seleccionar DOM)</h3>
+            <ul>
+              <li><code>document.getElementById("id")</code> → 1 elemento.</li>
+              <li><code>document.getElementsByClassName("clase")</code> → HTMLCollection (no tiene <code>forEach</code>).</li>
+              <li><code>document.querySelector("selectorCSS")</code> → 1 (el primero).</li>
+              <li><code>document.querySelectorAll("selectorCSS")</code> → NodeList (sí tiene <code>forEach</code>).</li>
+            </ul>
+            <div class="exam"><strong>Examen:</strong> saber qué devuelve cada selector y cómo recorrerlo.</div>
+          </div>
+
+          <div class="card" style="margin:0;">
+            <h3>2) Propiedades de texto</h3>
+            <ul>
+              <li><code>textContent</code> (propiedad) → texto plano.</li>
+              <li><code>innerHTML</code> (propiedad) → interpreta HTML (úsalo con cuidado).</li>
+              <li><code>value</code> (propiedad) → inputs/textarea/select (siempre devuelve <strong>string</strong>).</li>
+            </ul>
+            <div class="exam"><strong>Trampa:</strong> <code>textContent</code> no lleva paréntesis: es <code>=</code>, no <code>()</code>.</div>
+          </div>
+        </div>
+
+        <div class="grid">
+          <div class="card" style="margin:0;">
+            <h3>3) Estilos: <code>style</code> vs <code>classList</code></h3>
+            <ul>
+              <li><code>element.style.color = "red"</code> → estilo en línea (tiene prioridad alta).</li>
+              <li><code>element.classList.add/remove/toggle("clase")</code> → lo profesional (CSS decide el look).</li>
+            </ul>
+            <div class="key"><strong>Clave:</strong> si mezclas <code>style.color</code> con una clase que cambia color, la clase puede “no verse” por prioridad.</div>
+          </div>
+
+          <div class="card" style="margin:0;">
+            <h3>4) Eventos</h3>
+            <ul>
+              <li><code>addEventListener("click", ...)</code> → interacción.</li>
+              <li><code>addEventListener("submit", ...)</code> → formularios.</li>
+              <li><code>e.preventDefault()</code> en submit → evita recarga (imprescindible).</li>
+            </ul>
+            <div class="exam"><strong>Examen práctico:</strong> click para activar estados (toggle) y submit con validación.</div>
+          </div>
+        </div>
+
+        <article class="card" style="margin-top:12px;">
+          <h3>5) Patrón de validación (el que te van a pedir)</h3>
+          <div class="hint">
+            <strong>Plantilla mental:</strong><br/>
+            1) seleccionar elementos · 2) evento submit · 3) <code>preventDefault()</code> · 4) leer <code>.value</code> · 5) validar con <code>if</code> + <code>return</code> · 6) mostrar mensaje en DOM con clases (<code>error</code>/<code>ok</code>).
+          </div>
+          <pre style="white-space:pre-wrap; margin:0; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; background:#f3f4f6; border:1px solid #e5e7eb; padding:10px 12px; border-radius:12px;">
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const nombre = nombreInput.value.trim();
+  const edad = Number(edadInput.value);
+
+  if (!nombre) { mostrarError("Falta nombre"); return; }
+  if (edad &lt; 18) { mostrarError("Debes ser mayor de edad"); return; }
+
+  mostrarOK("Formulario válido");
+});</pre>
+        </article>
+      </article>
+    </section>
+
+    <!-- ================= BLOQUES ================= -->
+    <section id="panel-bloques" class="panel" role="tabpanel" aria-labelledby="tab-bloques">
+
+      <article class="card">
+        <h2>Cómo usar esta página</h2>
+        <ul>
+          <li>En cada bloque: lee el resumen, haz el test (3 preguntas) y luego la mini-práctica.</li>
+          <li>En la mini-práctica: pega tu código y pulsa <strong>Comprobar</strong>.</li>
+          <li>Si te da “faltan cosas”, corrige y repite hasta “OK”.</li>
+        </ul>
+        <div class="key"><strong>Objetivo:</strong> que llegues a hacer la práctica sin “memorizar por letras”, sino por lógica.</div>
+      </article>
+
+      <!-- ========== BLOQUE 1: SELECTORES ========== -->
+      <article class="card" id="b1">
+        <h2>Bloque 1 — Selectores DOM (selección)</h2>
+        <p class="mini">
+          Primero seleccionas, luego modificas. Si no seleccionas bien, todo lo demás falla.
+        </p>
+        <div class="key">
+          <strong>Lo mínimo:</strong> <code>getElementById</code> (1), <code>querySelector</code> (1, CSS), <code>querySelectorAll</code> (varios, forEach).
+        </div>
+
+        <h3>Test (3 preguntas)</h3>
+        <div class="q" data-quiz="b1q1">
+          <p class="qtitle">1) ¿Qué devuelve <code>document.querySelectorAll(".texto")</code>?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b1q1" value="a"> Un único elemento</label>
+            <label class="choice"><input type="radio" name="b1q1" value="b"> Un NodeList (varios elementos)</label>
+            <label class="choice"><input type="radio" name="b1q1" value="c"> Un string</label>
+            <label class="choice"><input type="radio" name="b1q1" value="d"> Un HTML</label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="q" data-quiz="b1q2">
+          <p class="qtitle">2) ¿Por qué <code>getElementsByClassName</code> no se recorre con <code>forEach</code> normalmente?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b1q2" value="a"> Porque devuelve HTMLCollection, no NodeList</label>
+            <label class="choice"><input type="radio" name="b1q2" value="b"> Porque no funciona en Chrome</label>
+            <label class="choice"><input type="radio" name="b1q2" value="c"> Porque forEach es solo para números</label>
+            <label class="choice"><input type="radio" name="b1q2" value="d"> Porque solo sirve con id</label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="q" data-quiz="b1q3">
+          <p class="qtitle">3) Con <code>querySelector</code>, ¿cómo seleccionas el elemento con id <code>titulo</code>?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b1q3" value="a"> <code>".titulo"</code></label>
+            <label class="choice"><input type="radio" name="b1q3" value="b"> <code>"#titulo"</code></label>
+            <label class="choice"><input type="radio" name="b1q3" value="c"> <code>"titulo"</code></label>
+            <label class="choice"><input type="radio" name="b1q3" value="d"> <code>"@titulo"</code></label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="controls">
+          <button class="btn primary" data-action="grade-block" data-block="b1">Corregir test Bloque 1</button>
+          <span class="pill" id="b1score">Test: 0/3</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Mini-práctica (autocorrección)</h3>
+        <p class="mini">
+          Escribe (o pega) código JS que:
+          <strong>(1)</strong> seleccione el H1 por id,
+          <strong>(2)</strong> seleccione todos los <code>.texto</code> con <code>querySelectorAll</code>,
+          <strong>(3)</strong> recorra con <code>forEach</code>.
+        </p>
+        <textarea id="b1code" spellcheck="false">// Ejemplo guía:
+// const h1 = document.getElementById("titulo");
+// const textos = document.querySelectorAll(".texto");
+// textos.forEach(p => { /* ... */ });</textarea>
+        <div class="controls">
+          <button class="btn" data-action="check-practice" data-practice="b1">Comprobar mini-práctica</button>
+          <button class="btn ghost" data-action="fill-solution" data-practice="b1">Ver solución</button>
+        </div>
+        <div class="feedback" id="b1fb" style="display:none;"></div>
+      </article>
+
+      <!-- ========== BLOQUE 2: TEXTO ========== -->
+      <article class="card" id="b2">
+        <h2>Bloque 2 — Texto y contenido</h2>
+        <div class="key">
+          <strong>Propiedades clave:</strong> <code>textContent</code> (texto plano) · <code>innerHTML</code> (interpreta HTML) · <code>value</code> (inputs).
+        </div>
+
+        <h3>Test (3 preguntas)</h3>
+        <div class="q" data-quiz="b2q1">
+          <p class="qtitle">1) ¿Cuál es la forma correcta de cambiar el texto de un párrafo?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b2q1" value="a"> <code>p.textContent("hola")</code></label>
+            <label class="choice"><input type="radio" name="b2q1" value="b"> <code>p.textContent = "hola"</code></label>
+            <label class="choice"><input type="radio" name="b2q1" value="c"> <code>p.textContent == "hola"</code></label>
+            <label class="choice"><input type="radio" name="b2q1" value="d"> <code>p.value = "hola"</code></label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="q" data-quiz="b2q2">
+          <p class="qtitle">2) ¿Qué riesgo tiene <code>innerHTML</code> si metes texto que viene del usuario?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b2q2" value="a"> Ninguno</label>
+            <label class="choice"><input type="radio" name="b2q2" value="b"> Puede ejecutar HTML/JS malicioso (inyección)</label>
+            <label class="choice"><input type="radio" name="b2q2" value="c"> Solo funciona en Firefox</label>
+            <label class="choice"><input type="radio" name="b2q2" value="d"> Rompe el CSS</label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="q" data-quiz="b2q3">
+          <p class="qtitle">3) ¿Qué tipo devuelve <code>input.value</code>?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b2q3" value="a"> number</label>
+            <label class="choice"><input type="radio" name="b2q3" value="b"> boolean</label>
+            <label class="choice"><input type="radio" name="b2q3" value="c"> string</label>
+            <label class="choice"><input type="radio" name="b2q3" value="d"> object</label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="controls">
+          <button class="btn primary" data-action="grade-block" data-block="b2">Corregir test Bloque 2</button>
+          <span class="pill" id="b2score">Test: 0/3</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Mini-práctica (autocorrección)</h3>
+        <p class="mini">
+          Código que:
+          <strong>(1)</strong> seleccione <code>#mensaje</code>,
+          <strong>(2)</strong> cambie su <code>textContent</code>,
+          <strong>(3)</strong> y deje un comentario explicando por qué NO es una función.
+        </p>
+        <textarea id="b2code" spellcheck="false">// Pega tu solución aquí</textarea>
+        <div class="controls">
+          <button class="btn" data-action="check-practice" data-practice="b2">Comprobar mini-práctica</button>
+          <button class="btn ghost" data-action="fill-solution" data-practice="b2">Ver solución</button>
+        </div>
+        <div class="feedback" id="b2fb" style="display:none;"></div>
+      </article>
+
+      <!-- ========== BLOQUE 3: CLASES ========== -->
+      <article class="card" id="b3">
+        <h2>Bloque 3 — classList (estados con CSS)</h2>
+        <div class="key">
+          <strong>Idea:</strong> CSS define estilos por clases. JS activa/desactiva estados con <code>classList</code>.
+        </div>
+        <div class="exam">
+          <strong>Trampa real:</strong> si pones <code>element.style.color = ...</code>, puede tapar el color de una clase por prioridad.
+        </div>
+
+        <h3>Test (3 preguntas)</h3>
+        <div class="q" data-quiz="b3q1">
+          <p class="qtitle">1) ¿Qué hace <code>classList.toggle("activo")</code>?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b3q1" value="a"> Borra todas las clases</label>
+            <label class="choice"><input type="radio" name="b3q1" value="b"> Añade la clase si no está, o la quita si ya está</label>
+            <label class="choice"><input type="radio" name="b3q1" value="c"> Cambia el HTML del archivo</label>
+            <label class="choice"><input type="radio" name="b3q1" value="d"> Solo funciona con inputs</label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="q" data-quiz="b3q2">
+          <p class="qtitle">2) ¿Qué opción NO “machaca” las clases existentes?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b3q2" value="a"> <code>el.className = "activo"</code></label>
+            <label class="choice"><input type="radio" name="b3q2" value="b"> <code>el.classList.add("activo")</code></label>
+            <label class="choice"><input type="radio" name="b3q2" value="c"> <code>el.setAttribute("class","activo")</code></label>
+            <label class="choice"><input type="radio" name="b3q2" value="d"> <code>el.removeAttribute("class")</code></label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="q" data-quiz="b3q3">
+          <p class="qtitle">3) Si no ves el verde de <code>.activo</code>, ¿cuál es una causa típica?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b3q3" value="a"> <code>toggle</code> no funciona en JS</label>
+            <label class="choice"><input type="radio" name="b3q3" value="b"> Un estilo en línea (<code>style.color</code>) tiene más prioridad</label>
+            <label class="choice"><input type="radio" name="b3q3" value="c"> Falta el DOCTYPE</label>
+            <label class="choice"><input type="radio" name="b3q3" value="d"> El navegador no soporta CSS</label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="controls">
+          <button class="btn primary" data-action="grade-block" data-block="b3">Corregir test Bloque 3</button>
+          <span class="pill" id="b3score">Test: 0/3</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Mini-práctica (autocorrección)</h3>
+        <p class="mini">
+          Escribe código que:
+          <strong>(1)</strong> seleccione <code>#mensaje</code> y <code>#btnCambiarTexto</code>,
+          <strong>(2)</strong> en click haga <code>toggle("activo")</code>.
+        </p>
+        <textarea id="b3code" spellcheck="false">// Pega tu solución aquí</textarea>
+        <div class="controls">
+          <button class="btn" data-action="check-practice" data-practice="b3">Comprobar mini-práctica</button>
+          <button class="btn ghost" data-action="fill-solution" data-practice="b3">Ver solución</button>
+        </div>
+        <div class="feedback" id="b3fb" style="display:none;"></div>
+      </article>
+
+      <!-- ========== BLOQUE 4: EVENTOS CLICK ========== -->
+      <article class="card" id="b4">
+        <h2>Bloque 4 — Eventos (click)</h2>
+        <div class="key">
+          <strong>Idea:</strong> el código dentro de <code>addEventListener</code> NO se ejecuta al cargar, solo cuando ocurre el evento.
+        </div>
+
+        <h3>Test (3 preguntas)</h3>
+        <div class="q" data-quiz="b4q1">
+          <p class="qtitle">1) ¿Cuándo se ejecuta el código dentro de <code>addEventListener("click", ...)</code>?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b4q1" value="a"> Al abrir VS Code</label>
+            <label class="choice"><input type="radio" name="b4q1" value="b"> Al cargar la página</label>
+            <label class="choice"><input type="radio" name="b4q1" value="c"> Cuando ocurre el click</label>
+            <label class="choice"><input type="radio" name="b4q1" value="d"> Cada segundo</label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="q" data-quiz="b4q2">
+          <p class="qtitle">2) Si usas una variable DOM sin seleccionarla antes, ¿qué pasa?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b4q2" value="a"> JS la crea sola</label>
+            <label class="choice"><input type="radio" name="b4q2" value="b"> No pasa nada</label>
+            <label class="choice"><input type="radio" name="b4q2" value="c"> Error: la variable no existe (ReferenceError)</label>
+            <label class="choice"><input type="radio" name="b4q2" value="d"> Se convierte en const</label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="q" data-quiz="b4q3">
+          <p class="qtitle">3) ¿Qué hace <code>console.log</code> en una práctica?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b4q3" value="a"> Cambia el DOM</label>
+            <label class="choice"><input type="radio" name="b4q3" value="b"> Muestra información en la consola para depurar</label>
+            <label class="choice"><input type="radio" name="b4q3" value="c"> Envía datos al servidor</label>
+            <label class="choice"><input type="radio" name="b4q3" value="d"> Da estilos CSS</label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="controls">
+          <button class="btn primary" data-action="grade-block" data-block="b4">Corregir test Bloque 4</button>
+          <span class="pill" id="b4score">Test: 0/3</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Mini-práctica (autocorrección)</h3>
+        <p class="mini">
+          En el click del botón:
+          <strong>(1)</strong> cambia el <code>textContent</code> de <code>#mensaje</code>,
+          <strong>(2)</strong> y cambia el texto del propio botón.
+        </p>
+        <textarea id="b4code" spellcheck="false">// Pega tu solución aquí</textarea>
+        <div class="controls">
+          <button class="btn" data-action="check-practice" data-practice="b4">Comprobar mini-práctica</button>
+          <button class="btn ghost" data-action="fill-solution" data-practice="b4">Ver solución</button>
+        </div>
+        <div class="feedback" id="b4fb" style="display:none;"></div>
+      </article>
+
+      <!-- ========== BLOQUE 5: SUBMIT FORM ========== -->
+      <article class="card" id="b5">
+        <h2>Bloque 5 — Formularios (submit) + validación</h2>
+        <div class="key">
+          <strong>Examen práctico típico:</strong> capturar submit, <code>preventDefault</code>, leer <code>.value</code>, validar, mostrar resultado en DOM con clases <code>error/ok</code>.
+        </div>
+
+        <h3>Test (3 preguntas)</h3>
+        <div class="q" data-quiz="b5q1">
+          <p class="qtitle">1) ¿Para qué sirve <code>e.preventDefault()</code> en submit?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b5q1" value="a"> Para enviar más rápido</label>
+            <label class="choice"><input type="radio" name="b5q1" value="b"> Para evitar recarga/navegación del envío por defecto</label>
+            <label class="choice"><input type="radio" name="b5q1" value="c"> Para convertir strings en números</label>
+            <label class="choice"><input type="radio" name="b5q1" value="d"> Para activar CSS</label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="q" data-quiz="b5q2">
+          <p class="qtitle">2) ¿Por qué solemos usar <code>return</code> tras detectar un error de validación?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b5q2" value="a"> Para recargar</label>
+            <label class="choice"><input type="radio" name="b5q2" value="b"> Para parar la ejecución del submit y no seguir</label>
+            <label class="choice"><input type="radio" name="b5q2" value="c"> Porque lo pide el navegador</label>
+            <label class="choice"><input type="radio" name="b5q2" value="d"> Para que aparezca el botón</label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="q" data-quiz="b5q3">
+          <p class="qtitle">3) Si quieres validar edad numérica, ¿qué debes hacer con <code>edadInput.value</code>?</p>
+          <div class="choices">
+            <label class="choice"><input type="radio" name="b5q3" value="a"> Nada, ya es number</label>
+            <label class="choice"><input type="radio" name="b5q3" value="b"> Convertir a número: <code>Number(...)</code> o <code>parseInt</code></label>
+            <label class="choice"><input type="radio" name="b5q3" value="c"> Convertir a boolean</label>
+            <label class="choice"><input type="radio" name="b5q3" value="d"> Poner <code>innerHTML</code></label>
+          </div>
+          <div class="feedback" style="display:none;"></div>
+        </div>
+
+        <div class="controls">
+          <button class="btn primary" data-action="grade-block" data-block="b5">Corregir test Bloque 5</button>
+          <span class="pill" id="b5score">Test: 0/3</span>
+        </div>
+
+        <div class="divider"></div>
+
+        <h3>Mini-práctica (autocorrección)</h3>
+        <p class="mini">
+          Pega código que:
+          <strong>(1)</strong> escuche submit de <code>#formulario</code>,
+          <strong>(2)</strong> haga <code>preventDefault()</code>,
+          <strong>(3)</strong> lea <code>#nombre</code> y <code>#edad</code> con <code>.value</code> (y convierta edad),
+          <strong>(4)</strong> valide nombre vacío y edad &lt; 18,
+          <strong>(5)</strong> muestre mensaje en <code>#resultado</code> con clases <code>error</code>/<code>ok</code>.
+        </p>
+
+        <div class="hint">
+          <strong>Si no tienes <code>#resultado</code> en tu HTML:</strong> añade debajo del formulario:<br/>
+          <code>&lt;p id="resultado"&gt;&lt;/p&gt;</code>
+        </div>
+
+        <textarea id="b5code" spellcheck="false">// Pega tu solución aquí</textarea>
+        <div class="controls">
+          <button class="btn" data-action="check-practice" data-practice="b5">Comprobar mini-práctica</button>
+          <button class="btn ghost" data-action="fill-solution" data-practice="b5">Ver solución</button>
+        </div>
+        <div class="feedback" id="b5fb" style="display:none;"></div>
+      </article>
+
+    </section>
+
+    <!-- ================= DEMO ================= -->
+    <section id="panel-demo" class="panel" role="tabpanel" aria-labelledby="tab-demo">
+      <article class="card">
+        <h2>Demo opcional (para ver “estados” sin tu proyecto)</h2>
+        <p class="mini">
+          Esto es solo un ejemplo interno para que veas el patrón: click → toggle, submit → preventDefault + validación + mensaje.
+        </p>
+
+        <div class="demoWrap">
+          <h3 id="demoTitulo">Práctica DOM UF3 (Demo)</h3>
+          <p id="demoMensaje" class="texto">Texto principal</p>
+
+          <div class="demoUI">
+            <button id="demoBtn">Cambiar texto / Toggle</button>
+
+            <form id="demoForm">
+              <input id="demoNombre" type="text" placeholder="Nombre" />
+              <input id="demoEdad" type="number" placeholder="Edad" />
+              <button type="submit">Enviar</button>
+            </form>
+
+            <p id="demoResultado"></p>
+          </div>
+
+          <div class="hint">
+            <strong>Consejo examen:</strong> si algo “no cambia”, abre DevTools → Inspector y mira si la clase entra/sale.
+          </div>
+        </div>
+      </article>
+    </section>
+  </main>
+
+  <footer>
+    Hecho para estudiar UF3 con enfoque 60% práctica: selectores → propiedades → classList → eventos → submit y validación.
+  </footer>
+
+  <script>
+    // =========================
+    // Tabs
+    // =========================
+    const tabResumen = document.getElementById('tab-resumen');
+    const tabBloques = document.getElementById('tab-bloques');
+    const tabDemo = document.getElementById('tab-demo');
+    const panelResumen = document.getElementById('panel-resumen');
+    const panelBloques = document.getElementById('panel-bloques');
+    const panelDemo = document.getElementById('panel-demo');
+
+    function setTab(which){
+      const isResumen = which === 'resumen';
+      const isBloques = which === 'bloques';
+      const isDemo = which === 'demo';
+      tabResumen.setAttribute('aria-selected', String(isResumen));
+      tabBloques.setAttribute('aria-selected', String(isBloques));
+      tabDemo.setAttribute('aria-selected', String(isDemo));
+      panelResumen.classList.toggle('active', isResumen);
+      panelBloques.classList.toggle('active', isBloques);
+      panelDemo.classList.toggle('active', isDemo);
+    }
+    tabResumen.addEventListener('click', ()=>setTab('resumen'));
+    tabBloques.addEventListener('click', ()=>setTab('bloques'));
+    tabDemo.addEventListener('click', ()=>setTab('demo'));
+
+    // =========================
+    // Block quiz keys + explanations
+    // =========================
+    const quizzes = {
+      // Bloque 1
+      b1q1: { correct:'b', why:'querySelectorAll devuelve un NodeList con todos los elementos que cumplen el selector. Un NodeList se recorre con forEach.' },
+      b1q2: { correct:'a', why:'getElementsByClassName devuelve una HTMLCollection, no un NodeList. HTMLCollection normalmente se recorre con for clásico.' },
+      b1q3: { correct:'b', why:'En CSS, # representa id. Por eso querySelector("#titulo") selecciona el elemento con id="titulo".' },
+
+      // Bloque 2
+      b2q1: { correct:'b', why:'textContent es una PROPIEDAD, no una función. Se asigna con =, no con ().' },
+      b2q2: { correct:'b', why:'innerHTML interpreta HTML. Si metes texto de usuario sin escapar, puede inyectar etiquetas o scripts (XSS).' },
+      b2q3: { correct:'c', why:'value siempre devuelve string (aunque el input sea type="number"). Si quieres número, conviertes con Number(...) o parseInt.' },
+
+      // Bloque 3
+      b3q1: { correct:'b', why:'toggle añade la clase si no está y la quita si ya estaba, sin tocar las demás clases.' },
+      b3q2: { correct:'b', why:'classList.add añade una clase sin eliminar las existentes. className / setAttribute suelen machacar.' },
+      b3q3: { correct:'b', why:'Un style en línea (element.style.color=...) tiene más prioridad que una clase CSS que cambie color.' },
+
+      // Bloque 4
+      b4q1: { correct:'c', why:'El listener se ejecuta cuando ocurre el evento. No se ejecuta al cargar la página.' },
+      b4q2: { correct:'c', why:'Si usas una variable sin declararla/seleccionarla, obtienes ReferenceError o null (si la selección falla).' },
+      b4q3: { correct:'b', why:'console.log sirve para depurar: ver valores y comprobar que el flujo entra donde debe.' },
+
+      // Bloque 5
+      b5q1: { correct:'b', why:'En submit, preventDefault evita que el navegador recargue/navegue. Sin eso tu JS se corta y pierdes estado.' },
+      b5q2: { correct:'b', why:'return corta la ejecución del submit cuando hay un error, para no llegar a “Formulario OK”.' },
+      b5q3: { correct:'b', why:'edadInput.value es string. Para comparar numéricamente, conviertes: Number(edadInput.value) o parseInt.' },
+    };
+
+    function gradeBlock(blockId){
+      const block = document.getElementById(blockId);
+      const qNodes = block.querySelectorAll('.q[data-quiz]');
+      let ok = 0;
+
+      qNodes.forEach(q => {
+        const key = q.getAttribute('data-quiz');
+        const meta = quizzes[key];
+        const chosen = q.querySelector('input[type="radio"]:checked');
+        const fb = q.querySelector('.feedback');
+
+        if(!chosen){
+          fb.style.display = 'block';
+          fb.className = 'feedback bad';
+          fb.innerHTML = `<strong>Falta responder.</strong> Elige una opción.`;
+          return;
+        }
+
+        if(chosen.value === meta.correct){
+          ok++;
+          fb.style.display = 'block';
+          fb.className = 'feedback ok';
+          fb.innerHTML = `<strong>Correcto ✅</strong><div class="mini"><strong>Por qué:</strong> ${meta.why}</div>`;
+        }else{
+          fb.style.display = 'block';
+          fb.className = 'feedback bad';
+          fb.innerHTML = `<strong>Incorrecto ❌</strong><div class="mini"><strong>Correcta:</strong> ${meta.correct.toUpperCase()}<br/><strong>Por qué:</strong> ${meta.why}</div>`;
+        }
+      });
+
+      const scoreEl = document.getElementById(blockId + 'score');
+      scoreEl.textContent = `Test: ${ok}/3`;
+    }
+
+    // =========================
+    // Practice validators (regex-based)
+    // =========================
+    const practice = {
+      b1: {
+        must: [
+          { re: /getElementById\s*\(\s*["']titulo["']\s*\)/, msg: 'Selecciona el H1 por id: document.getElementById("titulo")' },
+          { re: /querySelectorAll\s*\(\s*["']\.texto["']\s*\)/, msg: 'Selecciona todos los .texto: document.querySelectorAll(".texto")' },
+          { re: /\.forEach\s*\(/, msg: 'Recorre la lista con forEach(...)' },
+        ],
+        solution:
+`const h1 = document.getElementById("titulo");
+const textos = document.querySelectorAll(".texto");
+
+textos.forEach(p => {
+  console.log(p.textContent);
+});`
+      },
+      b2: {
+        must: [
+          { re: /getElementById\s*\(\s*["']mensaje["']\s*\)/, msg: 'Selecciona #mensaje: document.getElementById("mensaje")' },
+          { re: /\.textContent\s*=\s*["'`]/, msg: 'Cambia el texto con textContent = "..." (propiedad, no función)' },
+          { re: /\/\/.*(propiedad|no\s+es\s+funci[oó]n|no\s+lleva\s+\(\))|\/\*[\s\S]*(propiedad|no\s+es\s+funci[oó]n|no\s+lleva\s+\(\))[\s\S]*\*\//i, msg: 'Añade un comentario explicando que textContent es propiedad (no función)' },
+        ],
+        solution:
+`const p = document.getElementById("mensaje");
+// textContent es una PROPIEDAD: se asigna con = (no lleva paréntesis)
+p.textContent = "Texto cambiado con textContent";`
+      },
+      b3: {
+        must: [
+          { re: /getElementById\s*\(\s*["']btnCambiarTexto["']\s*\)/, msg: 'Selecciona el botón por id: getElementById("btnCambiarTexto")' },
+          { re: /getElementById\s*\(\s*["']mensaje["']\s*\)|querySelector\s*\(\s*["']#mensaje["']\s*\)/, msg: 'Selecciona #mensaje (getElementById o querySelector("#mensaje"))' },
+          { re: /addEventListener\s*\(\s*["']click["']\s*,/, msg: 'Escucha el click: addEventListener("click", ...)' },
+          { re: /classList\.toggle\s*\(\s*["']activo["']\s*\)/, msg: 'Alterna la clase: classList.toggle("activo")' },
+        ],
+        solution:
+`const btn = document.getElementById("btnCambiarTexto");
+const msg = document.getElementById("mensaje");
+
+btn.addEventListener("click", () => {
+  msg.classList.toggle("activo");
+});`
+      },
+      b4: {
+        must: [
+          { re: /addEventListener\s*\(\s*["']click["']\s*,/, msg: 'Debe haber un listener de click' },
+          { re: /textContent\s*=\s*["'`]/, msg: 'Debe cambiar el textContent de #mensaje (texto del párrafo)' },
+          { re: /btnCambiarTexto\.textContent\s*=\s*["'`]|btn\.textContent\s*=\s*["'`]/, msg: 'Debe cambiar el texto del botón (textContent = "...")' },
+        ],
+        solution:
+`const btnCambiarTexto = document.getElementById("btnCambiarTexto");
+const mensaje = document.getElementById("mensaje");
+
+btnCambiarTexto.addEventListener("click", () => {
+  mensaje.textContent = "Has pulsado el botón ✅";
+  btnCambiarTexto.textContent = "Texto cambiado (click)";
+});`
+      },
+      b5: {
+        must: [
+          { re: /getElementById\s*\(\s*["']formulario["']\s*\)/, msg: 'Selecciona el formulario: getElementById("formulario")' },
+          { re: /addEventListener\s*\(\s*["']submit["']\s*,/, msg: 'Escucha submit: addEventListener("submit", ...)' },
+          { re: /preventDefault\s*\(\s*\)/, msg: 'Debe haber e.preventDefault() dentro del submit' },
+          { re: /getElementById\s*\(\s*["']nombre["']\s*\)|querySelector\s*\(\s*["']#nombre["']\s*\)/, msg: 'Selecciona el input nombre' },
+          { re: /getElementById\s*\(\s*["']edad["']\s*\)|querySelector\s*\(\s*["']#edad["']\s*\)/, msg: 'Selecciona el input edad' },
+          { re: /Number\s*\(\s*.*edad.*value\s*\)/i, msg: 'Convierte la edad a número: Number(edadInput.value)' },
+          { re: /if\s*\(\s*.*nombre.*(===\s*["']{0}["']|!.*nombre|\.trim\(\))[\s\S]*return/i, msg: 'Valida nombre vacío y corta con return' },
+          { re: /if\s*\(\s*.*edad.*<\s*18[\s\S]*return/i, msg: 'Valida edad < 18 y corta con return' },
+          { re: /getElementById\s*\(\s*["']resultado["']\s*\)|querySelector\s*\(\s*["']#resultado["']\s*\)/, msg: 'Necesitas un elemento #resultado para mostrar mensajes' },
+          { re: /classList\.(add|remove)\s*\(\s*["']error["']\s*\)|className\s*=\s*["'].*error.*["']/, msg: 'Marca error con clase "error"' },
+          { re: /classList\.(add|remove)\s*\(\s*["']ok["']\s*\)|className\s*=\s*["'].*ok.*["']/, msg: 'Marca OK con clase "ok"' },
+        ],
+        solution:
+`const form = document.getElementById("formulario");
+const nombreInput = document.getElementById("nombre");
+const edadInput = document.getElementById("edad");
+const resultado = document.getElementById("resultado");
+
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const nombre = nombreInput.value.trim();
+  const edad = Number(edadInput.value);
+
+  resultado.textContent = "";
+  resultado.className = "";
+
+  if (!nombre) {
+    resultado.textContent = "❌ El nombre es obligatorio";
+    resultado.classList.add("error");
+    return;
+  }
+
+  if (edad < 18) {
+    resultado.textContent = "❌ Debes ser mayor de edad";
+    resultado.classList.add("error");
+    return;
+  }
+
+  resultado.textContent = "✅ Formulario válido. Bienvenido " + nombre;
+  resultado.classList.add("ok");
+});`
+      }
+    };
+
+    function checkPractice(practiceId){
+      const textArea = document.getElementById(practiceId + 'code');
+      const fb = document.getElementById(practiceId + 'fb');
+      const code = textArea.value || '';
+
+      const rules = practice[practiceId].must;
+      const missing = rules.filter(r => !r.re.test(code)).map(r => r.msg);
+
+      fb.style.display = 'block';
+      if(missing.length === 0){
+        fb.className = 'feedback ok';
+        fb.innerHTML = `<strong>OK ✅</strong><div class="mini">Cumples los puntos clave del bloque. Repite sin mirar la solución para fijarlo.</div>`;
+      }else{
+        fb.className = 'feedback bad';
+        fb.innerHTML = `<strong>Aún no ✅</strong><div class="mini">Te faltan estos puntos:</div><ul>${missing.map(m=>`<li>${m}</li>`).join('')}</ul>`;
+      }
+    }
+
+    function fillSolution(practiceId){
+      document.getElementById(practiceId + 'code').value = practice[practiceId].solution;
+      const fb = document.getElementById(practiceId + 'fb');
+      fb.style.display = 'block';
+      fb.className = 'feedback';
+      fb.innerHTML = `<strong>Solución cargada.</strong><div class="mini">Ahora bórrala y reescríbela de memoria. Ese es el entrenamiento real.</div>`;
+    }
+
+    // =========================
+    // Wire buttons
+    // =========================
+    document.addEventListener('click', (e) => {
+      const btn = e.target.closest('button[data-action]');
+      if(!btn) return;
+
+      const action = btn.getAttribute('data-action');
+      if(action === 'grade-block'){
+        gradeBlock(btn.getAttribute('data-block'));
+      }
+      if(action === 'check-practice'){
+        checkPractice(btn.getAttribute('data-practice'));
+      }
+      if(action === 'fill-solution'){
+        fillSolution(btn.getAttribute('data-practice'));
+      }
+    });
+
+    // =========================
+    // Demo logic (optional)
+    // =========================
+    (function initDemo(){
+      const demoBtn = document.getElementById('demoBtn');
+      const demoMsg = document.getElementById('demoMensaje');
+      const demoForm = document.getElementById('demoForm');
+      const demoNombre = document.getElementById('demoNombre');
+      const demoEdad = document.getElementById('demoEdad');
+      const demoRes = document.getElementById('demoResultado');
+
+      // inline CSS for demo states
+      const style = document.createElement('style');
+      style.textContent = `
+        #demoMensaje.activo { color: green; font-weight: 800; }
+        #demoResultado.error { color: crimson; font-weight: 800; }
+        #demoResultado.ok { color: #065f46; font-weight: 800; }
+      `;
+      document.head.appendChild(style);
+
+      demoBtn.addEventListener('click', () => {
+        demoMsg.textContent = "Has hecho click ✅";
+        demoMsg.classList.toggle('activo');
+        demoBtn.textContent = "Toggle ejecutado";
+      });
+
+      demoForm.addEventListener('submit', (ev) => {
+        ev.preventDefault();
+        const nombre = demoNombre.value.trim();
+        const edad = Number(demoEdad.value);
+
+        demoRes.textContent = "";
+        demoRes.className = "";
+
+        if(!nombre){
+          demoRes.textContent = "❌ Falta nombre";
+          demoRes.classList.add('error');
+          return;
+        }
+        if(edad < 18){
+          demoRes.textContent = "❌ Edad mínima: 18";
+          demoRes.classList.add('error');
+          return;
+        }
+        demoRes.textContent = "✅ OK. Bienvenido " + nombre;
+        demoRes.classList.add('ok');
+      });
+    })();
+  </script>
+</body>
+</html>

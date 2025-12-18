@@ -1,0 +1,858 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>UF3 — DOM, Eventos y Formularios (Resumen + Quiz + Práctica Examen)</title>
+  <style>
+    :root{color-scheme:light}
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;margin:0;line-height:1.6;background:#f6f7fb;color:#111827}
+    header{background:#0b5aa6;color:#fff;padding:18px 16px}
+    header .wrap{max-width:1100px;margin:0 auto;display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap}
+    h1{margin:0;font-size:1.25rem}
+    header p{margin:6px 0 0;opacity:.9}
+    main{max-width:1100px;margin:0 auto;padding:16px 16px 60px}
+    .nav{display:flex;flex-wrap:wrap;gap:10px;margin:10px 0 14px}
+    .nav a{display:inline-block;text-decoration:none;background:#fff;border:1px solid #e5e7eb;color:#0b5aa6;padding:10px 12px;border-radius:12px;font-weight:800}
+    .card{background:#fff;border:1px solid #e5e7eb;border-radius:14px;padding:14px;box-shadow:0 1px 2px rgba(0,0,0,.04);margin:12px 0}
+    .card h2{margin:0 0 6px;font-size:1.1rem}
+    .card h3{margin:12px 0 6px;font-size:1.0rem}
+    .muted{color:#4b5563}
+    code,kbd{background:#f3f4f6;border:1px solid #e5e7eb;padding:1px 6px;border-radius:8px;font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;font-size:.95em}
+    pre{background:#0b1020;color:#e5e7eb;border-radius:14px;padding:12px;overflow:auto;border:1px solid #1f2937}
+    pre code{background:transparent;border:none;padding:0;color:inherit}
+    .key{background:#fef3c7;border:1px solid #fde68a;color:#92400e;padding:10px 12px;border-radius:12px;margin:10px 0}
+    .exam{background:#ecfeff;border:1px solid #a5f3fc;color:#155e75;padding:10px 12px;border-radius:12px;margin:10px 0}
+    .danger{background:#fff1f2;border:1px solid #fecdd3;color:#9f1239;padding:10px 12px;border-radius:12px;margin:10px 0}
+    ul{margin:8px 0 8px 20px}
+    li{margin:6px 0}
+    details{background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:10px 12px;margin:10px 0}
+    details summary{cursor:pointer;font-weight:800}
+    .grid2{display:grid;gap:12px;grid-template-columns:1fr}
+    @media(min-width:900px){.grid2{grid-template-columns:1fr 1fr}}
+    .pill{display:inline-flex;gap:8px;align-items:center;background:#f3f4f6;border:1px solid #e5e7eb;padding:8px 10px;border-radius:999px;font-weight:700}
+    .btn{border:1px solid #e5e7eb;background:#fff;padding:10px 12px;border-radius:12px;cursor:pointer;font-weight:800}
+    .btn.primary{background:#0b5aa6;border-color:#0b5aa6;color:#fff}
+    .btnRow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+    .qbox h3{margin:0 0 10px}
+    .choice{display:flex;gap:10px;align-items:flex-start;padding:10px 12px;border:1px solid #e5e7eb;background:#fff;border-radius:12px;cursor:pointer}
+    .choice:hover{box-shadow:0 1px 2px rgba(0,0,0,.05)}
+    .choice input{margin-top:3px}
+    .fb{margin-top:10px;padding:10px 12px;border-radius:12px;border:1px solid #e5e7eb;background:#f9fafb}
+    .fb.ok{background:#ecfdf5;border-color:#a7f3d0;color:#065f46}
+    .fb.bad{background:#fff1f2;border-color:#fecdd3;color:#9f1239}
+    .bar{height:10px;border-radius:999px;background:#e5e7eb;overflow:hidden}
+    .bar>div{height:100%;width:0%;background:#0b5aa6}
+    .mini{font-size:.95rem;color:#374151}
+  </style>
+</head>
+
+<body>
+<header>
+  <div class="wrap">
+    <div>
+      <h1>UF3 — JavaScript y HTML: DOM, Eventos y Formularios</h1>
+      <p>Resumen para examen + ejemplos “memoriza-código” + Quiz final + Práctica tipo examen (formulario)</p>
+    </div>
+    <div class="pill" title="Consejo de examen">
+      <span>🎯</span>
+      <span>60% práctica: DOM + eventos + formularios</span>
+    </div>
+  </div>
+</header>
+
+<main>
+  <nav class="nav">
+    <a href="#memorizar">0) Memorizar</a>
+    <a href="#dom">1) DOM</a>
+    <a href="#atributos">2) Atributos, clases, dataset</a>
+    <a href="#eventos">3) Eventos</a>
+    <a href="#formularios">4) Formularios</a>
+    <a href="#extras">5) Extras UF3</a>
+    <a href="#practica">6) Práctica examen</a>
+    <a href="#quiz">7) Quiz final</a>
+  </nav>
+
+  <!-- 0) MEMORIZAR -->
+  <section id="memorizar" class="card">
+    <h2>0) Lo que tienes que MEMORIZAR sí o sí (examen)</h2>
+
+    <div class="key">
+      <strong>Frase clave:</strong> el navegador carga HTML → crea el <strong>DOM en memoria</strong>.
+      Con JavaScript tú <strong>lees/modificas el DOM</strong>. Si <strong>recargas</strong>, el DOM se vuelve a construir desde el HTML (si no guardas datos, se pierde).
+    </div>
+
+    <div class="grid2">
+      <div class="card" style="margin:0">
+        <h3>Selección (elige bien cuál toca)</h3>
+        <ul>
+          <li><code>document.getElementById("id")</code> → 1 elemento o <code>null</code></li>
+          <li><code>document.getElementsByClassName("clase")</code> → <strong>HTMLCollection</strong> (no tiene <code>forEach</code>)</li>
+          <li><code>document.getElementsByTagName("p")</code> → <strong>HTMLCollection</strong></li>
+          <li><code>document.querySelector("selectorCSS")</code> → 1º match o <code>null</code></li>
+          <li><code>document.querySelectorAll("selectorCSS")</code> → <strong>NodeList</strong> (sí tiene <code>forEach</code>)</li>
+        </ul>
+      </div>
+
+      <div class="card" style="margin:0">
+        <h3>Cambios típicos (lo más usado)</h3>
+        <ul>
+          <li>Texto: <code>textContent</code> (preferido) / <code>innerHTML</code> (cuidado)</li>
+          <li>Clases: <code>classList.add/remove/toggle/contains</code></li>
+          <li>Estilo puntual: <code>el.style.color = "red"</code> (demo/dinámico)</li>
+          <li>Atributos: <code>getAttribute/setAttribute/removeAttribute/hasAttribute</code></li>
+          <li>Crear/borrar nodos: <code>createElement</code>, <code>append/prepend/before/after</code>, <code>remove</code>, <code>replaceWith</code></li>
+          <li>Eventos: <code>addEventListener("click", ...)</code> y en formularios <code>submit</code> + <code>preventDefault()</code></li>
+          <li>Formularios: <code>value</code>, <code>checked</code>, <code>document.forms</code>, <code>form.elements</code></li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="exam">
+      <strong>Trampas típicas:</strong>
+      <ul>
+        <li><code>null</code> → estás seleccionando algo que no existe o el script corre antes de que el DOM esté cargado.</li>
+        <li><code>HTMLCollection</code> no tiene <code>forEach</code> → usa <code>for</code> o conviértelo: <code>Array.from(...)</code>.</li>
+        <li>En formularios: si no pones <code>type</code> en un botón dentro de un <code>&lt;form&gt;</code>, puede actuar como <code>submit</code>.</li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 1) DOM -->
+  <section id="dom" class="card">
+    <h2>1) DOM (selección + navegación + modificación)</h2>
+
+    <div class="card">
+      <h3>1.1 Seleccionar elementos (lo típico en práctica)</h3>
+      <pre><code>// ID (1 elemento)
+const titulo = document.getElementById("titulo");
+
+// CSS selector (1 elemento: el primero que coincida)
+const primerParrafo = document.querySelector("p");
+
+// CSS selector (varios: NodeList)
+const parrafos = document.querySelectorAll("p");
+
+// Clase (varios: HTMLCollection)
+const textos = document.getElementsByClassName("texto");</code></pre>
+
+      <details>
+        <summary>💡 Cómo detectar el típico error de <code>null</code></summary>
+        <ul>
+          <li>Si haces <code>console.log(titulo)</code> y sale <code>null</code> → no existe ese id en el HTML (o te equivocaste de nombre).</li>
+          <li>Otro caso: el script se ejecuta antes de que el HTML exista. Solución típica:
+            <ul>
+              <li>Poner <code>&lt;script src="..."&gt;&lt;/script&gt;</code> justo antes de <code>&lt;/body&gt;</code> (lo más simple).</li>
+              <li>O envolver en <code>DOMContentLoaded</code>.</li>
+            </ul>
+          </li>
+        </ul>
+      </details>
+    </div>
+
+    <div class="card">
+      <h3>1.2 Navegar por el DOM (muy típico)</h3>
+      <pre><code>const lista = document.getElementById("lista");
+
+// hijos (solo elementos)
+console.log(lista.children);
+
+// primer/último hijo elemento
+console.log(lista.firstElementChild);
+console.log(lista.lastElementChild);
+
+// padre
+console.log(lista.parentElement);
+
+// hermanos
+console.log(lista.previousElementSibling);
+console.log(lista.nextElementSibling);</code></pre>
+    </div>
+
+    <div class="card">
+      <h3>1.3 Modificar contenido y estilo</h3>
+      <pre><code>// Cambiar texto (seguro)
+titulo.textContent = "Nuevo título";
+
+// Cambiar HTML (cuidado si hay datos del usuario)
+primerParrafo.innerHTML = "&lt;strong&gt;Hola&lt;/strong&gt;";
+
+// Estilo puntual (demo o cambio dinámico)
+primerParrafo.style.color = "red";</code></pre>
+
+      <div class="exam">
+        <strong>Regla de oro:</strong> estilos “normales” en CSS. JS para cambios dinámicos (toggle, mostrar/ocultar, validar, etc.).
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>1.4 Crear y eliminar nodos (examen práctico frecuente)</h3>
+      <pre><code>const ul = document.getElementById("lista");
+
+// Crear un &lt;li&gt;
+const li = document.createElement("li");
+li.textContent = "Elemento nuevo";
+li.classList.add("item");
+
+// Insertar (al final)
+ul.append(li);
+
+// Eliminar un nodo
+// li.remove();
+
+// Reemplazar
+// const otro = document.createElement("li");
+// otro.textContent = "Reemplazo";
+// li.replaceWith(otro);</code></pre>
+    </div>
+  </section>
+
+  <!-- 2) ATRIBUTOS / CLASES / DATASET -->
+  <section id="atributos" class="card">
+    <h2>2) Atributos, propiedades, clases y dataset</h2>
+
+    <div class="grid2">
+      <div class="card" style="margin:0">
+        <h3>2.1 Atributos vs Propiedades (esto cae)</h3>
+        <ul>
+          <li><strong>Atributo HTML</strong> (en el código): se lee con <code>getAttribute</code>.</li>
+          <li><strong>Propiedad DOM</strong> (en memoria): se lee como objeto JS: <code>input.value</code>.</li>
+        </ul>
+        <pre><code>const input = document.getElementById("nombre");
+
+// Propiedad DOM (lo que el usuario escribe)
+console.log(input.value);
+
+// Atributo HTML (valor inicial si existiera)
+console.log(input.getAttribute("value"));</code></pre>
+        <div class="key">
+          <strong>Idea importante:</strong> si cambias <code>input.value</code> (propiedad), NO estás cambiando el atributo del HTML.
+        </div>
+      </div>
+
+      <div class="card" style="margin:0">
+        <h3>2.2 Atributos: métodos</h3>
+        <pre><code>const a = document.querySelector("a");
+
+// comprobar
+a.hasAttribute("href");
+
+// leer
+const href = a.getAttribute("href");
+
+// escribir/modificar
+a.setAttribute("href", "https://google.es");
+
+// borrar
+a.removeAttribute("href");</code></pre>
+
+        <h3>2.3 dataset (data-*)</h3>
+        <pre><code>// HTML: &lt;button data-id="7" data-accion="borrar"&gt;X&lt;/button&gt;
+const btn = document.querySelector("button");
+console.log(btn.dataset.id);     // "7"
+console.log(btn.dataset.accion); // "borrar"</code></pre>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>2.4 classList (lo que tú estabas pidiendo)</h3>
+      <pre><code>const p = document.getElementById("mensaje");
+
+// añadir
+p.classList.add("activo");
+
+// quitar
+p.classList.remove("activo");
+
+// alternar (toggle): si está la quita, si no está la añade
+p.classList.toggle("activo");
+
+// comprobar
+if (p.classList.contains("activo")) {
+  console.log("Está activa");
+}</code></pre>
+
+      <div class="exam">
+        <strong>Tu duda:</strong> “¿tengo que hacer add antes para usar toggle?”<br/>
+        ✅ No. <code>toggle("activo")</code> ya se encarga: si no existe, la añade; si existe, la quita.
+      </div>
+
+      <details>
+        <summary>Ejemplo real: JS no pone color, el color está en CSS</summary>
+        <pre><code>/* CSS */
+.activo { color: green; font-weight: 800; }</code></pre>
+        <pre><code>// JS
+mensaje.classList.toggle("activo");</code></pre>
+      </details>
+    </div>
+  </section>
+
+  <!-- 3) EVENTOS -->
+  <section id="eventos" class="card">
+    <h2>3) Eventos (click, propagación, delegación y preventDefault)</h2>
+
+    <div class="card">
+      <h3>3.1 addEventListener (base absoluta)</h3>
+      <pre><code>const btn = document.getElementById("btnCambiarTexto");
+const mensaje = document.getElementById("mensaje");
+
+btn.addEventListener("click", () => {
+  mensaje.textContent = "Has hecho click ✅";
+  mensaje.classList.toggle("activo");
+});</code></pre>
+
+      <div class="key">
+        <strong>Fijo:</strong> normalmente guardas el elemento en una <code>const</code> para reutilizarlo (más limpio y más rápido).
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>3.2 El objeto evento (event)</h3>
+      <pre><code>btn.addEventListener("click", (event) => {
+  console.log(event.type);        // "click"
+  console.log(event.target);      // dónde ocurrió
+  console.log(event.currentTarget); // dónde está el listener
+});</code></pre>
+
+      <div class="exam">
+        <strong>Target vs currentTarget:</strong> en delegación esto es CLAVE.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>3.3 Propagación (bubbling) y delegación</h3>
+      <p class="muted">Delegación = poner 1 listener al contenedor y decidir qué hacer según <code>event.target</code>.</p>
+      <pre><code>const lista = document.getElementById("lista");
+
+lista.addEventListener("click", (event) => {
+  // Si se ha hecho click en un &lt;li&gt;...
+  if (event.target.matches("li.item")) {
+    event.target.classList.toggle("activo");
+  }
+});</code></pre>
+
+      <div class="key">
+        <strong>Por qué es útil:</strong> si añades 100 <code>&lt;li&gt;</code>, no necesitas 100 listeners.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>3.4 Comportamiento por defecto (preventDefault)</h3>
+      <pre><code>// En un &lt;form&gt; el submit recarga / envía por defecto
+form.addEventListener("submit", (event) => {
+  event.preventDefault(); // evita recarga
+});</code></pre>
+      <div class="exam">
+        <strong>Esto te salvó:</strong> “ya no recarga” → perfecto: eso es lo que se busca en SPAs y validaciones.
+      </div>
+    </div>
+  </section>
+
+  <!-- 4) FORMULARIOS -->
+  <section id="formularios" class="card">
+    <h2>4) Formularios (leer valores, eventos y validación)</h2>
+
+    <div class="card">
+      <h3>4.1 Acceso “por colecciones” (document.forms y form.elements)</h3>
+      <pre><code>// Si el form tiene name="miForm"
+const form = document.forms.miForm;
+
+// Campos por name:
+const nombre = form.elements.nombre.value;
+const edad = form.elements.edad.value;</code></pre>
+
+      <div class="key">
+        <strong>En práctica suele ser más común:</strong> seleccionar por id (<code>getElementById</code>) y listo.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>4.2 Leer valores (value) y convertir tipos</h3>
+      <pre><code>const nombreInput = document.getElementById("nombre");
+const edadInput = document.getElementById("edad");
+
+const nombre = nombreInput.value.trim(); // quita espacios
+const edad = Number(edadInput.value);    // convierte a número
+
+console.log(typeof edad); // "number"</code></pre>
+
+      <div class="exam">
+        <strong>Trampa típica:</strong> <code>input.value</code> siempre viene como string. Si necesitas número: <code>Number()</code> o <code>parseInt()</code>.
+      </div>
+    </div>
+
+    <div class="card">
+      <h3>4.3 Validación típica de examen (3 casos)</h3>
+      <pre><code>const form = document.getElementById("formulario");
+
+form.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const nombre = document.getElementById("nombre").value.trim();
+  const edad = Number(document.getElementById("edad").value);
+
+  if (nombre === "") {
+    alert("El nombre es obligatorio");
+    return;
+  }
+
+  if (!Number.isFinite(edad) || edad &lt; 18) {
+    alert("Debes ser mayor de edad");
+    return;
+  }
+
+  alert("Formulario válido ✅");
+});</code></pre>
+
+      <div class="key">
+        <strong>Tu resumen perfecto:</strong> (1) nombre obligatorio → (2) mayor de edad → (3) válido.
+      </div>
+    </div>
+
+    <details>
+      <summary>Mini-test rápido (teórico) de formularios (abre y comprueba)</summary>
+      <ol>
+        <li><strong>¿Por qué se usa preventDefault en submit?</strong><br/>
+          ✅ Para evitar el comportamiento por defecto del navegador (enviar/recargar) y poder validar con JS.</li>
+        <li><strong>¿Por qué Number(...) en edad?</strong><br/>
+          ✅ Porque <code>value</code> llega como string.</li>
+        <li><strong>¿Qué hace trim() en nombre?</strong><br/>
+          ✅ Evita que “   ” cuente como nombre válido.</li>
+      </ol>
+    </details>
+  </section>
+
+  <!-- 5) EXTRAS (UF3) -->
+  <section id="extras" class="card">
+    <h2>5) Extras UF3 (si te los preguntan en test)</h2>
+    <div class="grid2">
+      <div class="card" style="margin:0">
+        <h3>Geolocation</h3>
+        <pre><code>navigator.geolocation.getCurrentPosition(
+  (pos) => console.log(pos.coords.latitude, pos.coords.longitude),
+  (err) => console.log("Error:", err)
+);</code></pre>
+        <div class="muted">Pide permisos. Es asíncrono (llega por callback).</div>
+      </div>
+
+      <div class="card" style="margin:0">
+        <h3>Web Storage (localStorage/sessionStorage)</h3>
+        <pre><code>// Guardar
+localStorage.setItem("nombre", "Eugenio");
+
+// Leer
+const n = localStorage.getItem("nombre");
+
+// Borrar 1
+localStorage.removeItem("nombre");
+
+// Borrar todo seección
+// localStorage.clear();</code></pre>
+      </div>
+    </div>
+
+    <div class="grid2">
+      <div class="card" style="margin:0">
+        <h3>Regex (muy básico)</h3>
+        <pre><code>// Literal
+const re = /^[A-Za-zÁÉÍÓÚáéíóúÑñ ]{2,}$/;
+
+// test → true/false
+console.log(re.test("Eugenio"));</code></pre>
+        <div class="muted">Útil para validar campos en formularios.</div>
+      </div>
+
+      <div class="card" style="margin:0">
+        <h3>Web Components (idea general)</h3>
+        <pre><code>// Custom Element (muy resumido)
+class MiBoton extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = "&lt;button&gt;Hola&lt;/button&gt;";
+  }
+}
+customElements.define("mi-boton", MiBoton);</code></pre>
+        <div class="muted">Shadow DOM encapsula estructura/estilos (no accesible con selectores normales desde fuera).</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6) PRACTICA EXAMEN -->
+  <section id="practica" class="card">
+    <h2>6) Práctica tipo EXAMEN (formulario + DOM + eventos)</h2>
+
+    <div class="exam">
+      <strong>Enunciado (muy típico):</strong><br/>
+      Tienes un formulario con <code>nombre</code> y <code>edad</code> y un botón “Cambiar texto”.
+      Debes:
+      <ul>
+        <li>Al hacer click, cambiar el texto del párrafo y alternar una clase CSS.</li>
+        <li>En submit, evitar recarga y validar: nombre obligatorio, edad >= 18.</li>
+        <li>Si es válido, mostrar un mensaje en la página (no solo alert).</li>
+        <li>Usar al menos: <code>getElementById</code>, <code>querySelectorAll</code> o delegación en lista.</li>
+      </ul>
+    </div>
+
+    <details>
+      <summary>✅ Paso a paso (como lo haría en examen)</summary>
+      <ol>
+        <li><strong>Selecciono todo lo que voy a usar</strong> en <code>const</code> (botón, párrafo, form, inputs, salida).</li>
+        <li><strong>Click</strong>: cambio <code>textContent</code> + <code>classList.toggle("activo")</code>.</li>
+        <li><strong>Submit</strong>: <code>preventDefault()</code>, leo <code>value</code>, uso <code>trim</code> y <code>Number</code>.</li>
+        <li>Valido con <code>if</code> y <code>return</code> (corto el flujo).</li>
+        <li>Si todo OK: muestro “válido” en un <code>&lt;div id="salida"&gt;</code>.</li>
+      </ol>
+    </details>
+
+    <details>
+      <summary>📌 Código completo “solución examen” (HTML+CSS+JS en 1 bloque)</summary>
+      <pre><code>&lt;!-- HTML (ejemplo mínimo) --&gt;
+&lt;h1 id="titulo"&gt;Práctica DOM UF3&lt;/h1&gt;
+
+&lt;p id="mensaje" class="texto"&gt;Texto principal&lt;/p&gt;
+
+&lt;ul id="lista"&gt;
+  &lt;li class="item"&gt;Elemento 1&lt;/li&gt;
+  &lt;li class="item"&gt;Elemento 2&lt;/li&gt;
+  &lt;li class="item"&gt;Elemento 3&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;button id="btnCambiarTexto" type="button"&gt;Cambiar texto&lt;/button&gt;
+
+&lt;form id="formulario"&gt;
+  &lt;label&gt;Nombre: &lt;input id="nombre" type="text"&gt;&lt;/label&gt;
+  &lt;br&gt;&lt;br&gt;
+  &lt;label&gt;Edad: &lt;input id="edad" type="number"&gt;&lt;/label&gt;
+  &lt;br&gt;&lt;br&gt;
+  &lt;button type="submit"&gt;Enviar&lt;/button&gt;
+&lt;/form&gt;
+
+&lt;div id="salida"&gt;&lt;/div&gt;
+
+&lt;style&gt;
+  .activo{ color: green; font-weight: 800; }
+  #salida{ margin-top: 10px; padding: 10px; border:1px solid #e5e7eb; border-radius:10px; background:#f9fafb; }
+&lt;/style&gt;
+
+&lt;script&gt;
+  // Selección
+  const mensaje = document.getElementById("mensaje");
+  const btnCambiarTexto = document.getElementById("btnCambiarTexto");
+  const form = document.getElementById("formulario");
+  const nombreInput = document.getElementById("nombre");
+  const edadInput = document.getElementById("edad");
+  const salida = document.getElementById("salida");
+
+  // Click
+  btnCambiarTexto.addEventListener("click", () =&gt; {
+    mensaje.textContent = "Has pulsado el botón: texto actualizado ✅";
+    mensaje.classList.toggle("activo");
+    btnCambiarTexto.textContent = "Texto cambiado (click)";
+  });
+
+  // Delegación en lista (extra típico)
+  const lista = document.getElementById("lista");
+  lista.addEventListener("click", (event) =&gt; {
+    if(event.target.matches("li.item")){
+      event.target.classList.toggle("activo");
+    }
+  });
+
+  // Submit + validación
+  form.addEventListener("submit", (event) =&gt; {
+    event.preventDefault();
+
+    const nombre = nombreInput.value.trim();
+    const edad = Number(edadInput.value);
+
+    if(nombre === ""){
+      alert("El nombre es obligatorio");
+      return;
+    }
+
+    if(!Number.isFinite(edad) || edad &lt; 18){
+      alert("Debes ser mayor de edad");
+      return;
+    }
+
+    salida.textContent = `Formulario válido ✅ Nombre: ${nombre} · Edad: ${edad}`;
+  });
+&lt;/script&gt;</code></pre>
+    </details>
+  </section>
+
+  <!-- 7) QUIZ FINAL -->
+  <section id="quiz" class="card">
+    <h2>7) Quiz final UF3 (interactivo)</h2>
+    <div class="pill" id="quizTop">
+      <span id="qCount">Pregunta 1/12</span>
+      <span>·</span>
+      <span id="score">Aciertos: 0 · Fallos: 0</span>
+    </div>
+    <div style="margin:10px 0" class="bar" aria-label="Progreso"><div id="barFill"></div></div>
+
+    <article class="card qbox" id="quizBox"></article>
+
+    <div class="btnRow">
+      <button class="btn" id="btnReset" type="button">Reiniciar</button>
+      <button class="btn primary" id="btnShuffle" type="button">Mezclar</button>
+      <button class="btn" id="btnReveal" type="button">Ver solución</button>
+    </div>
+
+    <p class="mini muted" style="margin-top:8px">
+      Consejo: no memorices letras. Memoriza la idea (qué hace cada cosa y cuándo se usa).
+    </p>
+  </section>
+
+</main>
+
+<script>
+  // =============================
+  // Quiz UF3 (12 preguntas)
+  // =============================
+  const baseQ = [
+    {
+      q: "¿Qué ocurre cuando el navegador carga un HTML?",
+      a: [
+        "Se guarda el HTML en localStorage automáticamente",
+        "Se crea el DOM en memoria a partir del HTML",
+        "Se convierte el HTML en JSON",
+        "JavaScript reemplaza el HTML antes de mostrarlo"
+      ],
+      correct: 1,
+      why: "El navegador construye un árbol (DOM) en memoria a partir del HTML. JS modifica ese DOM (no el archivo HTML)."
+    },
+    {
+      q: "¿Qué devuelve document.getElementById('x') si no existe ese id?",
+      a: ["undefined", "false", "null", "[]"],
+      correct: 2,
+      why: "Si no encuentra el elemento, devuelve null (muy típico en consola)."
+    },
+    {
+      q: "¿Qué diferencia hay entre querySelector y querySelectorAll?",
+      a: [
+        "No hay diferencia",
+        "querySelector devuelve todos y querySelectorAll uno",
+        "querySelector devuelve el primero; querySelectorAll devuelve una lista (NodeList)",
+        "querySelectorAll solo funciona con ids"
+      ],
+      correct: 2,
+      why: "querySelector → primer match. querySelectorAll → NodeList de coincidencias (normalmente con forEach)."
+    },
+    {
+      q: "¿Cuál es la forma recomendada para cambiar texto sin riesgos?",
+      a: ["innerHTML", "textContent", "outerHTML", "document.write"],
+      correct: 1,
+      why: "textContent escribe texto plano. innerHTML interpreta HTML (cuidado si viene de usuario)."
+    },
+    {
+      q: "¿Qué hace classList.toggle('activo')?",
+      a: [
+        "Añade siempre la clase activo",
+        "Quita siempre la clase activo",
+        "Si existe la quita y si no existe la añade",
+        "Cambia el id del elemento"
+      ],
+      correct: 2,
+      why: "toggle alterna: añade si no está, y quita si ya estaba."
+    },
+    {
+      q: "¿Qué es lo típico en un submit para que NO recargue la página?",
+      a: ["event.stopPropagation()", "event.preventDefault()", "return false siempre", "form.reset()"],
+      correct: 1,
+      why: "preventDefault evita el comportamiento por defecto del navegador (enviar/recargar)."
+    },
+    {
+      q: "¿Por mostraremos Number(input.value) en un campo edad?",
+      a: [
+        "Porque value es boolean",
+        "Porque value viene como string",
+        "Porque value ya viene como number",
+        "Porque Number convierte a array"
+      ],
+      correct: 1,
+      why: "input.value siempre llega como string; si necesitas número, conviertes."
+    },
+    {
+      q: "En delegación de eventos, ¿qué se usa para saber en qué elemento ocurrió el click?",
+      a: ["event.value", "event.node", "event.target", "event.form"],
+      correct: 2,
+      why: "event.target es el elemento donde se originó el evento (ideal para delegación)."
+    },
+    {
+      q: "¿Cuál es una forma correcta de crear un nodo nuevo?",
+      a: ["document.createElement('li')", "document.newNode('li')", "document.make('li')", "document.build('li')"],
+      correct: 0,
+      why: "createElement crea el elemento, luego hay que insertarlo con append/prepend/etc."
+    },
+    {
+      q: "¿Qué son los data-* attributes y cómo se acceden?",
+      a: [
+        "Son atributos prohibidos",
+        "Se accede con element.dataset",
+        "Se accede con element.data()",
+        "Solo sirven para CSS"
+      ],
+      correct: 1,
+      why: "data-* → dataset (p.ej. data-id='7' → element.dataset.id)."
+    },
+    {
+      q: "¿Qué API del navegador permite guardar pares clave/valor?",
+      a: ["DOM", "Web Storage", "Geolocation", "Shadow DOM"],
+      correct: 1,
+      why: "Web Storage: localStorage/sessionStorage."
+    },
+    {
+      q: "¿Qué hace una expresión regular (regex) normalmente en esta UF?",
+      a: [
+        "Convertir HTML a CSS",
+        "Validar o filtrar cadenas (por ejemplo campos de formulario)",
+        "Cambiar estilos del DOM",
+        "Crear eventos"
+      ],
+      correct: 1,
+      why: "Regex explica patrones de búsqueda/validación: muy típico en formularios."
+    }
+  ];
+
+  let questions = [];
+  let i = 0;
+  let ok = 0;
+  let bad = 0;
+  let answered = false;
+
+  const quizBox = document.getElementById("quizBox");
+  const qCount = document.getElementById("qCount");
+  const score = document.getElementById("score");
+  const barFill = document.getElementById("barFill");
+
+  function deepCopy(o){ return JSON.parse(JSON.stringify(o)); }
+  function shuffle(arr){
+    for(let k=arr.length-1;k>0;k--){
+      const j = Math.floor(Math.random()*(k+1));
+      [arr[k],arr[j]]=[arr[j],arr[k]];
+    }
+    return arr;
+  }
+
+  function updateTop(){
+    qCount.textContent = `Pregunta ${Math.min(i+1, questions.length)}/${questions.length}`;
+    score.textContent = `Aciertos: ${ok} · Fallos: ${bad}`;
+    barFill.style.width = `${(i/questions.length)*100}%`;
+  }
+
+  function reset({mix=false}={}){
+    questions = deepCopy(baseQ);
+    if(mix) shuffle(questions);
+    i=0; ok=0; bad=0; answered=false;
+    render();
+  }
+
+  function render(){
+    updateTop();
+    answered=false;
+
+    const item = questions[i];
+    const opts = item.a.map((t, idx) => {
+      const id = `q_${i}_${idx}`;
+      return `
+        <label class="choice" for="${id}">
+          <input type="radio" id="${id}" name="opt" value="${idx}" />
+          <div><strong>${String.fromCharCode(65+idx)}.</strong> ${t}</div>
+        </label>
+      `;
+    }).join("");
+
+    quizBox.innerHTML = `
+      <h3>${item.q}</h3>
+      <div style="display:grid;gap:10px">${opts}</div>
+      <div style="height:1px;background:#e5e7eb;margin:12px 0"></div>
+      <div class="btnRow">
+        <button class="btn primary" id="btnCheck" type="button">Corregir</button>
+        <button class="btn" id="btnNext" type="button" disabled>Siguiente</button>
+      </div>
+      <div id="fb" class="fb" style="display:none"></div>
+    `;
+
+    document.getElementById("btnCheck").addEventListener("click", check);
+    document.getElementById("btnNext").addEventListener("click", next);
+  }
+
+  function selected(){
+    const r = quizBox.querySelector('input[name="opt"]:checked');
+    return r ? Number(r.value) : null;
+  }
+
+  function check(){
+    if(answered) return;
+    const sel = selected();
+    const fb = document.getElementById("fb");
+
+    if(sel === null){
+      fb.style.display="block";
+      fb.className="fb bad";
+      fb.innerHTML = `<strong>Falta responder.</strong><div>Elige una opción antes de corregir.</div>`;
+      return;
+    }
+
+    answered = true;
+    const item = questions[i];
+    const good = sel === item.correct;
+
+    quizBox.querySelectorAll('input[name="opt"]').forEach(r => r.disabled = true);
+
+    if(good){
+      ok++;
+      fb.style.display="block";
+      fb.className="fb ok";
+      fb.innerHTML = `<strong>Correcto ✅</strong><div><strong>Por qué:</strong> ${item.why}</div>`;
+    } else {
+      bad++;
+      fb.style.display="block";
+      fb.className="fb bad";
+      fb.innerHTML = `<strong>Incorrecto ❌</strong>
+        <div><strong>Correcta:</strong> ${String.fromCharCode(65+item.correct)}. ${item.a[item.correct]}</div>
+        <div><strong>Explicación:</strong> ${item.why}</div>`;
+    }
+
+    document.getElementById("btnNext").disabled = false;
+    updateTop();
+  }
+
+  function next(){
+    i++;
+    if(i >= questions.length){
+      barFill.style.width = "100%";
+      quizBox.innerHTML = `
+        <h3>Fin del quiz</h3>
+        <p class="mini">Resultado: <strong>${ok}/${questions.length}</strong> correctas. Fallos: <strong>${bad}</strong>.</p>
+        <div class="${bad===0 ? 'key' : 'danger'}">
+          ${bad===0
+            ? '<strong>Nivel examen ✅</strong> (perfecto).'
+            : '<strong>Consejo:</strong> repite mezclado hasta reducir fallos a 0 y revisa las explicaciones de lo que fallas.'}
+        </div>
+      `;
+      return;
+    }
+    render();
+  }
+
+  function reveal(){
+    const item = questions[i];
+    // marca la correcta visualmente (sin contar)
+    const r = quizBox.querySelectorAll('input[name="opt"]');
+    r.forEach((x,idx)=>{ x.checked = (idx===item.correct); });
+    const fb = document.getElementById("fb");
+    fb.style.display="block";
+    fb.className="fb";
+    fb.innerHTML = `<strong>Solución:</strong> ${String.fromCharCode(65+item.correct)}. ${item.a[item.correct]}
+      <div><strong>Por qué:</strong> ${item.why}</div>`;
+  }
+
+  document.getElementById("btnReset").addEventListener("click", ()=>reset({mix:false}));
+  document.getElementById("btnShuffle").addEventListener("click", ()=>reset({mix:true}));
+  document.getElementById("btnReveal").addEventListener("click", reveal);
+
+  reset({mix:false});
+</script>
+</body>
+</html>
