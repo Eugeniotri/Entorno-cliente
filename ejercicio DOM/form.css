@@ -1,0 +1,23 @@
+body{
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+form{
+    width: 300px;
+}
+label{
+    display: block;
+    margin-top: 10px;
+}
+
+input,
+textarea {
+  width: 100%;
+}
+
+#previsualizacion {
+     margin-top: 20px;
+  padding: 10px;
+  border: 1px solid #000;
+  white-space: pre-line;
+}

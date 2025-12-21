@@ -1,0 +1,83 @@
+<!-- 3. Encuesta breve con elección única y múltiple
+•
+Formulario POST con dos <fieldset>:
+<legend>¿Cómo nos conociste?</legend> con 3 radios
+(required).
+• <legend>¿Qué te interesó?</legend> con al menos 3
+checkboxes.
+• Añade textarea de comentarios (opcional).
+En una pregunta adicional, incluye un <select> con categorías
+agrupadas mediante <optgroup> (p. ej., “Producto” y “Servicio”).
+Botón de envío. -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encuesta</title>
+</head>
+
+<body>
+    <h1>Formulario</h1>
+    <form action="#" method="post" enctype="application/x-www-form-urlencoded" target="_blank">
+        <fieldset>
+            <legend>Encuesta de cómo nos conociste</legend>
+            <div>
+
+                <input id="internet" name="encuesta" type="radio" value="internet" required>
+                <label for="internet">Internet</label>
+            </div>
+            <div>
+
+                <input id="amigo" name="encuesta" type="radio" value="amigo" required>
+                <label for="amigo">Amigo</label>
+            </div>
+            <div>
+                <input id="otros" name="encuesta" type="radio" value="otros" required>
+                <label for="otros">Otros</label>
+
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>¿Qué te interesó?</legend>
+            <div>
+                <label for="precio">Precio</label>
+                <input id="precio" name="interes" type="checkbox"  checked value="precio">
+                <label for="calidad">Calidad</label>
+                <input id="calidad" name="interes" type="checkbox" value="calidad">
+                <label for="rapidez">Rapidez</label>
+                <input id="rapidez" name="interes" type="checkbox" value="rapidez">
+            </div>
+            <div>
+                <label for="comentarios">Comentarios</label>
+                <textarea id="comentarios" name="comentarios" rows="4" cols="40" minlength="150"></textarea>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Elige la mejor opcion</legend>
+            <label for="mejor_opcion">¿que te gusta más?</label>
+            <select id="mejor_opcion" name="mejor_opcion" required>
+                <option value="Elige una opcion" disabled selected>Elige una opcion</option>
+                <optgroup label="producto">
+                    <option value="producto_precio">precio</option>
+                    <option value="producto_calidad">calidad</option>
+                </optgroup>
+                <optgroup label ="servicio">
+                    <option value="rapidez">rapidez</option>
+                    <option value="seriedad">seriedad</option>
+                </optgroup>
+            </select>
+        </fieldset>
+        <div>
+            <button type="submit">Enviar</button>
+        </div>
+
+
+    </form>
+
+
+</body>
+
+</html>

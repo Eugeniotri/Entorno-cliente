@@ -1,0 +1,826 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UF3 - Quiz DOM (DAW)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --card:#111a33;
+      --card2:#0f1730;
+      --text:#e9eefc;
+      --muted:#a9b6df;
+      --ok:#27c27a;
+      --bad:#ff4d6d;
+      --accent:#7aa2ff;
+      --line:rgba(255,255,255,.12);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, #12204d, var(--bg));
+      color: var(--text);
+      min-height: 100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 14px;
+    }
+    .app{
+      width: min(720px, 100%);
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+    header{
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px 14px 12px;
+      display:flex;
+      flex-direction:column;
+      gap:10px;
+    }
+    .toprow{
+      display:flex;
+      justify-content:space-between;
+      gap: 10px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+    .title{
+      display:flex; flex-direction:column; gap:2px;
+    }
+    .title h1{
+      font-size: 18px;
+      margin:0;
+      letter-spacing: .2px;
+    }
+    .title p{
+      margin:0;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .stats{
+      display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+      justify-content:flex-end;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      padding:6px 10px;
+      border-radius: 999px;
+      display:flex; gap:6px; align-items:center;
+    }
+    .bar{
+      height: 10px;
+      background: rgba(255,255,255,.06);
+      border:1px solid var(--line);
+      border-radius: 999px;
+      overflow:hidden;
+    }
+    .bar > div{
+      height:100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), #9a7bff);
+      transition: width .25s ease;
+    }
+
+    main{
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+      border:1px solid var(--line);
+      border-radius: 16px;
+      padding: 14px;
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+    }
+    .card{
+      background: rgba(0,0,0,.12);
+      border:1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .qmeta{
+      display:flex;
+      justify-content:space-between;
+      align-items:flex-start;
+      gap: 10px;
+      flex-wrap:wrap;
+    }
+    .level{
+      font-size: 12px;
+      color: var(--muted);
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      padding: 6px 10px;
+      border-radius: 999px;
+    }
+    .question{
+      font-size: 16px;
+      line-height: 1.35;
+      margin: 8px 0 0;
+    }
+    pre{
+      margin: 10px 0 0;
+      padding: 12px;
+      border-radius: 12px;
+      background: #0a0f22;
+      border: 1px solid rgba(255,255,255,.10);
+      overflow:auto;
+      color: #dfe7ff;
+      font-size: 13px;
+    }
+    .answers{
+      display:grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    button.choice{
+      text-align:left;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 12px 12px;
+      font-size: 15px;
+      line-height: 1.25;
+      cursor:pointer;
+      transition: transform .03s ease, background .15s ease, border-color .15s ease;
+      touch-action: manipulation;
+    }
+    button.choice:active{ transform: scale(.99); }
+    button.choice:hover{ background: rgba(255,255,255,.06); }
+
+    .feedback{
+      display:none;
+      gap: 10px;
+    }
+    .feedback.show{ display:grid; }
+    .banner{
+      border-radius: 14px;
+      padding: 10px 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .dot{
+      width: 12px; height: 12px; border-radius: 50%;
+      margin-top: 4px;
+      background: var(--muted);
+      flex: 0 0 auto;
+    }
+    .banner.ok .dot{ background: var(--ok); }
+    .banner.bad .dot{ background: var(--bad); }
+    .banner h3{
+      margin:0;
+      font-size: 14px;
+    }
+    .banner p{
+      margin: 6px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+    }
+    .actions{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:flex-end;
+      margin-top: 4px;
+    }
+    .btn{
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 14px;
+      cursor:pointer;
+      touch-action: manipulation;
+    }
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(122,162,255,.35), rgba(154,123,255,.35));
+      border-color: rgba(122,162,255,.45);
+    }
+    .btn.danger{
+      background: rgba(255,77,109,.12);
+      border-color: rgba(255,77,109,.35);
+    }
+    .btn:active{ transform: scale(.99); }
+
+    .footer{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      flex-wrap:wrap;
+      color: var(--muted);
+      font-size: 12px;
+      padding: 0 6px;
+    }
+
+    /* Modal */
+    .modal{
+      position:fixed;
+      inset:0;
+      display:none;
+      align-items:center;
+      justify-content:center;
+      padding: 14px;
+      background: rgba(0,0,0,.55);
+    }
+    .modal.show{ display:flex; }
+    .modal .panel{
+      width: min(720px, 100%);
+      background: linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.04));
+      border:1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px;
+    }
+    .panel h2{ margin:0; font-size: 18px; }
+    .panel p{ margin:8px 0 0; color: var(--muted); line-height: 1.35; }
+    .grid2{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    .grid2 .card{ min-height: 78px; }
+    @media (max-width: 520px){
+      .grid2{ grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app" id="app">
+    <header>
+      <div class="toprow">
+        <div class="title">
+          <h1>UF3 (DAW) · Quiz DOM — modo juego</h1>
+          <p>De fácil a difícil. Si fallas, te explica el porqué (como en clase).</p>
+        </div>
+
+        <div class="stats">
+          <div class="pill" title="Nivel actual">
+            🧩 <span id="levelLabel">Nivel 1</span>
+          </div>
+          <div class="pill" title="Puntuación">
+            ⭐ <span id="scoreLabel">0</span>
+          </div>
+          <div class="pill" title="Vidas">
+            ❤️ <span id="livesLabel">3</span>
+          </div>
+          <button class="btn danger" id="resetBtn" type="button">Reiniciar</button>
+        </div>
+      </div>
+
+      <div class="bar" aria-label="Progreso">
+        <div id="progressBar"></div>
+      </div>
+      <div class="footer">
+        <div>Progreso: <span id="progressText">0/0</span></div>
+        <div id="hintText">Consejo: recuerda “children = solo etiquetas”.</div>
+      </div>
+    </header>
+
+    <main>
+      <div class="card" id="questionCard">
+        <div class="qmeta">
+          <div class="level" id="qTag">Nivel 1 · Conceptos</div>
+          <div class="level" id="qId">Pregunta 1</div>
+        </div>
+
+        <div class="question" id="questionText">Cargando…</div>
+        <pre id="questionCode" style="display:none"></pre>
+
+        <div class="answers" id="answers"></div>
+      </div>
+
+      <div class="feedback" id="feedback">
+        <div class="banner" id="banner">
+          <div class="dot"></div>
+          <div>
+            <h3 id="bannerTitle">—</h3>
+            <p id="bannerText">—</p>
+          </div>
+        </div>
+
+        <div class="card" id="teacherCard">
+          <div style="display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap; align-items:center;">
+            <strong>👨‍🏫 Explicación del profe</strong>
+            <span class="level" id="teacherFocus">Refuerzo</span>
+          </div>
+          <p id="teacherText" style="margin:10px 0 0; color: var(--muted); line-height: 1.45;"></p>
+        </div>
+
+        <div class="actions">
+          <button class="btn" id="retryBtn" type="button">Repetir esta</button>
+          <button class="btn primary" id="nextBtn" type="button">Siguiente</button>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="panel">
+      <h2 id="modalTitle">Fin</h2>
+      <p id="modalText">—</p>
+
+      <div class="grid2">
+        <div class="card">
+          <strong>⭐ Puntuación</strong>
+          <p style="margin-top:8px; color: var(--muted);"><span id="finalScore">0</span></p>
+        </div>
+        <div class="card">
+          <strong>🧠 Qué reforzar</strong>
+          <p style="margin-top:8px; color: var(--muted);" id="reinforceList">—</p>
+        </div>
+      </div>
+
+      <div class="actions" style="margin-top:12px;">
+        <button class="btn" id="closeModalBtn" type="button">Cerrar</button>
+        <button class="btn primary" id="playAgainBtn" type="button">Jugar otra vez</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================
+    // QUIZ UF3: DOM / NODOS
+    // =========================
+
+    const questions = [
+      // Nivel 1 (conceptos)
+      {
+        level: 1,
+        tag: "Conceptos",
+        text: "¿Qué es un nodo en el DOM?",
+        code: "",
+        choices: [
+          "Una función de JavaScript que crea HTML",
+          "Cualquier pieza del árbol DOM (elemento, texto, comentario, etc.)",
+          "Solo una etiqueta HTML",
+          "Un archivo .js enlazado al HTML"
+        ],
+        correctIndex: 1,
+        explainWrong: "Un nodo NO es solo una etiqueta. En el DOM también existen nodos de texto (espacios, saltos de línea), comentarios, etc. El DOM es un árbol de nodos.",
+        explainRight: "Exacto: un nodo es cualquier unidad del DOM (elementos, textos, comentarios…)."
+      },
+      {
+        level: 1,
+        tag: "Conceptos",
+        text: "En DOM, ¿qué suele ser `p.firstChild` si el HTML es: `<p id='x'>Hola</p>`?",
+        code: "<p id='x'>Hola</p>",
+        choices: [
+          "El propio elemento <p>",
+          "Un nodo texto con 'Hola'",
+          "Un array de caracteres",
+          "Da error siempre"
+        ],
+        correctIndex: 1,
+        explainWrong: "`firstChild` devuelve el primer hijo, y dentro del <p> hay un nodo texto con 'Hola'. El <p> es el nodo elemento, no su primer hijo.",
+        explainRight: "Bien: dentro del <p> hay un nodo texto 'Hola', y ese es el primer hijo."
+      },
+
+      // Nivel 2 (children vs childNodes)
+      {
+        level: 2,
+        tag: "children vs childNodes",
+        text: "Si el HTML es:",
+        code:
+`<div id="caja">
+    <p>Uno</p>
+    <p>Dos</p>
+</div>`,
+        choices: [
+          "`caja.children.length` cuenta también los saltos de línea",
+          "`caja.children.length` cuenta solo etiquetas hijas directas",
+          "`caja.childNodes.length` cuenta solo etiquetas",
+          "`children` y `childNodes` siempre dan lo mismo"
+        ],
+        correctIndex: 1,
+        explainWrong: "`children` ignora nodos texto (espacios/saltos). Cuenta solo elementos (etiquetas) y además SOLO los hijos directos.",
+        explainRight: "Correcto: `children` = solo elementos (etiquetas) hijos directos."
+      },
+      {
+        level: 2,
+        tag: "children vs childNodes",
+        text: "En ese mismo HTML, ¿por qué `childNodes.length` suele ser mayor que `children.length`?",
+        code:
+`<div id="caja">
+    <p>Uno</p>
+    <p>Dos</p>
+</div>`,
+        choices: [
+          "Porque `childNodes` cuenta también nodos texto (saltos/espacios)",
+          "Porque `children` cuenta los nietos y `childNodes` no",
+          "Porque `children` suma 1 por el elemento padre",
+          "Porque `childNodes` solo cuenta comentarios"
+        ],
+        correctIndex: 0,
+        explainWrong: "La razón típica es que los saltos de línea y espacios entre etiquetas son nodos texto, y `childNodes` los cuenta.",
+        explainRight: "Exacto: `childNodes` incluye textos invisibles (saltos/espacios), por eso suele dar más."
+      },
+
+      // Nivel 3 (hijos vs nietos)
+      {
+        level: 3,
+        tag: "Hijos directos",
+        text: "Con este HTML, ¿cuánto vale `p.children.length`?",
+        code: `<p id="p">Hola <strong>DAW</strong></p>`,
+        choices: [
+          "0",
+          "1",
+          "2",
+          "Depende del navegador, imposible saber"
+        ],
+        correctIndex: 1,
+        explainWrong: "Dentro del <p> hay un hijo directo que es la etiqueta <strong>. El texto 'Hola ' NO cuenta para children, porque no es etiqueta.",
+        explainRight: "Bien: el único hijo elemento directo del <p> es <strong>, así que es 1."
+      },
+      {
+        level: 3,
+        tag: "Hijos directos",
+        text: "Con ese mismo HTML, ¿cuánto vale `p.childNodes.length` normalmente?",
+        code: `<p id="p">Hola <strong>DAW</strong></p>`,
+        choices: [
+          "1",
+          "2",
+          "3",
+          "4"
+        ],
+        correctIndex: 1,
+        explainWrong: "Los hijos directos del <p> son: (1) nodo texto 'Hola ' y (2) nodo elemento <strong>. El 'DAW' es hijo de <strong>, o sea, nieto de <p>.",
+        explainRight: "Correcto: texto 'Hola ' + elemento <strong> = 2 hijos directos."
+      },
+
+      // Nivel 4 (crear y añadir)
+      {
+        level: 4,
+        tag: "Crear y añadir",
+        text: "¿Qué le falta a este código para que el <p> se vea en la página?",
+        code:
+`const p = document.createElement("p");
+p.textContent = "Hola";`,
+        choices: [
+          "Nada, createElement lo inserta automáticamente",
+          "Hacer `document.body.appendChild(p)` (o añadirlo a un contenedor del DOM)",
+          "Hacer `p.appendChild(document.body)`",
+          "Hacer `p.children = 'Hola'`"
+        ],
+        correctIndex: 1,
+        explainWrong: "`createElement` crea el nodo en memoria. Para verlo debes insertarlo en el DOM con `appendChild` (sobre un padre que ya está en el DOM).",
+        explainRight: "Exacto: hay que insertarlo en el DOM, por ejemplo con `document.body.appendChild(p)`."
+      },
+      {
+        level: 4,
+        tag: "Crear y añadir",
+        text: "¿Qué pasa si haces dos veces `document.body.appendChild(p)` con el MISMO nodo `p`?",
+        code:
+`document.body.appendChild(p);
+document.body.appendChild(p);`,
+        choices: [
+          "Aparecen dos <p>",
+          "Da error por duplicado",
+          "Solo hay un <p> porque el nodo se mueve, no se duplica",
+          "Se borra el <p>"
+        ],
+        correctIndex: 2,
+        explainWrong: "Un nodo no puede estar en dos sitios a la vez. `appendChild` mueve el nodo si ya estaba insertado. Para duplicar necesitas crear otro nodo o clonar.",
+        explainRight: "Correcto: se mueve, no se duplica. Para duplicar, clona o crea otro."
+      },
+
+      // Nivel 5 (cloneNode)
+      {
+        level: 5,
+        tag: "Clonado",
+        text: "¿Qué hace `cloneNode(true)`?",
+        code:
+`const copia = nodo.cloneNode(true);`,
+        choices: [
+          "Clona solo la etiqueta (sin hijos)",
+          "Clona el nodo y también sus hijos (clonado profundo)",
+          "Mueve el nodo al final",
+          "Elimina el nodo original"
+        ],
+        correctIndex: 1,
+        explainWrong: "`true` significa 'deep clone': copia el nodo y todo lo que cuelga de él (hijos, texto, etc.).",
+        explainRight: "Exacto: `true` = clonado profundo, incluye hijos."
+      },
+      {
+        level: 5,
+        tag: "Clonado",
+        text: "¿Qué diferencia hay con `cloneNode(false)`?",
+        code:
+`const copia = nodo.cloneNode(false);`,
+        choices: [
+          "No clona nada",
+          "Clona solo el nodo, SIN hijos ni texto interno",
+          "Clona el nodo y lo borra del DOM",
+          "Clona el nodo dos veces"
+        ],
+        correctIndex: 1,
+        explainWrong: "`false` = shallow clone: copia solo el nodo (la etiqueta), sin contenido/hijos.",
+        explainRight: "Correcto: con false copia solo la etiqueta, sin hijos."
+      },
+
+      // Nivel 6 (borrar)
+      {
+        level: 6,
+        tag: "Eliminar",
+        text: "¿Cuál es la forma correcta de eliminar un nodo `li` usando `remove()`?",
+        code:
+`const li = lista.children[0];`,
+        choices: [
+          "lista.remove(li)",
+          "li.remove()",
+          "lista.removeChild()",
+          "document.remove(li)"
+        ],
+        correctIndex: 1,
+        explainWrong: "`remove()` se llama sobre el nodo que quieres borrar: `li.remove()`.",
+        explainRight: "Bien: `li.remove()` elimina ese nodo del DOM."
+      },
+      {
+        level: 6,
+        tag: "Eliminar",
+        text: "¿Cuál es la forma correcta usando `removeChild()`?",
+        code:
+`const li = lista.children[0];`,
+        choices: [
+          "li.removeChild(lista)",
+          "lista.removeChild(li)",
+          "li.removeChild()",
+          "removeChild(lista, li)"
+        ],
+        correctIndex: 1,
+        explainWrong: "Con removeChild se llama al padre: `padre.removeChild(hijo)` => `lista.removeChild(li)`.",
+        explainRight: "Exacto: se llama en el padre y recibe el hijo."
+      },
+      {
+        level: 6,
+        tag: "Eliminar",
+        text: "Si haces `li.remove(); li.remove();` (dos veces), ¿qué ocurre normalmente?",
+        code:
+`li.remove();
+li.remove();`,
+        choices: [
+          "Se eliminan dos li distintos",
+          "La segunda llamada no hace nada porque ya no está en el DOM",
+          "Da un error obligatorio",
+          "Se reinserta automáticamente"
+        ],
+        correctIndex: 1,
+        explainWrong: "La primera lo elimina. La segunda, como ya no está en el DOM, normalmente no hace nada (no se duplica ni se borra otra cosa).",
+        explainRight: "Correcto: la segunda no afecta porque el nodo ya no está insertado."
+      }
+    ];
+
+    // Estado
+    let order = [];
+    let idx = 0;
+    let score = 0;
+    let lives = 3;
+    let wrongTopics = new Map(); // tag -> count
+    let locked = false;
+
+    // UI refs
+    const levelLabel = document.getElementById("levelLabel");
+    const scoreLabel = document.getElementById("scoreLabel");
+    const livesLabel = document.getElementById("livesLabel");
+    const progressText = document.getElementById("progressText");
+    const progressBar = document.getElementById("progressBar");
+    const hintText = document.getElementById("hintText");
+
+    const qTag = document.getElementById("qTag");
+    const qId = document.getElementById("qId");
+    const questionText = document.getElementById("questionText");
+    const questionCode = document.getElementById("questionCode");
+    const answers = document.getElementById("answers");
+
+    const feedback = document.getElementById("feedback");
+    const banner = document.getElementById("banner");
+    const bannerTitle = document.getElementById("bannerTitle");
+    const bannerText = document.getElementById("bannerText");
+    const teacherText = document.getElementById("teacherText");
+    const teacherFocus = document.getElementById("teacherFocus");
+
+    const nextBtn = document.getElementById("nextBtn");
+    const retryBtn = document.getElementById("retryBtn");
+    const resetBtn = document.getElementById("resetBtn");
+
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const modalText = document.getElementById("modalText");
+    const finalScore = document.getElementById("finalScore");
+    const reinforceList = document.getElementById("reinforceList");
+    const closeModalBtn = document.getElementById("closeModalBtn");
+    const playAgainBtn = document.getElementById("playAgainBtn");
+
+    function shuffle(array){
+      for(let i = array.length - 1; i > 0; i--){
+        const j = Math.floor(Math.random() * (i + 1));
+        [array[i], array[j]] = [array[j], array[i]];
+      }
+      return array;
+    }
+
+    function buildOrder(){
+      // Importante: dificultad ascendente
+      // Pero dentro del mismo nivel, barajamos un poco para que sea "juego" sin romper progresión
+      const byLevel = new Map();
+      questions.forEach((q, i) => {
+        if(!byLevel.has(q.level)) byLevel.set(q.level, []);
+        byLevel.get(q.level).push(i);
+      });
+
+      const levels = [...byLevel.keys()].sort((a,b)=>a-b);
+      let o = [];
+      for(const lv of levels){
+        const arr = byLevel.get(lv);
+        shuffle(arr);
+        o = o.concat(arr);
+      }
+      return o;
+    }
+
+    function setHint(tag){
+      const hints = {
+        "Conceptos": "Consejo: un nodo puede ser elemento o texto (los espacios también cuentan).",
+        "children vs childNodes": "Consejo: children = solo etiquetas; childNodes = incluye textos invisibles.",
+        "Hijos directos": "Consejo: children/childNodes miran HIJOS directos, no nietos.",
+        "Crear y añadir": "Consejo: createElement crea en memoria; necesitas append/appendChild para verlo.",
+        "Clonado": "Consejo: cloneNode(true) copia con hijos; cloneNode(false) sin hijos.",
+        "Eliminar": "Consejo: remove() se llama en el nodo; removeChild() se llama en el padre."
+      };
+      hintText.textContent = hints[tag] || "Consejo: DOM = árbol de nodos.";
+    }
+
+    function updateHeader(){
+      const q = questions[order[idx]];
+      levelLabel.textContent = `Nivel ${q.level}`;
+      scoreLabel.textContent = String(score);
+      livesLabel.textContent = String(lives);
+
+      progressText.textContent = `${Math.min(idx+1, order.length)}/${order.length}`;
+      const pct = (idx / order.length) * 100;
+      progressBar.style.width = `${Math.min(100, Math.max(0, pct))}%`;
+
+      setHint(q.tag);
+    }
+
+    function clearFeedback(){
+      feedback.classList.remove("show");
+      banner.classList.remove("ok","bad");
+      bannerTitle.textContent = "—";
+      bannerText.textContent = "—";
+      teacherText.textContent = "";
+      teacherFocus.textContent = "Refuerzo";
+    }
+
+    function renderQuestion(){
+      locked = false;
+      clearFeedback();
+
+      const q = questions[order[idx]];
+      qTag.textContent = `Nivel ${q.level} · ${q.tag}`;
+      qId.textContent = `Pregunta ${idx + 1}`;
+
+      questionText.textContent = q.text;
+      if(q.code && q.code.trim().length > 0){
+        questionCode.style.display = "block";
+        questionCode.textContent = q.code;
+      } else {
+        questionCode.style.display = "none";
+        questionCode.textContent = "";
+      }
+
+      answers.innerHTML = "";
+      q.choices.forEach((label, i) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "choice";
+        btn.textContent = label;
+        btn.addEventListener("click", () => onChoose(i));
+        answers.appendChild(btn);
+      });
+
+      updateHeader();
+    }
+
+    function markWrong(tag){
+      wrongTopics.set(tag, (wrongTopics.get(tag) || 0) + 1);
+    }
+
+    function showFeedback(isCorrect, q, chosenIndex){
+      feedback.classList.add("show");
+      banner.classList.add(isCorrect ? "ok" : "bad");
+      bannerTitle.textContent = isCorrect ? "✅ Correcto" : "❌ Incorrecto";
+
+      if(isCorrect){
+        bannerText.textContent = `Punto para ti (+10).`;
+        teacherFocus.textContent = "Refuerzo rápido";
+        teacherText.textContent = q.explainRight;
+      } else {
+        bannerText.textContent = `Has perdido 1 vida (-1).`;
+        teacherFocus.textContent = "Explicación";
+        teacherText.textContent =
+          `${q.explainWrong}\n\nTu respuesta: "${q.choices[chosenIndex]}".\nLa correcta: "${q.choices[q.correctIndex]}".`;
+      }
+    }
+
+    function onChoose(choiceIndex){
+      if(locked) return;
+      locked = true;
+
+      const q = questions[order[idx]];
+      const ok = (choiceIndex === q.correctIndex);
+
+      // Desactivar botones (evitar dobles clics)
+      [...answers.querySelectorAll("button.choice")].forEach(b => b.disabled = true);
+
+      if(ok){
+        score += 10;
+      } else {
+        lives -= 1;
+        markWrong(q.tag);
+      }
+
+      updateHeader();
+      showFeedback(ok, q, choiceIndex);
+
+      if(lives <= 0){
+        endGame(false);
+      } else if(idx === order.length - 1){
+        endGame(true);
+      }
+    }
+
+    function endGame(won){
+      // Completa barra
+      progressBar.style.width = "100%";
+
+      modal.classList.add("show");
+      modalTitle.textContent = won ? "🏁 ¡Terminado!" : "💥 Game Over";
+      finalScore.textContent = `${score} puntos`;
+
+      if(won){
+        modalText.textContent =
+          "Has completado el recorrido de DOM de fácil a difícil. Ahora ya puedes repetir para reforzar lo que más falla.";
+      } else {
+        modalText.textContent =
+          "Te has quedado sin vidas. No pasa nada: repite y verás que cada ronda se fija mejor.";
+      }
+
+      const entries = [...wrongTopics.entries()].sort((a,b)=>b[1]-a[1]);
+      if(entries.length === 0){
+        reinforceList.textContent = "Nada crítico: vas limpio. Repite para automatizar.";
+      } else {
+        const top = entries.slice(0, 3).map(([tag, n]) => `${tag} (${n} fallos)`);
+        reinforceList.textContent = top.join(" · ");
+      }
+    }
+
+    function resetGame(){
+      order = buildOrder();
+      idx = 0;
+      score = 0;
+      lives = 3;
+      wrongTopics = new Map();
+      modal.classList.remove("show");
+      progressBar.style.width = "0%";
+      renderQuestion();
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if(idx < order.length - 1){
+        idx += 1;
+        renderQuestion();
+      } else {
+        endGame(true);
+      }
+    });
+
+    retryBtn.addEventListener("click", () => {
+      // Repetir la misma pregunta: re-habilita botones y oculta feedback
+      renderQuestion();
+    });
+
+    resetBtn.addEventListener("click", resetGame);
+
+    closeModalBtn.addEventListener("click", () => modal.classList.remove("show"));
+    playAgainBtn.addEventListener("click", resetGame);
+
+    // Arranque
+    resetGame();
+  </script>
+</body>
+</html>

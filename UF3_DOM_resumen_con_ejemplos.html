@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UF3 DOM (DAW) · Resumen + Ejemplos (Parte 1 y Parte 2)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --text:#e9eefc;
+      --muted:#a9b6df;
+      --line:rgba(255,255,255,.12);
+      --accent:#7aa2ff;
+      --ok:#27c27a;
+      --warn:#ffd166;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, #12204d, var(--bg));
+      color: var(--text);
+      padding: 14px;
+    }
+    .wrap{ width:min(980px,100%); margin:0 auto; display:flex; flex-direction:column; gap:14px; }
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      border-radius: 16px;
+      padding: 14px;
+    }
+    header h1{ margin:0; font-size: 18px; }
+    header p{ margin:8px 0 0; color: var(--muted); font-size: 13px; line-height:1.4; }
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+      border-radius: 16px;
+      padding: 14px;
+    }
+    h2{ margin:0 0 8px; font-size: 16px; }
+    h3{ margin:14px 0 8px; font-size: 15px; }
+    .sub{ margin:0 0 10px; color: var(--muted); font-size: 13px; line-height:1.45; }
+    .pillrow{ display:flex; flex-wrap:wrap; gap:8px; margin-top:10px; }
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius:999px;
+      padding:6px 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    code, pre{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+    }
+    code{
+      background: rgba(122,162,255,.12);
+      border: 1px solid rgba(122,162,255,.22);
+      padding: 2px 6px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    pre{
+      margin: 10px 0 0;
+      padding: 12px;
+      border-radius: 12px;
+      background: #0a0f22;
+      border: 1px solid rgba(255,255,255,.10);
+      overflow:auto;
+      color: #dfe7ff;
+      line-height:1.45;
+    }
+    table{
+      width:100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow:hidden;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      font-size: 13px;
+      margin-top:10px;
+    }
+    th, td{
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th{ text-align:left; background: rgba(255,255,255,.05); }
+    tr:last-child td{ border-bottom:none; }
+    .note{
+      display:flex; gap:10px; align-items:flex-start;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .dot{
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--warn);
+      margin-top: 4px; flex: 0 0 auto;
+    }
+    .dot.ok{ background: var(--ok); }
+    .dot.accent{ background: var(--accent); }
+    .toc a{ color: var(--text); text-decoration: none; border-bottom:1px dashed rgba(255,255,255,.25); }
+    .toc a:hover{ border-bottom-color: rgba(255,255,255,.55); }
+    .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width: 720px){ .grid2{ grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>UF3 (2º DAW) · DOM — Resumen completo con ejemplos (lo visto)</h1>
+      <p>
+        Chuleta de repaso: <strong>selectores</strong>, <strong>children vs childNodes</strong>,
+        <strong>textContent</strong>, <strong>create/append/insert</strong>, <strong>remove/removeChild</strong>,
+        y UF3 Parte 2: <strong>mover vs copiar</strong>, <strong>cloneNode</strong>, <strong>listas vivas vs estáticas</strong> y bucles correctos.
+      </p>
+      <div class="pillrow">
+        <span class="pill">UF3 · Parte 1: selectores → remove</span>
+        <span class="pill">UF3 · Parte 2: cloneNode y bucles seguros</span>
+        <span class="pill">Pensado para móvil</span>
+      </div>
+    </header>
+
+    <section class="card toc">
+      <h2>Índice</h2>
+      <p class="sub">Toca para saltar a la sección.</p>
+      <div class="grid2">
+        <div>
+          <p>1) <a href="#selectores">Selectores</a></p>
+          <p>2) <a href="#children">children vs childNodes</a></p>
+          <p>3) <a href="#textcontent">textContent</a></p>
+          <p>4) <a href="#crear-insertar">Crear / Insertar</a></p>
+        </div>
+        <div>
+          <p>5) <a href="#borrar">Borrar</a></p>
+          <p>6) <a href="#mover-copiar">Mover vs Copiar</a></p>
+          <p>7) <a href="#listas">Listas vivas vs estáticas + bucles</a></p>
+          <p>8) <a href="#copiar-especificos">Copiar nodos específicos</a></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="selectores">
+      <h2>1) Selectores (seleccionar elementos)</h2>
+      <p class="sub"><strong>Regla de oro:</strong> si hay ID → usa <code>getElementById</code>. Con CSS usa <code>querySelector</code>/<code>querySelectorAll</code>.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Qué</th>
+            <th>Sintaxis</th>
+            <th>Devuelve</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>ID</td>
+            <td><code>document.getElementById("menu")</code></td>
+            <td>1 elemento</td>
+          </tr>
+          <tr>
+            <td>Clase</td>
+            <td><code>document.getElementsByClassName("item")</code></td>
+            <td>HTMLCollection (viva)</td>
+          </tr>
+          <tr>
+            <td>Etiqueta</td>
+            <td><code>document.getElementsByTagName("li")</code></td>
+            <td>HTMLCollection (viva)</td>
+          </tr>
+          <tr>
+            <td>CSS (1)</td>
+            <td><code>document.querySelector(".item")</code></td>
+            <td>1 elemento (el primero)</td>
+          </tr>
+          <tr>
+            <td>CSS (varios)</td>
+            <td><code>document.querySelectorAll("li")</code></td>
+            <td>NodeList (estática)</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <div class="dot accent"></div>
+        <div>
+          <strong>Truco CSS:</strong> etiqueta = <code>"li"</code> (sin símbolos), clase = <code>".item"</code>, id = <code>"#menu"</code>.
+        </div>
+      </div>
+
+      <h3>Ejemplo</h3>
+      <pre>&lt;ul id="menu"&gt;
+  &lt;li class="item"&gt;Inicio&lt;/li&gt;
+  &lt;li class="item"&gt;Servicios&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script&gt;
+const menu = document.getElementById("menu");
+const primeroItem = document.querySelector(".item");
+const todosLosLi = document.querySelectorAll("#menu li");
+&lt;/script&gt;</pre>
+    </section>
+
+    <section class="card" id="children">
+      <h2>2) children vs childNodes</h2>
+      <p class="sub"><strong>children</strong> = solo etiquetas. <strong>childNodes</strong> = incluye textos (saltos/espacios) + etiquetas.</p>
+
+      <pre>&lt;div id="caja"&gt;
+  &lt;p&gt;Hola&lt;/p&gt;
+  &lt;p&gt;DAW&lt;/p&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+const caja = document.getElementById("caja");
+
+console.log(caja.children.length);   // cuenta &lt;p&gt; (solo etiquetas)
+console.log(caja.childNodes.length); // cuenta saltos/espacios + etiquetas
+&lt;/script&gt;</pre>
+
+      <div class="note">
+        <div class="dot"></div>
+        <div>
+          En HTML real suele haber saltos de línea → <code>childNodes</code> “ve” nodos texto. Por eso a veces “sale más”.
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="textcontent">
+      <h2>3) textContent (leer y modificar texto)</h2>
+      <p class="sub"><strong>Regla:</strong> <code>textContent</code> es una <strong>propiedad</strong> (se usa con <code>=</code>).</p>
+
+      <pre>&lt;ul id="lista"&gt;
+  &lt;li&gt;Manzana&lt;/li&gt;
+  &lt;li&gt;Plátano&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script&gt;
+const lista = document.getElementById("lista");
+
+// Leer
+console.log(lista.children[1].textContent); // "Plátano"
+
+// Modificar
+lista.children[1].textContent = "Pera";
+&lt;/script&gt;</pre>
+    </section>
+
+    <section class="card" id="crear-insertar">
+      <h2>4) Crear e insertar (createElement / appendChild / insertBefore)</h2>
+      <p class="sub"><strong>Orden mental:</strong> crear → poner texto → insertar.</p>
+
+      <h3>Crear y añadir al final</h3>
+      <pre>&lt;ul id="lista"&gt;
+  &lt;li&gt;A&lt;/li&gt;
+  &lt;li&gt;B&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script&gt;
+const lista = document.getElementById("lista");
+
+const li = document.createElement("li");
+li.textContent = "C";
+
+lista.appendChild(li); // al final
+&lt;/script&gt;</pre>
+
+      <h3>Insertar en posición (antes de un nodo referencia)</h3>
+      <pre>&lt;ul id="lista"&gt;
+  &lt;li&gt;A&lt;/li&gt;
+  &lt;li&gt;C&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;script&gt;
+const lista = document.getElementById("lista");
+
+const li = document.createElement("li");
+li.textContent = "B";
+
+lista.insertBefore(li, lista.children[1]); // antes de "C"
+&lt;/script&gt;</pre>
+    </section>
+
+    <section class="card" id="borrar">
+      <h2>5) Borrar (remove / removeChild)</h2>
+      <p class="sub"><strong>Nemotecnia:</strong> <code>remove()</code> = “yo me borro”. <code>removeChild()</code> = “papá me borra”.</p>
+
+      <h3>remove()</h3>
+      <pre>&lt;script&gt;
+const lista = document.getElementById("lista");
+lista.children[1].remove();
+&lt;/script&gt;</pre>
+
+      <h3>removeChild()</h3>
+      <pre>&lt;script&gt;
+const lista = document.getElementById("lista");
+lista.removeChild(lista.children[1]);
+&lt;/script&gt;</pre>
+    </section>
+
+    <section class="card" id="mover-copiar">
+      <h2>6) Mover vs copiar (appendChild vs cloneNode)</h2>
+      <p class="sub"><strong>Regla MAESTRA:</strong> <code>appendChild</code> <strong>MUEVE</strong>. <code>cloneNode(true)</code> <strong>COPIA</strong>.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Acción</th>
+            <th>Método</th>
+            <th>Qué pasa</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mover</td>
+            <td><code>destino.appendChild(nodo)</code></td>
+            <td>Sale del origen y aparece en destino</td>
+          </tr>
+          <tr>
+            <td>Copiar</td>
+            <td><code>const c = nodo.cloneNode(true)</code></td>
+            <td>Original intacto + copia nueva</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>Ejemplo: copiar 1 nodo sin que desaparezca</h3>
+      <pre>&lt;ul id="origen"&gt;
+  &lt;li&gt;JS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul id="destino"&gt;&lt;/ul&gt;
+
+&lt;script&gt;
+const origen = document.getElementById("origen");
+const destino = document.getElementById("destino");
+
+const liOriginal = origen.children[0];
+const liCopia = liOriginal.cloneNode(true);
+
+destino.appendChild(liCopia);
+&lt;/script&gt;</pre>
+    </section>
+
+    <section class="card" id="listas">
+      <h2>7) Listas vivas vs estáticas + bucles correctos</h2>
+      <p class="sub">
+        <strong>VIVA</strong>: cambia al mover nodos (HTMLCollection: <code>children</code>, <code>getElementsByClassName</code>, <code>getElementsByTagName</code>).<br/>
+        <strong>ESTÁTICA</strong>: no cambia (NodeList: <code>querySelectorAll</code>).
+      </p>
+
+      <div class="grid2">
+        <div>
+          <h3>7.1 Lista VIVA → recorrer con <code>while</code> (mover)</h3>
+          <pre>&lt;ul id="origen"&gt;
+  &lt;li class="item"&gt;A&lt;/li&gt;
+  &lt;li class="item"&gt;B&lt;/li&gt;
+  &lt;li class="item"&gt;C&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul id="destino"&gt;&lt;/ul&gt;
+
+&lt;script&gt;
+const destino = document.getElementById("destino");
+const items = document.getElementsByClassName("item"); // VIVA
+
+while (items.length &gt; 0) {
+  destino.appendChild(items[0]); // MUEVE
+}
+&lt;/script&gt;</pre>
+        </div>
+
+        <div>
+          <h3>7.2 Lista ESTÁTICA → recorrer con <code>for</code> (copiar)</h3>
+          <pre>&lt;ul id="origen"&gt;
+  &lt;li&gt;A&lt;/li&gt;
+  &lt;li&gt;B&lt;/li&gt;
+  &lt;li&gt;C&lt;/li&gt;
+&lt;/ul&gt;
+&lt;ul id="destino"&gt;&lt;/ul&gt;
+
+&lt;script&gt;
+const origen = document.getElementById("origen");
+const destino = document.getElementById("destino");
+
+const items = origen.querySelectorAll("li"); // ESTÁTICA
+
+for (let i = 0; i &lt; items.length; i++) {
+  const copia = items[i].cloneNode(true); // COPIA
+  destino.appendChild(copia);
+}
+&lt;/script&gt;</pre>
+        </div>
+      </div>
+
+      <div class="note">
+        <div class="dot ok"></div>
+        <div>
+          <strong>Tabla mental:</strong> lista <em>viva</em> → <code>while</code>. lista <em>estática</em> → <code>for</code>/<code>forEach</code>.
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="copiar-especificos">
+      <h2>8) Copiar nodos específicos (por posición o por texto)</h2>
+      <p class="sub"><strong>Flujo:</strong> seleccionar todos → recorrer → condición → clonar → añadir.</p>
+
+      <h3>8.1 Copiar posiciones pares (0,2,4...)</h3>
+      <pre>&lt;script&gt;
+const origen = document.getElementById("origen");
+const destino = document.getElementById("destino");
+
+const items = origen.querySelectorAll("li");
+
+for (let i = 0; i &lt; items.length; i++) {
+  if (i % 2 === 0) {
+    destino.appendChild(items[i].cloneNode(true));
+  }
+}
+&lt;/script&gt;</pre>
+
+      <h3>8.2 Copiar solo el que tenga texto "C"</h3>
+      <pre>&lt;script&gt;
+const origen = document.getElementById("origen");
+const destino = document.getElementById("destino");
+
+const items = origen.querySelectorAll("li");
+
+for (let i = 0; i &lt; items.length; i++) {
+  if (items[i].textContent === "C") {
+    destino.appendChild(items[i].cloneNode(true));
+  }
+}
+&lt;/script&gt;</pre>
+
+      <div class="note">
+        <div class="dot"></div>
+        <div>
+          <strong>Ojo:</strong> comparar texto con <code>===</code>. Y recuerda: <code>"C"</code> no es lo mismo que <code>"c"</code>.
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Mini-chuleta final (muy examen)</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Quiero…</th>
+            <th>Uso…</th>
+            <th>Bucle</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Mover todos</td>
+            <td><code>appendChild</code> + <code>children/getElements*</code></td>
+            <td><code>while</code></td>
+          </tr>
+          <tr>
+            <td>Copiar varios</td>
+            <td><code>querySelectorAll</code> + <code>cloneNode(true)</code></td>
+            <td><code>for</code> / <code>forEach</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <div class="dot ok"></div>
+        <div>
+          <strong>Nemotecnia:</strong> APPEND = ARRANCA (mueve) · CLONE = COPIA · VIVA = while · FOTO = for.
+        </div>
+      </div>
+    </section>
+
+    <footer class="card">
+      <h2>Fin ✅</h2>
+      <p class="sub">Si quieres, te hago una versión “ultra 1 página” o un test tipo examen solo de DOM.</p>
+    </footer>
+  </div>
+</body>
+</html>

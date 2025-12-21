@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario ejercicio</title>
+    <link rel="stylesheet" href="form.css">
+</head>
+
+<body>
+    <h1>Formulario de ejercicio</h1>
+    <form  
+    id="formContacto"
+    name="formContacto"
+    action="#" 
+    method="post"
+    enctype="application/x-www-form-urlencoded">
+    <!--Campo de entrada nombre-->
+    <label for="nombre">Nombre</label>
+    <input type="text" id="nombre" name="nombre" required>
+    <!--Campo de entrada correo electrónico-->
+    <label for="email">Correo electrónico</label>
+    <input type="email" id="email" name="email" required>
+    <!--Campo de texto para mensaje-->
+    <label for="mensaje">Mensaje</label>
+    <textarea  id="mensaje" name="mensaje" placeholder="Escriba su mensaje" required></textarea>
+    <!--Botón de envío-->
+    <button type="submit">Enviar</button>
+    </form>
+    <!--Área de vista previa-->
+    <section id="vistaPrevia">
+        <h2>Vista previa</h2>
+        <p id="previsualizacion">Aún no hay datos</p>
+    </section>
+    <!--Script d js para funcionalidades al final-->
+    <script src="form.js"></script>
+ </body>
+
+</html>

@@ -1,0 +1,33 @@
+<!doctype html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Formulario básico</title>
+
+</head>
+
+<body>
+    <h1>Mi primer formulario</h1>
+
+    <form action="https://www.gomezopticos.es" method="POST" enctype="application/x-www-form-urlencoded" target="_blank">
+        <label for="nombre">Nombre:</label><br>
+        <input id="nombre" name="nombre" type="text" required><br><br>
+        <label for="email">Correo electrónico:</label><br>
+        <input id="email" name="email" type="email" required><br><br>
+
+        <label for="mensaje">Mensaje:</label><br>
+        <textarea id="mensaje" name="mensaje" rows="4" placeholder="Escribe tu mensaje aquí..."></textarea><br><br>
+        <button type="submit" value="Enviar">Enviar</button><br><br>
+        <button type="reset" value="Borrar">Borrar todo</button>
+    </form>
+
+</body>
+
+
+
+
+
+
+</html>

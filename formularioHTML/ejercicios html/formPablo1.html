@@ -1,0 +1,71 @@
+<!-- 1. Formulario de contacto básico
+Crea un formulario POST con: nombre (texto), email (email), asunto
+(select) y mensaje (textarea).
+Usa <label> y required en todos.
+En el <select id="asunto">, agrupa opciones con <optgroup
+label="General"> (p. ej., Consulta, Sugerencia) y <optgroup
+label="Soporte"> (Incidencia).
+Botón “Enviar”. -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="formpablo1.css">
+</head>
+
+<body>
+
+    <form action="URL" method="post" enctype="application/x-www-form-urlencoded" target="_blank">
+        <h1>Formulario Pablo 1</h1>
+        <fieldset>
+            <legend>Formulario de contacto básico</legend>
+            <div>
+                <label for="nick">Nombre*</label>
+                <input id="nick" name="nick" type="text" required placeholder="Tu nombre"
+                    title="Escribe nombre completo">
+            </div>
+            <div>
+                <label for="email">Email*</label>
+                <input id="email" name="email" type="email" required autocomplete="email"
+                    placeholder="ejemplo@dominio.es" title="escribe mail con dominio y @">
+
+            </div>
+            <div>
+                <label for="asunto">Asunto*</label>
+                <select id="asunto" name="asunto" required>
+                    
+                    <option value="Elija una opción" disabled selected>Elija un opción</option>
+                    
+                    <optgroup label="general">
+
+                        <option value="general1">general1</option>
+                        <option value="general2">general2</option>
+                    </optgroup>
+                    <optgroup label="soporte">
+                        <option value="incidencia1">Incidencia1</option>
+                        <option value="incidencia1">Incidencia1</option>
+
+                    </optgroup>
+                </select>
+
+            </div>
+            <div>
+                <label for="mensaje">Mensaje</label>
+                <textarea id="mensaje" name="mensaje" cols="40" rows="7" minlength="320">escribe el mensaje</textarea>
+            </div>
+
+        </fieldset>
+        <div class="prueba">
+            <small>*campos obligatorios</small>
+        </div>
+        <div>
+            <button type="submit">Enviar</button>
+        </div>
+    </form>
+
+</body>
+
+</html>

@@ -1,0 +1,60 @@
+<!-- 4. Reserva con fechas y cantidades
+Formulario GET con: destino (select), fecha de entrada/salida
+(type="date", required) y personas (type="number", min="1", max="10",
+required).
+Envuelve los campos en un <fieldset> con <legend>Datos de la
+reserva</legend>.
+En el <select id="destino">, usa <optgroup label="España"> (Madrid,
+Barcelona, Valencia) y <optgroup label="Europa"> (París, Roma).
+Botón “Buscar”. -->
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <form action="#" method="get" enctype="application/x-www-form-urlencoded" 
+    target="_blank">
+    <fieldset>
+        <legend>Datos de la reserva</legend>
+        <div>
+        <label for="destino">Destino</label>
+        <select id="destino" name="destino">
+            <option value="Elige_destino" disabled selected>Elige destino</option>
+            <optgroup label="España">
+                
+                <option value="Madrid">Madrid</option>
+                <option value="Barcelona">Barcelona</option>
+                <option value="Valencia">Valencia</option>
+            </optgroup>
+            <optgroup label="Europa">
+                <option value="Paris">París</option>
+                <option value="Roma">Roma</option>
+            </optgroup>
+        </select>
+        </div>
+        <div>
+        <label for="fecha_entrada">Fecha entrada</label>
+        <input id="fecha_entrada" name="fecha" type="date" required>
+        </div>
+        <div>
+          <label for="fecha_salida">Fecha salida</label>
+        <input id="fecha_salida" name="fecha" type="date" required>  
+        </div>
+        <div>
+            <label for="personas">Numero personas</label>
+            <input id="personas" name="personas" type="number" min="1" max="10" required>
+        </div>
+        <div>
+            <button type="submit">Buscar</button>
+        </div>
+    </fieldset>
+
+
+
+
+</form>
+</body>
+</html>

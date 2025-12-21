@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UF3 · Práctica Storage (localStorage / sessionStorage)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --text:#e9eefc;
+      --muted:#a9b6df;
+      --line:rgba(255,255,255,.12);
+      --accent:#7aa2ff;
+      --ok:#27c27a;
+      --warn:#ffd166;
+      --danger:#ff6b6b;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1100px 800px at 15% 0%, #12204d, var(--bg));
+      color: var(--text);
+      padding: 14px;
+    }
+    .wrap{ width:min(980px,100%); margin:0 auto; display:flex; flex-direction:column; gap:14px; }
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      border-radius: 16px;
+      padding: 14px;
+    }
+    header h1{ margin:0; font-size: 18px; }
+    header p{ margin:8px 0 0; color: var(--muted); font-size: 13px; line-height:1.45; }
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+      border-radius: 16px;
+      padding: 14px;
+    }
+    h2{ margin:0 0 8px; font-size: 16px; }
+    h3{ margin:12px 0 8px; font-size: 14px; }
+    .sub{ margin:0 0 10px; color: var(--muted); font-size: 13px; line-height:1.45; }
+    .row{ display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    input, select, button{
+      font: inherit;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: rgba(0,0,0,.25);
+      color: var(--text);
+      padding: 10px 12px;
+      outline: none;
+    }
+    input{ min-width: 210px; flex: 1 1 210px; }
+    select{ min-width: 190px; }
+    button{
+      cursor:pointer;
+      background: rgba(122,162,255,.20);
+      border-color: rgba(122,162,255,.35);
+    }
+    button:hover{ filter: brightness(1.05); }
+    .btn-ok{ background: rgba(39,194,122,.20); border-color: rgba(39,194,122,.35); }
+    .btn-warn{ background: rgba(255,209,102,.16); border-color: rgba(255,209,102,.32); }
+    .btn-danger{ background: rgba(255,107,107,.18); border-color: rgba(255,107,107,.35); }
+    .pill{
+      display:inline-block;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      border-radius:999px;
+      padding:5px 10px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    .grid2{ display:grid; grid-template-columns: 1fr 1fr; gap:12px; }
+    @media (max-width: 760px){ .grid2{ grid-template-columns:1fr; } }
+    pre{
+      margin: 10px 0 0;
+      padding: 12px;
+      border-radius: 12px;
+      background: #0a0f22;
+      border: 1px solid rgba(255,255,255,.10);
+      overflow:auto;
+      color: #dfe7ff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+      line-height:1.45;
+    }
+    .note{
+      display:flex; gap:10px; align-items:flex-start;
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.45;
+    }
+    .dot{ width: 10px; height: 10px; border-radius: 50%; background: var(--warn); margin-top: 4px; flex: 0 0 auto; }
+    .dot.ok{ background: var(--ok); }
+    .status{
+      padding:10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      font-size: 13px;
+      min-height: 44px;
+      display:flex;
+      align-items:center;
+    }
+    table{
+      width:100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow:hidden;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      font-size: 13px;
+      margin-top:10px;
+    }
+    th, td{ padding: 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+    th{ text-align:left; background: rgba(255,255,255,.05); }
+    tr:last-child td{ border-bottom:none; }
+    code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      background: rgba(122,162,255,.12);
+      border: 1px solid rgba(122,162,255,.22);
+      padding: 2px 6px;
+      border-radius: 999px;
+      white-space: nowrap;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>UF3 · Práctica de Storage (tipo examen)</h1>
+      <p>
+        Practica <strong>localStorage</strong> y <strong>sessionStorage</strong>: guardar, leer, borrar, y guardar objetos con JSON.
+        Abre este archivo en el móvil y prueba los botones.
+      </p>
+      <div class="row" style="margin-top:10px;">
+        <span class="pill">✅ setItem / getItem / removeItem / clear</span>
+        <span class="pill">✅ local vs session</span>
+        <span class="pill">✅ JSON.stringify / JSON.parse</span>
+      </div>
+    </header>
+
+    <section class="card">
+      <h2>Chuleta rápida</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Acción</th>
+            <th>localStorage</th>
+            <th>sessionStorage</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Guardar</td>
+            <td><code>localStorage.setItem("k","v")</code></td>
+            <td><code>sessionStorage.setItem("k","v")</code></td>
+          </tr>
+          <tr>
+            <td>Leer</td>
+            <td><code>localStorage.getItem("k")</code></td>
+            <td><code>sessionStorage.getItem("k")</code></td>
+          </tr>
+          <tr>
+            <td>Borrar 1</td>
+            <td><code>localStorage.removeItem("k")</code></td>
+            <td><code>sessionStorage.removeItem("k")</code></td>
+          </tr>
+          <tr>
+            <td>Borrar todo</td>
+            <td><code>localStorage.clear()</code></td>
+            <td><code>sessionStorage.clear()</code></td>
+          </tr>
+          <tr>
+            <td>Guardar objeto</td>
+            <td colspan="2"><code>JSON.stringify(obj)</code> + <code>JSON.parse(texto)</code></td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <div class="dot ok"></div>
+        <div>
+          <strong>Regla de examen:</strong> Storage guarda <strong>strings</strong>. Si quieres guardar un objeto → JSON.
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Ejercicio A · Guardar y leer un dato (Nombre)</h2>
+      <p class="sub">
+        Escribe un nombre, elige dónde guardarlo (local o session), y prueba <strong>Guardar</strong> / <strong>Cargar</strong>.
+      </p>
+
+      <div class="row">
+        <input id="nombre" type="text" placeholder="Escribe tu nombre..." />
+        <select id="tipoStorage">
+          <option value="local">localStorage (permanece)</option>
+          <option value="session">sessionStorage (se borra al cerrar)</option>
+        </select>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button id="btnGuardar" class="btn-ok">Guardar</button>
+        <button id="btnCargar">Cargar</button>
+        <button id="btnBorrar" class="btn-danger">Borrar clave</button>
+        <button id="btnClear" class="btn-warn">Borrar TODO</button>
+      </div>
+
+      <div class="status" id="estadoA" style="margin-top:10px;"></div>
+
+      <h3>Código (para repasar)</h3>
+      <pre>// Guardar
+storage.setItem("nombre", nombre.value);
+
+// Leer
+const valor = storage.getItem("nombre");
+
+// Borrar 1
+storage.removeItem("nombre");
+
+// Borrar todo
+storage.clear();</pre>
+    </section>
+
+    <section class="card">
+      <h2>Ejercicio B · Guardar un objeto (Usuario) con JSON</h2>
+      <p class="sub">
+        Guardaremos un objeto con <strong>nombre</strong> y <strong>edad</strong>. Recuerda: storage solo guarda strings.
+      </p>
+
+      <div class="row">
+        <input id="userNombre" type="text" placeholder="Nombre de usuario..." />
+        <input id="userEdad" type="number" min="0" placeholder="Edad..." />
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button id="btnGuardarObj" class="btn-ok">Guardar objeto en localStorage</button>
+        <button id="btnCargarObj">Cargar objeto</button>
+        <button id="btnBorrarObj" class="btn-danger">Borrar objeto</button>
+      </div>
+
+      <div class="status" id="estadoB" style="margin-top:10px;"></div>
+
+      <h3>Código (para repasar)</h3>
+      <pre>const usuario = { nombre: "Ana", edad: 20 };
+localStorage.setItem("usuario", JSON.stringify(usuario));
+
+const texto = localStorage.getItem("usuario");
+const usuarioRec = JSON.parse(texto);</pre>
+    </section>
+
+    <section class="card">
+      <h2>Mini-test rápido</h2>
+      <p class="sub">Marca una opción y pulsa comprobar.</p>
+
+      <div class="grid2">
+        <div class="card" style="padding:12px;">
+          <h3 style="margin-top:0;">Pregunta 1</h3>
+          <p class="sub">¿Qué devuelve <code>getItem</code> si la clave no existe?</p>
+          <label><input type="radio" name="q1" value="a"> a) "" (string vacío)</label><br>
+          <label><input type="radio" name="q1" value="b"> b) 0</label><br>
+          <label><input type="radio" name="q1" value="c"> c) null</label><br>
+          <label><input type="radio" name="q1" value="d"> d) undefined</label><br>
+        </div>
+
+        <div class="card" style="padding:12px;">
+          <h3 style="margin-top:0;">Pregunta 2</h3>
+          <p class="sub">¿Qué storage se mantiene aunque cierres el navegador?</p>
+          <label><input type="radio" name="q2" value="a"> a) sessionStorage</label><br>
+          <label><input type="radio" name="q2" value="b"> b) localStorage</label><br>
+          <label><input type="radio" name="q2" value="c"> c) cookieStorage</label><br>
+          <label><input type="radio" name="q2" value="d"> d) tempStorage</label><br>
+        </div>
+      </div>
+
+      <div class="row" style="margin-top:10px;">
+        <button id="btnTest" class="btn-ok">Comprobar test</button>
+      </div>
+
+      <div class="status" id="estadoTest" style="margin-top:10px;"></div>
+    </section>
+
+    <footer class="card">
+      <h2>Cómo practicar</h2>
+      <p class="sub">
+        1) Haz el Ejercicio A con <strong>local</strong> y luego con <strong>session</strong>.<br>
+        2) Cierra la pestaña y vuelve a abrir: comprueba qué se ha borrado.<br>
+        3) En el Ejercicio B, guarda y carga el objeto y fíjate en JSON.
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    function getStorage(tipo) {
+      return (tipo === "session") ? sessionStorage : localStorage;
+    }
+
+    // ===== Ejercicio A =====
+    const nombre = document.getElementById("nombre");
+    const tipoStorage = document.getElementById("tipoStorage");
+    const estadoA = document.getElementById("estadoA");
+
+    const btnGuardar = document.getElementById("btnGuardar");
+    const btnCargar = document.getElementById("btnCargar");
+    const btnBorrar = document.getElementById("btnBorrar");
+    const btnClear = document.getElementById("btnClear");
+
+    function setEstadoA(msg) {
+      estadoA.textContent = msg;
+    }
+
+    btnGuardar.addEventListener("click", function () {
+      const storage = getStorage(tipoStorage.value);
+      storage.setItem("nombre", nombre.value);
+      setEstadoA("✅ Guardado en " + (tipoStorage.value === "session" ? "sessionStorage" : "localStorage") + ": " + nombre.value);
+    });
+
+    btnCargar.addEventListener("click", function () {
+      const storage = getStorage(tipoStorage.value);
+      const valor = storage.getItem("nombre");
+      if (valor === null) {
+        setEstadoA("⚠️ No hay nada guardado con la clave 'nombre' en ese storage.");
+      } else {
+        setEstadoA("📦 Cargado desde " + (tipoStorage.value === "session" ? "sessionStorage" : "localStorage") + ": " + valor);
+        nombre.value = valor;
+      }
+    });
+
+    btnBorrar.addEventListener("click", function () {
+      const storage = getStorage(tipoStorage.value);
+      storage.removeItem("nombre");
+      setEstadoA("🗑️ Clave 'nombre' borrada en " + (tipoStorage.value === "session" ? "sessionStorage" : "localStorage") + ".");
+    });
+
+    btnClear.addEventListener("click", function () {
+      const storage = getStorage(tipoStorage.value);
+      storage.clear();
+      setEstadoA("🧹 Borrado TODO el " + (tipoStorage.value === "session" ? "sessionStorage" : "localStorage") + ".");
+    });
+
+    setEstadoA("Escribe un nombre y pulsa Guardar. Luego prueba Cargar.");
+
+    // ===== Ejercicio B =====
+    const userNombre = document.getElementById("userNombre");
+    const userEdad = document.getElementById("userEdad");
+    const estadoB = document.getElementById("estadoB");
+
+    const btnGuardarObj = document.getElementById("btnGuardarObj");
+    const btnCargarObj = document.getElementById("btnCargarObj");
+    const btnBorrarObj = document.getElementById("btnBorrarObj");
+
+    function setEstadoB(msg) {
+      estadoB.textContent = msg;
+    }
+
+    btnGuardarObj.addEventListener("click", function () {
+      const usuario = {
+        nombre: userNombre.value,
+        edad: Number(userEdad.value)
+      };
+
+      localStorage.setItem("usuario", JSON.stringify(usuario));
+      setEstadoB("✅ Objeto guardado en localStorage con clave 'usuario': " + JSON.stringify(usuario));
+    });
+
+    btnCargarObj.addEventListener("click", function () {
+      const texto = localStorage.getItem("usuario");
+      if (texto === null) {
+        setEstadoB("⚠️ No existe la clave 'usuario' en localStorage.");
+        return;
+      }
+      const usuario = JSON.parse(texto);
+      userNombre.value = usuario.nombre ?? "";
+      userEdad.value = (usuario.edad ?? "");
+      setEstadoB("📦 Objeto cargado: nombre=" + usuario.nombre + ", edad=" + usuario.edad);
+    });
+
+    btnBorrarObj.addEventListener("click", function () {
+      localStorage.removeItem("usuario");
+      setEstadoB("🗑️ Objeto borrado (clave 'usuario') en localStorage.");
+    });
+
+    setEstadoB("Rellena nombre y edad, guarda el objeto y luego cárgalo.");
+
+    // ===== Mini-test =====
+    const btnTest = document.getElementById("btnTest");
+    const estadoTest = document.getElementById("estadoTest");
+
+    function getAnswer(name) {
+      const checked = document.querySelector('input[name="' + name + '"]:checked');
+      return checked ? checked.value : null;
+    }
+
+    btnTest.addEventListener("click", function () {
+      const a1 = getAnswer("q1");
+      const a2 = getAnswer("q2");
+
+      let ok = 0;
+      let msg = "";
+
+      if (a1 === "c") ok++; else msg += "❌ P1: La correcta es c) null. ";
+      if (a2 === "b") ok++; else msg += "❌ P2: La correcta es b) localStorage. ";
+
+      if (ok === 2) {
+        estadoTest.textContent = "✅ Perfecto: 2/2 correctas.";
+      } else {
+        estadoTest.textContent = "Resultado: " + ok + "/2. " + msg;
+      }
+    });
+  </script>
+</body>
+</html>

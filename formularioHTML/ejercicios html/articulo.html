@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Quiz: Artículos en inglés (a / an / the / Ø)</title>
+  <style>
+    :root{--bg:#0f172a;--card:#111827;--muted:#94a3b8;--accent:#22c55e;--danger:#ef4444;--brand:#38bdf8}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Ubuntu,Helvetica,Arial,sans-serif;background:linear-gradient(180deg,#0b1025,#0f172a);color:#e5e7eb}
+    .container{max-width:880px;margin:24px auto;padding:24px}
+    .card{background:linear-gradient(180deg,#0f172a,#0b1025);border:1px solid #1f2937;border-radius:18px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+    h1{font-size:clamp(22px,2.8vw,32px);margin:0 0 4px;}
+    .sub{color:var(--muted);margin:0 0 18px}
+    .controls{display:flex;gap:12px;flex-wrap:wrap;margin:14px 0 18px}
+    .btn{appearance:none;border:1px solid #303a4a;background:#0b1220;color:#e5e7eb;border-radius:12px;padding:10px 14px;font-weight:600;cursor:pointer;transition:.2s}
+    .btn:hover{border-color:#4b5563;transform:translateY(-1px)}
+    .btn.primary{background:linear-gradient(180deg,#0ea5e9,#0284c7);border-color:#0284c7}
+    .btn.success{background:linear-gradient(180deg,#22c55e,#16a34a);border-color:#16a34a}
+    .btn.ghost{background:transparent}
+    .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
+    .progress{height:10px;background:#121a2a;border:1px solid #1f2937;border-radius:999px;overflow:hidden}
+    .bar{height:100%;width:0;background:linear-gradient(90deg,#38bdf8,#22c55e)}
+    fieldset{border:1px solid #1f2937;border-radius:14px;padding:14px;margin:0}
+    legend{padding:0 8px;color:#cbd5e1}
+    .qtext{font-size:18px;margin:0 0 10px}
+    .option{display:flex;align-items:center;gap:10px;padding:8px;border-radius:10px}
+    .option input{accent-color:#38bdf8}
+    .option.correct{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35)}
+    .option.incorrect{background:rgba(239,68,68,.10);border:1px solid rgba(239,68,68,.30)}
+    .feedback{margin:12px 0 0;padding:12px;border-radius:10px;font-size:15px}
+    .feedback.ok{background:rgba(34,197,94,.12);border:1px solid rgba(34,197,94,.35)}
+    .feedback.no{background:rgba(239,68,68,.10);border:1px solid rgba(239,68,68,.30)}
+    .meta{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:12px 0}
+    .muted{color:var(--muted)}
+    .score{font-weight:700}
+    .hidden{display:none}
+    .footer{margin-top:20px;color:#94a3b8;font-size:13px}
+    .list{margin-top:10px}
+    .list details{background:#0b1220;border:1px solid #1f2937;border-radius:10px;padding:8px 12px;margin:8px 0}
+    .pill{display:inline-block;background:#0b1220;border:1px solid #1f2937;border-radius:999px;padding:4px 10px;font-size:12px;color:#cbd5e1}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="card">
+      <h1>Quiz: Artículos en inglés</h1>
+      <p class="sub">a / an / the / Ø — 40 preguntas con corrección inmediata y explicación. Etiquetas <code>&lt;label&gt;</code> asociadas de forma <strong>explícita</strong>.</p>
+
+      <div class="meta">
+        <div><span class="pill" id="mode-pill">Modo: examen</span></div>
+        <div class="score">Aciertos: <span id="score">0</span>/<span id="total">0</span></div>
+      </div>
+      <div class="progress"><div class="bar" id="bar"></div></div>
+
+      <div class="controls">
+        <button id="prevBtn" class="btn ghost" disabled>⟵ Anterior</button>
+        <button id="checkBtn" class="btn primary">Corregir</button>
+        <button id="nextBtn" class="btn" disabled>Siguiente ⟶</button>
+        <button id="toggleMode" class="btn">Ver todas</button>
+        <button id="resetBtn" class="btn">Reiniciar</button>
+      </div>
+
+      <div id="quiz"></div>
+
+      <div class="footer">Consejo: piensa primero si es <em>general vs. específico</em> y si el sustantivo es <em>contable singular</em>. Después decide entre <strong>a/an</strong>, <strong>the</strong> o <strong>Ø</strong>.</div>
+    </div>
+
+    <div class="card list hidden" id="allCard">
+      <h2>Todas las preguntas</h2>
+      <div id="all"></div>
+    </div>
+  </div>
+
+<script>
+// === 1) Banco de preguntas (40) ===
+const QUESTIONS = [
+  {id:1,question:"I need ___ umbrella.",options:["a","an","the","—"],correctIndex:1,explanation:"Sonido de vocal /ʌ/: an umbrella."},
+  {id:2,question:"She’s ___ engineer.",options:["a","an","the","—"],correctIndex:1,explanation:"Profesiones usan a/an; engineer empieza con sonido vocálico."},
+  {id:3,question:"___ sun is very bright today.",options:["a","an","the","—"],correctIndex:2,explanation:"Único en el contexto: the sun."},
+  {id:4,question:"I like ___ music.",options:["a","an","the","—"],correctIndex:3,explanation:"Incontable en general: Ø."},
+  {id:5,question:"He’s at ___ work right now.",options:["a","an","the","—"],correctIndex:3,explanation:"Lugar común (work) sin artículo."},
+  {id:6,question:"They’re going to ___ United States next month.",options:["a","an","the","—"],correctIndex:2,explanation:"País plural compuesto: the United States."},
+  {id:7,question:"I saw ___ dog. ___ dog was very big.",options:["a / the","an / an","the / a","— / the"],correctIndex:0,explanation:"Primera mención a; segunda mención the."},
+  {id:8,question:"She’s looking for ___ job in Madrid.",options:["the","a","an","—"],correctIndex:1,explanation:"No específico: a job."},
+  {id:9,question:"He goes to work ___ car.",options:["by","by the","on","with"],correctIndex:0,explanation:"Transporte: by car (sin artículo)."},
+  {id:10,question:"It’s ___ best restaurant in town.",options:["a","an","the","—"],correctIndex:2,explanation:"Superlativos usan the."},
+  {id:11,question:"___ people in this neighborhood are very friendly.",options:["The","A","An","—"],correctIndex:0,explanation:"Grupo específico (de este barrio): the people."},
+  {id:12,question:"He speaks ___ English and ___ French.",options:["the / the","a / a","— / —","an / a"],correctIndex:2,explanation:"Idiomas en general: Ø."},
+  {id:13,question:"This is ___ university with a great library.",options:["a","an","the","—"],correctIndex:0,explanation:"Sound /juː/: a university."},
+  {id:14,question:"She waited for ___ hour before the bus arrived.",options:["a","an","the","—"],correctIndex:1,explanation:"H muda → sonido vocálico: an hour."},
+  {id:15,question:"We spent the weekend in ___ Alps.",options:["a","an","the","—"],correctIndex:2,explanation:"Cadenas montañosas: the Alps."},
+  {id:16,question:"She is ___ architect who designed our office.",options:["a","an","the","—"],correctIndex:1,explanation:"Architect empieza con vocal: an architect."},
+  {id:17,question:"I love ___ coffee, but I rarely drink ___ coffee at night.",options:["the / —","— / the","— / —","— / the"],correctIndex:2,explanation:"Generalidades incontables: Ø en ambos."},
+  {id:18,question:"We visited ___ Amazon River last year.",options:["a","an","the","—"],correctIndex:2,explanation:"Ríos: the + nombre propio."},
+  {id:19,question:"He’s ___ CEO of our company.",options:["a","an","the","—"],correctIndex:2,explanation:"Cargo único en un contexto: the CEO."},
+  {id:20,question:"They moved to ___ France in 2010.",options:["a","an","the","—"],correctIndex:3,explanation:"País (nombre simple): Ø."},
+  {id:21,question:"I’ll see you on ___ Monday.",options:["a","an","the","—"],correctIndex:3,explanation:"Días de la semana: Ø (con on)."},
+  {id:22,question:"She took ___ bus to work, but came home on ___ foot.",options:["the / the","a / —","the / —","— / —"],correctIndex:2,explanation:"by bus (Ø) pero aquí ‘the bus’ es específico; on foot siempre Ø."},
+  {id:23,question:"It happened in ___ 19th century.",options:["a","an","the","—"],correctIndex:2,explanation:"Períodos de tiempo: the 19th century."},
+  {id:24,question:"There is ___ apple on the table.",options:["a","an","the","—"],correctIndex:1,explanation:"Sonido de vocal: an apple."},
+  {id:25,question:"He bought ___ few books about history.",options:["a","an","the","—"],correctIndex:0,explanation:"Expresión de cantidad: a few."},
+  {id:26,question:"She has ___ little money left.",options:["a","an","the","—"],correctIndex:0,explanation:"Expresión de cantidad: a little (incontable)."},
+  {id:27,question:"They stayed at ___ hotel near the beach.",options:["a","an","the","—"],correctIndex:0,explanation:"Primera mención, no específico: a hotel."},
+  {id:28,question:"___ hotel they chose was expensive.",options:["A","An","The","—"],correctIndex:2,explanation:"Referencia específica previa: the hotel."},
+  {id:29,question:"My sister is ___ teacher.",options:["a","an","the","—"],correctIndex:0,explanation:"Profesión: a teacher."},
+  {id:30,question:"We went to ___ school by bus.",options:["the","a","an","—"],correctIndex:0,explanation:"‘The school’ habitual del contexto."},
+  {id:31,question:"___ Pacific Ocean is the largest on Earth.",options:["A","An","The","—"],correctIndex:2,explanation:"Océanos: the + nombre propio."},
+  {id:32,question:"She arrived ___ home late.",options:["to the","at the","at","—"],correctIndex:3,explanation:"Arrived home (sin preposición/artículo)."},
+  {id:33,question:"He’s ___ most experienced engineer on the team.",options:["a","an","the","—"],correctIndex:2,explanation:"Superlativo: the most experienced."},
+  {id:34,question:"___ Amazon is longer than ___ Thames.",options:["The / the","— / —","A / a","An / the"],correctIndex:0,explanation:"Ríos: the + nombre."},
+  {id:35,question:"He’s ___ manager of our department.",options:["a","an","the","—"],correctIndex:2,explanation:"Único en el contexto: the manager."},
+  {id:36,question:"Cars are expensive in general. (Choose the best article use.)",options:["The cars are expensive.","Cars are expensive.","A cars are expensive.","An cars are expensive."],correctIndex:1,explanation:"Plural en general: Ø."},
+  {id:37,question:"We had ___ couple of problems with the software.",options:["a","an","the","—"],correctIndex:0,explanation:"Expresión de cantidad: a couple of."},
+  {id:38,question:"He is ___ European citizen.",options:["a","an","the","—"],correctIndex:0,explanation:"Sonido inicial /juː/: a European."},
+  {id:39,question:"I’m reading ___ most interesting book right now.",options:["a","an","the","—"],correctIndex:2,explanation:"‘The most’ (superlativo específico)."},
+  {id:40,question:"She went to ___ hospital after the accident.",options:["a","an","the","—"],correctIndex:2,explanation:"Referencia específica del accidente: the hospital."}
+];
+
+// === 2) Estado ===
+let index = 0;
+let score = 0;
+let answered = new Array(QUESTIONS.length).fill(null); // guarda índice elegido o null
+let checked = new Array(QUESTIONS.length).fill(false); // si ya se corrigió
+
+// === 3) Utilidades ===
+const $ = (sel)=>document.querySelector(sel);
+const $$ = (sel)=>Array.from(document.querySelectorAll(sel));
+const totalEl = $('#total');
+const scoreEl = $('#score');
+const barEl = $('#bar');
+const quizEl = $('#quiz');
+const allCard = $('#allCard');
+const allEl = $('#all');
+const prevBtn = $('#prevBtn');
+const nextBtn = $('#nextBtn');
+const checkBtn = $('#checkBtn');
+const resetBtn = $('#resetBtn');
+const toggleModeBtn = $('#toggleMode');
+const modePill = $('#mode-pill');
+
+function updateProgress(){
+  const pct = ((index) / QUESTIONS.length) * 100;
+  barEl.style.width = pct + '%';
+}
+
+function updateScore(){
+  scoreEl.textContent = score;
+}
+
+function setTotal(){ totalEl.textContent = QUESTIONS.length; }
+
+function renderQuestion(i){
+  const q = QUESTIONS[i];
+  if(!q) return;
+
+  // Construcción con labels EXPÍCITAS
+  const optionsHtml = q.options.map((opt, k)=>{
+    const inputId = `q${q.id}_opt${k}`;
+    const chosen = answered[i] === k;
+    const isCorrect = q.correctIndex === k;
+    const classes = [];
+    if(checked[i]){
+      if (isCorrect) classes.push('correct');
+      if (chosen && !isCorrect) classes.push('incorrect');
+    }
+    return `
+      <div class="option ${classes.join(' ')}">
+        <input type="radio" name="q${q.id}" id="${inputId}" value="${k}" ${chosen? 'checked':''} ${checked[i]?'disabled':''} />
+        <label for="${inputId}">${opt}</label>
+      </div>
+    `;
+  }).join('');
+
+  quizEl.innerHTML = `
+    <fieldset>
+      <legend>Pregunta ${i+1} de ${QUESTIONS.length}</legend>
+      <p class="qtext">${q.question}</p>
+      ${optionsHtml}
+      <div id="feedback" class="feedback hidden"></div>
+    </fieldset>
+  `;
+
+  prevBtn.disabled = (i === 0);
+  nextBtn.disabled = (i >= QUESTIONS.length-1) || !checked[i];
+  checkBtn.disabled = checked[i];
+
+  // listeners de selección (guardan respuesta)
+  $$(`input[name="q${q.id}"]`).forEach(r=>{
+    r.addEventListener('change', (e)=>{
+      const val = Number(e.target.value);
+      answered[i] = val;
+    })
+  });
+
+  updateProgress();
+  updateScore();
+}
+
+function checkCurrent(){
+  const q = QUESTIONS[index];
+  if(answered[index] === null){
+    showToast('Primero selecciona una opción.');
+    return;
+  }
+  checked[index] = true;
+  const correct = answered[index] === q.correctIndex;
+  if(correct) score++;
+  renderQuestion(index); // re-render para aplicar estilos
+  const fb = $('#feedback');
+  fb.classList.remove('hidden');
+  fb.classList.toggle('ok', correct);
+  fb.classList.toggle('no', !correct);
+  fb.innerHTML = correct
+    ? `✅ ¡Correcto! ${q.explanation}`
+    : `❌ Incorrecto. Respuesta correcta: <strong>${q.options[q.correctIndex]}</strong>. ${q.explanation}`;
+}
+
+function next(){ if(index < QUESTIONS.length-1){ index++; renderQuestion(index); } }
+function prev(){ if(index > 0){ index--; renderQuestion(index); } }
+
+function resetAll(){
+  index=0; score=0; answered.fill(null); checked.fill(false);
+  renderQuestion(0);
+}
+
+// === 4) Modo "Ver todas" ===
+let showAll = false;
+function toggleMode(){
+  showAll = !showAll;
+  modePill.textContent = showAll ? 'Modo: lista' : 'Modo: examen';
+  toggleModeBtn.textContent = showAll ? 'Volver a examen' : 'Ver todas';
+  allCard.classList.toggle('hidden', !showAll);
+  if(showAll){
+    renderAll();
+  }
+}
+
+function renderAll(){
+  const html = QUESTIONS.map((q,i)=>{
+    const opts = q.options.map((opt,k)=>{
+      const id = `all_q${q.id}_o${k}`;
+      const chosen = answered[i] === k;
+      const isCorrect = q.correctIndex === k;
+      const cls = (checked[i] && isCorrect) ? 'correct' : (checked[i] && chosen && !isCorrect ? 'incorrect' : '');
+      return `
+      <div class="option ${cls}">
+        <input type="radio" name="all_q${q.id}" id="${id}" value="${k}" ${chosen? 'checked':''} ${checked[i]?'disabled':''} />
+        <label for="${id}">${opt}</label>
+      </div>`;
+    }).join('');
+    return `
+      <details ${i===0? 'open':''}>
+        <summary><strong>${i+1}.</strong> ${q.question}</summary>
+        <div style="margin-top:8px">
+          ${opts}
+          <div class="feedback ${checked[i]?'':'hidden'} ${checked[i] && answered[i]===q.correctIndex ? 'ok':'no'}">
+            ${checked[i] ? (answered[i]===q.correctIndex ? '✅ ¡Correcto! ' : `❌ Incorrecto. Correcta: <strong>${q.options[q.correctIndex]}</strong>. `) + q.explanation : ''}
+          </div>
+        </div>
+      </details>
+    `;
+  }).join('');
+  allEl.innerHTML = html;
+
+  // listeners
+  QUESTIONS.forEach((q,i)=>{
+    $$(`input[name="all_q${q.id}"]`).forEach(r=>{
+      r.addEventListener('change', (e)=>{
+        answered[i] = Number(e.target.value);
+      })
+    })
+  });
+}
+
+// === 5) Toast simple ===
+let toastTimeout;
+function showToast(msg){
+  clearTimeout(toastTimeout);
+  let t = document.getElementById('toast');
+  if(!t){
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.position='fixed'; t.style.bottom='18px'; t.style.left='50%'; t.style.transform='translateX(-50%)';
+    t.style.padding='10px 14px'; t.style.background='#0b1220'; t.style.border='1px solid #334155'; t.style.borderRadius='10px'; t.style.boxShadow='0 8px 20px rgba(0,0,0,.35)';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg; t.style.opacity='1';
+  toastTimeout = setTimeout(()=>{ t.style.opacity='0'; }, 1800);
+}
+
+// === 6) Eventos ===
+prevBtn.addEventListener('click', prev);
+nextBtn.addEventListener('click', next);
+checkBtn.addEventListener('click', ()=>{ checkCurrent(); updateScore(); });
+resetBtn.addEventListener('click', resetAll);
+toggleModeBtn.addEventListener('click', ()=>{ toggleMode(); if(!showAll){ renderQuestion(index); } });
+
+// Inicialización
+setTotal();
+renderQuestion(0);
+updateProgress();
+updateScore();
+</script>
+</body>
+</html>

@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>UF3 DAW · Chuleta + Test (Selectores → DOM → remove)</title>
+  <style>
+    :root{
+      --bg:#0b1020;
+      --text:#e9eefc;
+      --muted:#a9b6df;
+      --line:rgba(255,255,255,.12);
+      --ok:#27c27a;
+      --bad:#ff4d6d;
+      --accent:#7aa2ff;
+      --warn:#ffd166;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 20% 0%, #12204d, var(--bg));
+      color: var(--text);
+      padding: 14px;
+    }
+    .wrap{
+      width:min(980px, 100%);
+      margin:0 auto;
+      display:flex;
+      flex-direction:column;
+      gap: 14px;
+    }
+    header{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.08), rgba(255,255,255,.02));
+      border-radius: 16px;
+      padding: 14px;
+      display:flex;
+      flex-direction:column;
+      gap:8px;
+    }
+    header h1{ margin:0; font-size: 18px; }
+    header p{ margin:0; color: var(--muted); font-size: 13px; line-height: 1.35; }
+
+    .card{
+      border:1px solid var(--line);
+      background: linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .card h2{ margin:0 0 8px; font-size: 16px; }
+    .sub{ color:var(--muted); font-size: 13px; margin:0 0 12px; line-height:1.35; }
+
+    table{
+      width:100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      overflow:hidden;
+      border-radius: 14px;
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      font-size: 13px;
+    }
+    th, td{
+      padding: 10px 10px;
+      border-bottom: 1px solid var(--line);
+      vertical-align: top;
+    }
+    th{
+      text-align:left;
+      color: var(--text);
+      background: rgba(255,255,255,.05);
+      font-weight: 650;
+    }
+    tr:last-child td{ border-bottom: none; }
+    code, pre{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace;
+      font-size: 12px;
+    }
+    code{
+      background: rgba(122,162,255,.12);
+      border: 1px solid rgba(122,162,255,.22);
+      padding: 2px 6px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+    .note{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      padding: 10px 12px;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.35;
+      margin-top: 12px;
+    }
+    .dot{
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--warn);
+      margin-top: 4px;
+      flex: 0 0 auto;
+    }
+
+    /* Quiz */
+    .quizTop{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom: 10px;
+    }
+    .pill{
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      padding:6px 10px;
+      border-radius: 999px;
+      font-size: 13px;
+      color: var(--muted);
+      display:flex; gap:6px; align-items:center;
+    }
+    .btn{
+      border-radius: 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      padding: 10px 12px;
+      font-size: 14px;
+      cursor:pointer;
+      touch-action: manipulation;
+    }
+    .btn.primary{
+      background: linear-gradient(90deg, rgba(122,162,255,.35), rgba(154,123,255,.35));
+      border-color: rgba(122,162,255,.45);
+    }
+    .btn:active{ transform: scale(.99); }
+
+    .qBox{
+      border:1px solid var(--line);
+      background: rgba(0,0,0,.12);
+      border-radius: 14px;
+      padding: 12px;
+    }
+    .qMeta{
+      display:flex; justify-content:space-between; gap:10px; flex-wrap:wrap;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .qText{
+      margin: 8px 0 0;
+      font-size: 15px;
+      line-height: 1.35;
+    }
+    pre{
+      margin: 10px 0 0;
+      padding: 12px;
+      border-radius: 12px;
+      background: #0a0f22;
+      border: 1px solid rgba(255,255,255,.10);
+      overflow:auto;
+      color: #dfe7ff;
+    }
+    .answers{
+      display:grid;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    button.choice{
+      text-align:left;
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      padding: 12px 12px;
+      font-size: 14px;
+      line-height: 1.25;
+      cursor:pointer;
+      transition: transform .03s ease, background .15s ease, border-color .15s ease;
+      touch-action: manipulation;
+    }
+    button.choice:active{ transform: scale(.99); }
+    button.choice:hover{ background: rgba(255,255,255,.06); }
+    button.choice[disabled]{ opacity:.75; cursor: default; }
+
+    .feedback{
+      margin-top: 12px;
+      display:none;
+      gap:10px;
+    }
+    .feedback.show{ display:grid; }
+    .banner{
+      border-radius: 14px;
+      padding: 10px 12px;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.03);
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+    }
+    .banner .dot{ background: var(--muted); }
+    .banner.ok .dot{ background: var(--ok); }
+    .banner.bad .dot{ background: var(--bad); }
+    .banner h3{ margin:0; font-size: 14px; }
+    .banner p{ margin: 6px 0 0; color: var(--muted); font-size: 13px; line-height: 1.35; }
+
+    .actions{
+      display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;
+    }
+
+    @media (max-width: 520px){
+      th:nth-child(3), td:nth-child(3){ display:none; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>UF3 (2º DAW) · Chuleta visual + Cuestionario (Selectores → DOM → remove)</h1>
+      <p>Primero tienes una tabla “de un vistazo” con sintaxis y reglas clave. Debajo, un test tipo juego: eliges una opción y, si fallas, aparece una explicación (refuerzo) para fijar la sintaxis.</p>
+    </header>
+
+    <section class="card">
+      <h2>1) Chuleta visual (sintaxis + regla rápida)</h2>
+      <p class="sub">Lo esencial: seleccionar → hijos → textContent → crear/insertar → borrar.</p>
+
+      <table aria-label="Chuleta UF3 DOM">
+        <thead>
+          <tr>
+            <th style="width:24%">Tema</th>
+            <th style="width:46%">Sintaxis típica (correcta)</th>
+            <th style="width:30%">Regla / Nota DAW</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Selector por ID</strong></td>
+            <td><code>document.getElementById("id")</code></td>
+            <td>ID devuelve <strong>1</strong> elemento. No usa <code>#</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Selector por clase</strong></td>
+            <td><code>document.getElementsByClassName("clase")</code></td>
+            <td>Devuelve colección. Acceso: <code>colec[0]</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>Selector por etiqueta</strong></td>
+            <td><code>document.getElementsByTagName("li")</code></td>
+            <td>Devuelve colección. Útil con <code>li</code>, <code>p</code>, <code>div</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>CSS (1 elemento)</strong></td>
+            <td><code>document.querySelector(".clase")</code> · <code>document.querySelector("#id")</code></td>
+            <td>Devuelve el <strong>primero</strong> que coincide.</td>
+          </tr>
+          <tr>
+            <td><strong>CSS (varios)</strong></td>
+            <td><code>document.querySelectorAll("li")</code></td>
+            <td>Devuelve NodeList. Puedes usar <code>[i]</code> y <code>forEach</code>.</td>
+          </tr>
+          <tr>
+            <td><strong>children</strong></td>
+            <td><code>padre.children</code> · <code>padre.children[1]</code></td>
+            <td><strong>Solo etiquetas</strong>. Hijos directos.</td>
+          </tr>
+          <tr>
+            <td><strong>childNodes</strong></td>
+            <td><code>padre.childNodes</code></td>
+            <td>Incluye textos (saltos/espacios). Hijos directos.</td>
+          </tr>
+          <tr>
+            <td><strong>Leer texto</strong></td>
+            <td><code>nodo.textContent</code></td>
+            <td>Ojo: <code>textContent</code> (C y N mayúsculas).</td>
+          </tr>
+          <tr>
+            <td><strong>Modificar texto</strong></td>
+            <td><code>nodo.textContent = "Nuevo"</code></td>
+            <td><strong>Propiedad</strong>, no función.</td>
+          </tr>
+          <tr>
+            <td><strong>Crear elemento</strong></td>
+            <td><code>document.createElement("li")</code></td>
+            <td>No se ve hasta insertarlo en el DOM.</td>
+          </tr>
+          <tr>
+            <td><strong>Añadir al final</strong></td>
+            <td><code>padre.appendChild(hijo)</code></td>
+            <td><code>appendChild</code> mueve nodos (no duplica).</td>
+          </tr>
+          <tr>
+            <td><strong>Insertar en medio</strong></td>
+            <td><code>padre.insertBefore(nuevo, referencia)</code></td>
+            <td>Inserta <strong>ANTES</strong> del nodo referencia.</td>
+          </tr>
+          <tr>
+            <td><strong>Borrar con remove()</strong></td>
+            <td><code>hijo.remove()</code></td>
+            <td>Se llama en el nodo que borras. Sin parámetros.</td>
+          </tr>
+          <tr>
+            <td><strong>Borrar con removeChild()</strong></td>
+            <td><code>padre.removeChild(hijo)</code></td>
+            <td>Padre llama y recibe hijo (nodo, no índice).</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div class="note">
+        <div class="dot" aria-hidden="true"></div>
+        <div>
+          <strong>Orden mental DAW:</strong> 1) seleccionar padre → 2) <code>children[i]</code> → 3) <code>textContent</code> → 4) crear/insertar → 5) borrar.
+        </div>
+      </div>
+    </section>
+
+    <section class="card" id="quiz">
+      <div class="quizTop">
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <div class="pill">🎯 Pregunta: <span id="qCount">1/1</span></div>
+          <div class="pill">⭐ Puntos: <span id="score">0</span></div>
+          <div class="pill">❤️ Vidas: <span id="lives">3</span></div>
+        </div>
+        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+          <button class="btn" id="repeatBtn" type="button">Repetir pregunta</button>
+          <button class="btn primary" id="restartBtn" type="button">Reiniciar test</button>
+        </div>
+      </div>
+
+      <div class="qBox">
+        <div class="qMeta">
+          <span id="topic">Tema</span>
+          <span id="qid">#</span>
+        </div>
+        <div class="qText" id="qText">Cargando…</div>
+        <pre id="qCode" style="display:none"></pre>
+
+        <div class="answers" id="answers"></div>
+
+        <div class="feedback" id="feedback">
+          <div class="banner" id="banner">
+            <div class="dot"></div>
+            <div>
+              <h3 id="fbTitle">—</h3>
+              <p id="fbText">—</p>
+            </div>
+          </div>
+
+          <div class="qBox" style="background: rgba(0,0,0,.08);">
+            <strong>👨‍🏫 Explicación (refuerzo)</strong>
+            <p id="explain" style="margin:10px 0 0; color: var(--muted); line-height:1.45;"></p>
+          </div>
+
+          <div class="actions">
+            <button class="btn" id="nextBtn" type="button">Siguiente</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:12px;">
+        <div class="dot" style="background: var(--accent);" aria-hidden="true"></div>
+        <div><strong>Modo práctica:</strong> si fallas, usa “Repetir pregunta”.</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const QUESTIONS = [
+      {
+        level: 1, topic: "Selectores (ID)",
+        text: "¿Cuál es la línea correcta para seleccionar un elemento por ID y guardarlo en `caja`?",
+        code: `<div id="caja">Hola</div>`,
+        choices: [
+          'const caja = document.getElementById("caja");',
+          'const caja = document.getElementById("#caja");',
+          'const caja = getElementById("caja");',
+          'const caja = document.querySelectorAll("#caja");'
+        ],
+        correct: 0,
+        explainWrong: "getElementById cuelga de document y NO usa #. querySelectorAll devuelve varios.",
+        explainRight: 'Correcto: document.getElementById("caja") devuelve 1 elemento.'
+      },
+      {
+        level: 1, topic: "Selectores (clase)",
+        text: "Selecciona todos los elementos con clase `item`.",
+        code: `<p class="item">A</p>\n<p class="item">B</p>`,
+        choices: [
+          'const items = document.getElementsByClassName("item");',
+          'const items = document.getElementById("item");',
+          'const items = document.getElementsByClassName(".item");',
+          'const items = document.querySelector("item");'
+        ],
+        correct: 0,
+        explainWrong: 'En getElementsByClassName NO se pone el punto ".". getElementById es para ID.',
+        explainRight: 'Correcto: getElementsByClassName("item") devuelve una colección.'
+      },
+      {
+        level: 1, topic: "Selectores (CSS)",
+        text: "Con CSS: selecciona SOLO el primer elemento con clase `item`.",
+        code: `<p class="item">A</p>\n<p class="item">B</p>`,
+        choices: [
+          'const x = document.querySelector(".item");',
+          'const x = document.querySelectorAll(".item");',
+          'const x = document.getElementsByClassName("item");',
+          'const x = document.querySelector("#item");'
+        ],
+        correct: 0,
+        explainWrong: "querySelector devuelve 1 (el primero). querySelectorAll devuelve varios.",
+        explainRight: 'Correcto: querySelector(".item") devuelve el primero.'
+      },
+      {
+        level: 2, topic: "children vs childNodes",
+        text: "¿Qué propiedad cuenta SOLO etiquetas hijas directas (ignora saltos/espacios)?",
+        code: `<div id="caja">\n  <p>Uno</p>\n  <p>Dos</p>\n</div>`,
+        choices: ["caja.childNodes","caja.children","caja.firstChild","caja.textContent"],
+        correct: 1,
+        explainWrong: "childNodes incluye nodos texto. children solo elementos.",
+        explainRight: "Correcto: children = solo etiquetas."
+      },
+      {
+        level: 2, topic: "Hijos vs nietos",
+        text: "Con `<p>Hola <strong>DAW</strong></p>`, ¿qué devuelve `p.children.length` normalmente?",
+        code: `<p id="p">Hola <strong>DAW</strong></p>`,
+        choices: ["0","1","2","Depende y no se puede saber"],
+        correct: 1,
+        explainWrong: "El único hijo elemento directo del <p> es <strong>. 'DAW' es nieto del <p>.",
+        explainRight: "Correcto: 1."
+      },
+      {
+        level: 2, topic: "textContent",
+        text: "¿Cuál muestra por consola el texto del segundo <li>?",
+        code: `<ul id="lista">\n  <li>Perro</li>\n  <li>Gato</li>\n</ul>`,
+        choices: [
+          'console.log(lista.children[1]);',
+          'console.log(lista.children[1].textContent);',
+          'console.log(document.getElementById("lista")[1].text);',
+          'console.log(lista.childNodes[1].text);'
+        ],
+        correct: 1,
+        explainWrong: "Para leer texto usa .textContent. getElementById devuelve 1 elemento, no se indexa.",
+        explainRight: "Correcto: .textContent."
+      },
+      {
+        level: 2, topic: "textContent (modificar)",
+        text: "Cambia el texto del segundo <li> a 'Pera'. ¿Cuál es correcto?",
+        code: `<ul id="lista">\n  <li>Manzana</li>\n  <li>Plátano</li>\n</ul>`,
+        choices: [
+          'lista.children[1] = "Pera";',
+          'lista.children[1].textContent = "Pera";',
+          'lista.children[1].textContent("Pera");',
+          'document.getElementById("lista")[1].textContent = "Pera";'
+        ],
+        correct: 1,
+        explainWrong: "textContent es PROPIEDAD (usa =). Y el id no se indexa: usa .children[i].",
+        explainRight: "Correcto: .textContent = 'Pera'."
+      },
+      {
+        level: 3, topic: "Crear + añadir",
+        text: "Añadir un <li> con texto 'C' al final (patrón correcto).",
+        code: `<ul id="lista">\n  <li>A</li>\n  <li>B</li>\n</ul>`,
+        choices: [
+          'const li = createElement("li"); li.textContent="C"; lista.appendChild(li);',
+          'const li = document.createElement("li"); li.textContent="C"; lista.appendChild(li);',
+          'const li = document.createElement("li"); li.textContent("C"); document.appendChild(li);',
+          'const li = document.createElement("li"); lista.appendChild("C");'
+        ],
+        correct: 1,
+        explainWrong: "createElement va con document. textContent no lleva paréntesis. appendChild se llama en el padre.",
+        explainRight: "Correcto: create → textContent = → appendChild."
+      },
+      {
+        level: 4, topic: "insertBefore",
+        text: "Insertar 'B' entre A y C usando insertBefore (referencia correcta).",
+        code: `<ul id="lista">\n  <li>A</li>\n  <li>C</li>\n</ul>`,
+        choices: [
+          'lista.insertBefore(li, lista.children[0]);',
+          'lista.insertBefore(li, lista.children[1]);',
+          'lista.insertBefore(lista.children[1], li);',
+          'lista.insertAfter(li, lista.children[1]);'
+        ],
+        correct: 1,
+        explainWrong: "insertBefore(nuevo, referencia) inserta ANTES de referencia. Para A _ B _ C, referencia = C.",
+        explainRight: "Correcto: referencia = children[1] (C)."
+      },
+      {
+        level: 4, topic: "Borrar (remove)",
+        text: "Borrar el segundo <li> usando remove().",
+        code: `<ul id="dias">\n  <li>Lunes</li>\n  <li>Martes</li>\n  <li>Miércoles</li>\n</ul>`,
+        choices: [
+          'dias.remove(dias.children[1]);',
+          'dias.children[1].remove();',
+          'dias.removeChild(1);',
+          'remove(dias.children[1]);'
+        ],
+        correct: 1,
+        explainWrong: "remove() se llama sobre el nodo que borras: hijo.remove().",
+        explainRight: "Correcto: dias.children[1].remove()."
+      },
+      {
+        level: 4, topic: "Borrar (removeChild)",
+        text: "Borrar el segundo <li> usando removeChild().",
+        code: `<ul id="menu">\n  <li>Inicio</li>\n  <li>Servicios</li>\n  <li>Contacto</li>\n</ul>`,
+        choices: [
+          'menu.removeChild(1);',
+          'menu.children[1].removeChild();',
+          'menu.removeChild(menu.children[1]);',
+          'removeChild(menu.children[1]);'
+        ],
+        correct: 2,
+        explainWrong: "removeChild se llama en el padre y recibe el hijo (nodo), no índice.",
+        explainRight: "Correcto: menu.removeChild(menu.children[1])."
+      }
+    ];
+
+    let order = [];
+    let idx = 0;
+    let score = 0;
+    let lives = 3;
+    let locked = false;
+
+    const qCount = document.getElementById("qCount");
+    const scoreEl = document.getElementById("score");
+    const livesEl = document.getElementById("lives");
+    const topicEl = document.getElementById("topic");
+    const qidEl = document.getElementById("qid");
+    const qTextEl = document.getElementById("qText");
+    const qCodeEl = document.getElementById("qCode");
+    const answersEl = document.getElementById("answers");
+    const feedbackEl = document.getElementById("feedback");
+    const bannerEl = document.getElementById("banner");
+    const fbTitle = document.getElementById("fbTitle");
+    const fbText = document.getElementById("fbText");
+    const explainEl = document.getElementById("explain");
+    const nextBtn = document.getElementById("nextBtn");
+    const repeatBtn = document.getElementById("repeatBtn");
+    const restartBtn = document.getElementById("restartBtn");
+
+    function shuffle(a){
+      for(let i=a.length-1;i>0;i--){
+        const j = Math.floor(Math.random()*(i+1));
+        [a[i],a[j]]=[a[j],a[i]];
+      }
+      return a;
+    }
+    function buildOrder(){
+      const map = new Map();
+      QUESTIONS.forEach((q,i)=>{
+        if(!map.has(q.level)) map.set(q.level, []);
+        map.get(q.level).push(i);
+      });
+      const levels = [...map.keys()].sort((a,b)=>a-b);
+      let out=[];
+      for(const lv of levels) out = out.concat(shuffle(map.get(lv)));
+      return out;
+    }
+    function resetFeedback(){
+      feedbackEl.classList.remove("show");
+      bannerEl.classList.remove("ok","bad");
+      fbTitle.textContent = "—";
+      fbText.textContent = "—";
+      explainEl.textContent = "";
+    }
+    function render(){
+      locked = false;
+      resetFeedback();
+      const q = QUESTIONS[order[idx]];
+      qCount.textContent = `${idx+1}/${order.length}`;
+      scoreEl.textContent = String(score);
+      livesEl.textContent = String(lives);
+      topicEl.textContent = `Tema: ${q.topic} · Nivel ${q.level}`;
+      qidEl.textContent = `#${idx+1}`;
+      qTextEl.textContent = q.text;
+
+      if(q.code && q.code.trim().length){
+        qCodeEl.style.display = "block";
+        qCodeEl.textContent = q.code;
+      } else {
+        qCodeEl.style.display = "none";
+        qCodeEl.textContent = "";
+      }
+
+      answersEl.innerHTML = "";
+      q.choices.forEach((label, i)=>{
+        const b = document.createElement("button");
+        b.type = "button";
+        b.className = "choice";
+        b.textContent = label;
+        b.addEventListener("click", ()=>choose(i));
+        answersEl.appendChild(b);
+      });
+    }
+    function showFeedback(ok, q, chosen){
+      feedbackEl.classList.add("show");
+      bannerEl.classList.add(ok ? "ok" : "bad");
+      fbTitle.textContent = ok ? "✅ Correcto" : "❌ Incorrecto";
+      fbText.textContent = ok ? "Punto +10" : "Pierdes 1 vida";
+      explainEl.textContent = ok ? q.explainRight : (q.explainWrong + "\n\nTu: " + q.choices[chosen] + "\nCorrecta: " + q.choices[q.correct]);
+    }
+    function choose(choiceIndex){
+      if(locked) return;
+      locked = true;
+
+      const q = QUESTIONS[order[idx]];
+      const ok = (choiceIndex === q.correct);
+
+      [...answersEl.querySelectorAll("button.choice")].forEach(b=>b.disabled=true);
+
+      if(ok) score += 10;
+      else lives -= 1;
+
+      scoreEl.textContent = String(score);
+      livesEl.textContent = String(lives);
+
+      showFeedback(ok, q, choiceIndex);
+
+      if(lives <= 0) nextBtn.textContent = "Reiniciar";
+      else if(idx === order.length - 1) nextBtn.textContent = "Terminar";
+      else nextBtn.textContent = "Siguiente";
+    }
+    function next(){
+      if(lives <= 0){ start(); return; }
+      if(idx >= order.length - 1){
+        alert(`Fin del test.\nPuntos: ${score}\nVidas: ${lives}\n\nConsejo: repite hasta que la sintaxis salga sola.`);
+        start();
+        return;
+      }
+      idx += 1;
+      render();
+    }
+    function repeat(){ render(); }
+    function start(){
+      order = buildOrder();
+      idx = 0;
+      score = 0;
+      lives = 3;
+      nextBtn.textContent = "Siguiente";
+      render();
+    }
+
+    nextBtn.addEventListener("click", next);
+    repeatBtn.addEventListener("click", repeat);
+    restartBtn.addEventListener("click", start);
+
+    start();
+  </script>
+</body>
+</html>

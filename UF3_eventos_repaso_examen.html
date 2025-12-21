@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>UF3 - Repaso Eventos (Input, Click UL/LI, Submit)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.6;
+      background: #f4f6fb;
+      padding: 15px;
+    }
+    h1, h2 { color: #1e3a8a; }
+    section {
+      background: white;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 5px rgba(0,0,0,0.1);
+    }
+    code { background: #eef2ff; padding: 3px 6px; border-radius: 4px; }
+    pre {
+      background: #0f172a;
+      color: #e5e7eb;
+      padding: 12px;
+      border-radius: 6px;
+      overflow-x: auto;
+    }
+    .resultado { font-weight: bold; margin-top: 10px; color: #065f46; }
+  </style>
+</head>
+<body>
+
+<h1>UF3 – Repaso de Eventos (Examen)</h1>
+<p>Ejemplos básicos de los <strong>3 eventos más importantes</strong> de UF3.</p>
+
+<section>
+  <h2>1️⃣ Evento input</h2>
+  <label>Nombre: <input type="text" id="nombre"></label>
+  <p class="resultado" id="salida"></p>
+  <pre>
+const nombre = document.getElementById("nombre");
+const salida = document.getElementById("salida");
+
+nombre.addEventListener("input", function () {
+  salida.textContent = nombre.value;
+});
+  </pre>
+</section>
+
+<section>
+  <h2>2️⃣ Evento click en UL / LI</h2>
+  <ul id="menu">
+    <li>Rojo</li>
+    <li>Verde</li>
+    <li>Azul</li>
+  </ul>
+  <p class="resultado" id="color"></p>
+  <pre>
+const menu = document.getElementById("menu");
+const color = document.getElementById("color");
+
+menu.addEventListener("click", function (e) {
+  if (e.target.tagName === "LI") {
+    color.textContent = e.target.textContent;
+  }
+});
+  </pre>
+</section>
+
+<section>
+  <h2>3️⃣ Evento submit</h2>
+  <form id="formulario">
+    <label>Email: <input type="email" id="email"></label><br><br>
+    <button type="submit">Enviar</button>
+  </form>
+  <p class="resultado" id="resultado"></p>
+  <pre>
+const form = document.getElementById("formulario");
+const email = document.getElementById("email");
+const resultado = document.getElementById("resultado");
+
+form.addEventListener("submit", function (e) {
+  e.preventDefault();
+  resultado.textContent = email.value;
+});
+  </pre>
+</section>
+
+<script>
+const nombre = document.getElementById("nombre");
+const salida = document.getElementById("salida");
+nombre.addEventListener("input", () => salida.textContent = nombre.value);
+
+const menu = document.getElementById("menu");
+const color = document.getElementById("color");
+menu.addEventListener("click", e => {
+  if (e.target.tagName === "LI") color.textContent = e.target.textContent;
+});
+
+const form = document.getElementById("formulario");
+const email = document.getElementById("email");
+const resultado = document.getElementById("resultado");
+form.addEventListener("submit", e => {
+  e.preventDefault();
+  resultado.textContent = email.value;
+});
+</script>
+
+</body>
+</html>

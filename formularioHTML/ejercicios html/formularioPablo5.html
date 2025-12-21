@@ -1,0 +1,78 @@
+<!-- 5. Solicitud de empleo con secciones, archivo y listas
+• Formulario POST con enctype="multipart/form-data" y dos
+<fieldset>
+o <legend>Datos personales</legend>: DNI (texto), teléfono
+(tel), ciudad (input con list + datalist).
+o <legend>Perfil profesional</legend>: puesto deseado
+(select), CV (file aceptando .pdf), LinkedIn (url opcional).
+• En el select de “puesto deseado”, agrupa con <optgroup
+label="Desarrollo"> (Frontend, Backend, Full-stack) y <optgroup
+label="Datos"> (Data Analyst, Data Engineer).
+• Checkbox required para la política de privacidad y botón “Enviar
+solicitud”. -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=<device-width>, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form method="post" action="#" enctype="multipart/form-data" target="_blank">
+        <fieldset>
+            <legend>Datos personales</legend>
+            <div>
+                <label for="dni">DNI</label>
+                <input id="dni" name="dni" type="text" required>
+            </div>
+            <div>
+                <label for="telefono">Teléfono</label>
+                <input id="telefono" name="telefono" type="tel" inputmode="tel" required placeholder="+34 XXX XXX XXX"
+                    title="Escribe el telefono con +34 si es d España">
+            </div>
+            <div>
+                <label for="ciudad">Ciudad</label>
+                <input id="ciudad" name="ciudad" list="lista_ciudades" required>
+                <datalist id="lista_ciudades">
+                    <option value="Madrid">
+                    <option value="Barcelona">
+                    <option value="Valencia">
+                </datalist>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Perfil profesional</legend>
+            <div>
+                <label for="puesto_deseado">Puesto deseado</label>
+                <select id="puesto_deseado" name="puesto_deseado">
+                    <option value="elige_puesto" disabled selected>Elige un puesto</option>
+                    <optgroup label="Desarrollo">
+                        <option value="frontend">Frontend</option>
+                        <option value="backend">Backend</option>
+                        <option value="fullstack">Fullstack</option>
+                    </optgroup>
+                    <optgroup label="datos">
+                        <option value="data_analist">Data Analist</option>
+                        <option value="data_engineer">Data Engineer</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div>
+                <label for="cv">CV</label>
+                <input id="cv" name="cv" type="file" title="Adjunta tu CV">
+            </div>
+        </fieldset>
+        <div>
+            <input id="politica_privacidad" name="politica_privacidad" type="checkbox" required>
+            <label for="politica_privacidad">Política de privacidad</label>
+        </div>
+        <div>
+            <button type="submit">Enviar</button>
+        </div>
+    </form>
+
+</body>
+
+</html>

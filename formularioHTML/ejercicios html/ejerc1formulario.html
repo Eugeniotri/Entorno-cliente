@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="description" content="ejemplo">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="keywords" content="palabras SEO">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+    <form action="#" method="post" enctype="application/x-www-form-urlencoded" target="_blank">
+
+        <h1>Registro de evento</h1>
+
+        <fieldset>
+            <legend>Datos personales</legend>
+            <label for="nombre">Nombre</label>
+            <input id="nombre" name="nombre" type="text" required placeholder="Tu nombre"
+                title="Escribe tu nombre"><br><br>
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" required placeholder="Tu Email"><br><br>
+            <label for="telefono">Teléfono</label>
+            <input id="telefono" name="telefono" type="tel" inputmode="tel" pattern="\+?\d{9,15}"
+                placeholder="+34 6XX XXX XXX" title="Introduce tu teléfono con código nacional ej.+34"><br><br>
+            <label for="fecha_nacimiento">Fecha nacimiento</label>
+            <input id="fecha_nacimiento" name="fecha_nacimiento" type="date" title="Elige la fecha" min="1900-01-01"
+                max="2025-10-15" required>
+        </fieldset><br><br><br>
+        <fieldset>
+            <legend>Detalles de la inscripción</legend>
+            <p>Selecciona el tipo de entrada</p>
+
+            <label for="general">general</label>
+            <input id="general" name="tipo_entrada" type="radio" value="general">
+            <label for="estudiante">estudiante</label>
+            <input id="estudiante" name="tipo_entrada" type="radio" value="estudiante">
+            <label for="vip">VIP</label>
+            <input id="vip" name="tipo_entrada" type="radio" value="vip">
+        </fieldset><br><br>
+        <fieldset>
+            <legend>Opciones de taller</legend>
+            <p> Elige las opciones que quieras</p>
+
+            <label for="taller1">Taller1</label>
+            <input id="taller1" name="opciones" type="checkbox" value="taller1">
+            <label for="taller2">Taller2</label>
+            <input id="taller2" name="opciones" type="checkbox" value="taller2"></fieldset><br>
+        <fieldset>
+            <legend>Turno preferido</legend>    
+            <p>Elige turno</p>
+            <label for="turno">Turno Mañana </label>
+            <select id="turno" name="turno_preferido" required>
+                <option value="" disabled selected>---Selecciona un turno---</option>
+                <option value="mañana">Mañana</option>
+                <option value="tarde">Tarde</option>
+                <option value="noche">Noche</option>
+    </form>
+</body>
+
+
+</html>

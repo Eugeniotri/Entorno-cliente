@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Formulario HTML básico - DAW</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { font-family: Arial, sans-serif; padding: 16px; line-height: 1.5; }
+code, pre { background: #f4f4f4; padding: 8px; display: block; overflow-x: auto; }
+h1, h2 { color: #0a4ea3; }
+</style>
+</head>
+<body>
+
+<h1>Formulario HTML básico (2º DAW)</h1>
+
+<p>Ejemplo de formulario con <strong>inputs asociados de forma explícita</strong>,
+siguiendo buenas prácticas de accesibilidad y criterios de examen.</p>
+
+<h2>Código del formulario</h2>
+
+<pre><code>&lt;form action="https://httpbin.org/post" method="POST"&gt;
+
+&lt;label for="usuario"&gt;Usuario&lt;/label&gt;
+&lt;input type="text" id="usuario" name="usuario" required&gt;
+
+&lt;label for="email"&gt;Email&lt;/label&gt;
+&lt;input type="email" id="email" name="email" required&gt;
+
+&lt;label for="password"&gt;Contraseña&lt;/label&gt;
+&lt;input type="password" id="password" name="password" required&gt;
+
+&lt;label for="edad"&gt;Edad&lt;/label&gt;
+&lt;input type="number" id="edad" name="edad"&gt;
+
+&lt;fieldset&gt;
+  &lt;legend&gt;Método de pago&lt;/legend&gt;
+  &lt;label for="tarjeta"&gt;Tarjeta&lt;/label&gt;
+  &lt;input type="radio" id="tarjeta" name="pago" value="tarjeta"&gt;
+
+  &lt;label for="paypal"&gt;PayPal&lt;/label&gt;
+  &lt;input type="radio" id="paypal" name="pago" value="paypal"&gt;
+&lt;/fieldset&gt;
+
+&lt;label for="pais"&gt;País&lt;/label&gt;
+&lt;select id="pais" name="pais"&gt;
+  &lt;option value="es"&gt;España&lt;/option&gt;
+  &lt;option value="fr"&gt;Francia&lt;/option&gt;
+&lt;/select&gt;
+
+&lt;button type="submit"&gt;Enviar&lt;/button&gt;
+
+&lt;/form&gt;</code></pre>
+
+<h2>Ideas clave</h2>
+<ul>
+<li><strong>for</strong> del label debe coincidir con el <strong>id</strong></li>
+<li><strong>name</strong> es el dato que se envía al servidor</li>
+<li>Sin <strong>name</strong>, el campo no viaja</li>
+<li>Los radio comparten el mismo <strong>name</strong></li>
+</ul>
+
+<p>Documento pensado para repasar desde el móvil 📱</p>
+
+</body>
+</html>

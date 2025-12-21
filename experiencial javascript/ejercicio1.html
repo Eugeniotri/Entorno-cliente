@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Document</title>
+
+</head>
+
+<body>
+
+    <main>
+
+        <button id = "obtener_ultimo_elemento">
+
+            OBTENER ÚLTIMO ELEMENTO
+
+        </button>
+
+    </main>
+
+    <script>
+
+        let elementosArray = [1,5,5,"ultimo elemento"];
+
+        document.getElementById("obtener_ultimo_elemento").onclick = function(){
+
+            console.log(elementosArray[elementosArray.length - 1])
+
+        }
+
+    </script>
+
+</body>
+
+</html>

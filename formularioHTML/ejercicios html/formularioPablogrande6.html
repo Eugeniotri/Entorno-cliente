@@ -1,0 +1,139 @@
+<!-- Enunciado: Formulario integral “Solicitud de empleo”
+Implementa un formulario completo en HTML (sin CSS ni JavaScript) para
+una solicitud de empleo. Debe ser semántico, accesible y validar lo posible con
+atributos nativos.
+Requisitos generales
+• Solo HTML. Prohibido CSS y JS.
+• El formulario debe usar method="post" y un action ficticio.
+• Todos los campos llevarán su <label> correctamente asociado mediante
+for/id.
+• Agrupa lógicamente con mínimo 5 <fieldset>, cada uno con su
+<legend> descriptivo.
+• Debe incluir al menos 3 <select> distintos con <optgroup>.
+• Incluir datalist con <input list="…">.
+• Incluir botón de envío y botón de reset.
+Secciones y campos obligatorios
+1) Datos personales (<fieldset><legend>Datos personales</legend>)
+• Nombre completo (type="text", required, minlength, maxlength).
+• DNI/NIE (type="text", required, pattern para formato español, ejemplo:
+[0-9XYZxyz][0-9]{7}[A-Za-z]).
+• Email (type="email", required, autocomplete="email").
+• Teléfono (type="tel", required, inputmode="tel").
+• Fecha de nacimiento (type="date", required).
+• País (<select required> con dos <optgroup>: por ejemplo Europa y
+América).
+• Ciudad con sugerencias (<input list="ciudades" required> y su <datalist>
+con 5 opciones).
+2) Preferencias y disponibilidad (<fieldset><legend>Preferencias y
+disponibilidad</legend>)
+• Tipo de jornada: radios (Completa/Parcial/Remoto) con required.
+• Áreas de interés: checkboxes múltiples (mínimo 4).
+• Rol deseado: <select required> con dos <optgroup> (p. ej., Desarrollo y
+Datos).
+• Salario esperado (type="number", min, max, step, required).
+• Fecha disponible desde (type="date", required).
+• Hora preferida para entrevistas (type="time").
+• Movilidad (type="range" con min, max, value por defecto).
+3) Perfil profesional (<fieldset><legend>Perfil profesional</legend>)
+• Años de experiencia (type="number", min="0", max="40", required).
+• Tecnologías: <select multiple size="6" required> con dos <optgroup>
+(Frontend/Backend).
+• URL de portfolio (type="url").
+• CV (type="file", accept=".pdf", required).
+• Certificados (type="file", multiple, accept=".pdf,.jpg,.png").
+• Resumen profesional (<textarea> con required, minlength, maxlength).
+4) Dirección (<fieldset><legend>Dirección</legend>)
+• Calle y número (type="text", required).
+• Complemento (opcional).
+• Código postal (type="text", inputmode="numeric", pattern="[0-9]{5}",
+required).
+• Provincia: <select required> con dos <optgroup> de
+provincias/municipios.
+5) Consentimientos y confirmación (<fieldset><legend>Consentimientos y
+confirmación</legend>)
+• Aceptación de política de privacidad (checkbox required).
+• Comunicaciones comerciales (checkbox opcional).
+• Método de contacto preferido: radios (Email/Teléfono) con required.
+6) Extras (<fieldset><legend>Extras</legend>)
+• Idioma de contacto: <select required> con <optgroup> (p. ej., Español y
+Otros).
+• Etiquetas personalizadas: <input list="lista-tags"> + datalist (mínimo 5
+opciones). -->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <form method="post" action="#" enctype="multipart/form-data" target="_blank">
+        <fieldset>
+            <legend>Datos personales</legend>
+            <div>
+                <label for="nombre">Nombre completo</label>
+                <input id="nombre" name="nombre" type="text" required minlength="20" maxlength="80">
+            </div>
+            <div>
+                <label for="dni">DNI</label>
+                <input id="dni" name="dni" type="text" required pattern="[0-9XYZxyz][0-9]{7}[A-Za-z]">
+
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <input id="email" name="email" type="email"
+                 required autocomplete="email">
+            </div>
+            <div>
+                <label for="telefono">Teléfono</label>
+                <input id="telefono" name="telefono" type="tel" inputmode="tel required">
+
+            </div>
+            <div>
+                <label for="fecha_nacimiento">Fecha nacimiento</label>
+                <input id="fecha_nacimiento" name="fecha_nacimiento"
+                 type="date" required>
+            </div>
+            <div>
+                <label for="pais">País</label>
+                <select id="pais" name="pais">
+                    <option value="selecciona_pais" disabled selected>Selecciona país</option>
+                    <optgroup label="Europa">
+                        <option value="España">España</option>
+                        <option value="Francia">Francia</option>
+                    </optgroup>
+                    <optgroup label="Asia">
+                        <option value="China">China</option>
+                        <option value="Japon">Japón</option>
+                    </optgroup>
+                </select>
+            </div>
+            <div>
+                <label for="ciudad">Ciudad</label>
+                <input id="ciudad" name="ciudad" list="ciudades" required>
+                <datalist id="ciudades">
+                    <option value="Hong Kong">
+                        <option value="El Cairo">
+                            <option value="New York">
+                </datalist>
+                
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Preferencias y disponibilidad</legend>
+        </fieldset>
+        <fieldset>
+            <legend>Perfil profesional</legend>
+        </fieldset>
+        <fieldset>
+            <legend>Dirección</legend>
+        </fieldset>
+        <fieldset>
+            <legend>Consentimientos y confirmación</legend>
+        </fieldset>
+    </form>
+</body>
+
+</html>

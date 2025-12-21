@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <form action="https://httpbin.org/post" 
+        method="post" 
+        enctype="application/x-www-form-urlencoded" 
+        target="_self">
+
+    <fieldset>
+      <legend>Datos personales</legend>
+      <label for="nombre">Nombre</label>
+      <input id="nombre" name="nombre" type="text" required placeholder="Tu nombre" title="Escribe el puto nombre"><br><br>
+      <label for="telefono">Teléfono</label>
+      <input id="telefono" name="telefono" type="tel" inputmode="tel" pattern="\+?\d{9,15}"
+        placeholder="+34 6XX XXX XXX" title="Introduce tu teléfono con codigo nacional ej.+34"><br><br>
+      <label for="email">Correo</label>
+      <input id="email" name="email" type="email" required placeholder="Tu Email"
+        title="Introduce correo válido ej. texto@dominio.com"><br><br>
+      <label for="fecha_nacimiento">Fecha nacimiento</label>
+      <input id="fecha_nacimiento" name="fecha_nacimiento" type="date" title="Elige la fecha" min="1900-01-01"
+        max="2025-10-15" required>
+
+
+    </fieldset><br>
+    <fieldset>
+      <legend>Tipo de entrada</legend>
+      <p>Seleccione una opción</p>
+      <label for="entrada_general">Entrada general</label>
+      <input id="entrada_general" name="tipo_entrada" type="radio" value="general">
+      <label for="entrada_estudiante">Estudiante</label>
+      <input id="entrada_estudiante" name="tipo_entrada" type="radio" value="estudiante">
+      <label for="entrada_vip">Entrada VIP</label>
+      <input id="entrada_vip" name="tipo_entrada" type="radio" value="vip">
+    </fieldset><br>
+    <fieldset>
+      <legend>Servicios adicionales</legend>
+      <p>Selecciona uno o varios servicios</p>
+      <label for="limpieza">Limpieza gafas</label>
+      <input id="limpieza" name="servicios_adicionales" type="checkbox" value="Limpieza gafas">
+      <label for="audiologia">Audiología</label>
+      <input id="audiologia" name="servicios_adicionales" type="checkbox" value="audiologia">
+      <label for="envio">Envío domicilio</label>
+      <input id="envio" name="servicios_adicionales" type="checkbox" value="envio">
+    </fieldset><br>
+    <fieldset>
+      <legend>Turno preferido</legend>
+      <p>Selecciona el horario que prefieras</p>
+      <label for="turno">Turno</label>
+      <select id="turno" name="turno_preferido" required>
+        <option value="" disabled selected>---Selecciona un turno---</option>
+        <option value="mañana">Mañana</option>
+        <option value="tarde">Tarde</option>
+        <option value="noche">Noche</option>
+      </select>
+    </fieldset>
+    <fieldset>
+      <legend>Comentarios</legend>
+      <p>Escribe tus comentarios</p>
+      <label for="comentarios">Comentarios</label>
+      <textarea id="comentarios" name="comentarios" rows="4" cols="40" maxlength="150"
+        placeholder="cuentanos tu visita">
+
+            </textarea>
+    </fieldset><br>
+    <fieldset>
+      <legend>Ciudad de procedencia</legend>
+      <p>Dinos tu ciudad</p>
+      <label for="ciudad">Ciudad</label>
+      <input id="ciudad" name="ciudad" list="sugerencias_ciudad" placeholder="Escribe tu ciudad">
+      <datalist id="sugerencias_ciudad">
+        <option value="Madrid">
+        <option value="Barcelona">
+        <option value="Valencia">
+
+      </datalist>
+    </fieldset><br>
+    <fieldset>
+      <legend>Subir justificante de descuento</legend>
+      <p>Añade tu justificante</p>
+      <label for="justificante">Archivo (PDF o imagen JPG)</label><br>
+      <input id="justificante" name="justificante_descuento" type="file" 
+      required title="Adjunta tu justificante">
+    </fieldset><br><br>
+    <button type="submit">Enviar</button>
+
+
+
+  </form>
+
+
+
+</body>
+
+</html>
