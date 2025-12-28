@@ -12,11 +12,26 @@ recibir estos parámetros y asignarlos a las propiedades correspondientes.
 
 *En este ejercicio me planteo el hacer una clase Libro en el cual le meta el constructor y las propiedades
  , pero creo q me pides que cree el objeto a traves de una función
+ class Libro{
+ constructor(titulo,autor,precio){
+ this.titulo=titulo;
+ this.autor=autor;
+ this._precio=precio;}
+
+ get precio() {
+  return this._precio;
+}
+
+set precio(nuevoPrecio) {
+  this._precio = nuevoPrecio;
+}
+
+ }
 */
 function Libro(titulo, autor, precio) {
     this.titulo = titulo;
     this.autor = autor;
-    this.precio = precio;
+    this._precio = precio;
 }
 
 /*2. Creación de la Clase Biblioteca 
