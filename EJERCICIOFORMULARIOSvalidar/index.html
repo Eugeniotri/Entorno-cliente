@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Regex</title>
+    <link rel="stylesheet" href="form.css">
+</head>
+
+<body>
+    <header>
+        <h1>EJERCICIO FORMULARIO REGEX</h1>
+    </header>
+    <main>
+        <section>
+            <form id="form" novalidate>
+                <label for="nombreInput">Nombre:</label>
+                <input id="nombreInput" type="text" name="nombreInput" placeholder="Escribe el nombre" required>
+                <label for="email">Correo electrónico:</label>
+                <input id="email" name="email" type="email" placeholder="Escribe tu correo electrónico" required>
+                <label for="telefono">Teléfono:</label>
+                <input id="telefono" name="telefono" type="tel" placeholder="Escribe tu teléfono"
+                    title="0034 6xx xxx xxx">
+                <label for="fecha">Fecha nacimiento:</label>
+                <input id="fecha" name="fecha" type="date" title="ejemplo dd/mm/aaaa" required>
+
+                <p>Género:</p>
+                <div class="grupo_radio">
+
+                    <input id="generoH" name="genero" type="radio" value="hombre" >
+                    <label for="generoH">Hombre</label>
+                    <input id="generoM" name="genero" type="radio" value="mujer">
+                    <label for="generoM">Mujer</label>
+                    <input id="generoO" name="genero" type="radio" value="otro">
+                    <label for="generoO">Otro</label>
+
+                </div>
+
+
+                <label for="pais">País:</label>
+                <select id="pais" name="pais">
+                    <option value="" disabled selected>Selecciona un país</option>
+
+                    <optgroup label="Europa">
+                        <option value="es">España</option>
+                        <option value="al">Alemania</option>
+                    </optgroup>
+                    <optgroup label="África">
+                        <option value="ma">Marruecos</option>
+                    </optgroup>
+
+                </select>
+
+
+                <label for="terminos">Acepto los términos y condiciones</label>
+                <input id="terminos" name="terminos" type="checkbox" required>
+
+
+                <button id="btnEnviar" type="submit">Enviar</button>
+            </form>
+        </section>
+        <section>
+            <p id="resultado"></p>
+        </section>
+
+    </main>
+    <script src="app.js"></script>
+</body>
+
+</html>

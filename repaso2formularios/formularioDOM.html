@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulario Clase 4</title>
+    <!--<link rel="stylesheet" href="styles.css">-->
+</head>
+
+<body>
+    <form id="contactForm" method="post" action="#" enctype="application/x-www-form-urlencoded">
+        <label for="nombre">Nombre:</label>
+        <input id="nombre" name="nombre" type="text" required>
+        <label for="email">Email</label>
+        <input id="email" name="email" type="email" title="nombre@dominio.es" required>
+        <label for="mensaje">Mensaje</label>
+        <textarea id="mensaje" name="mensaje" required placeholder="Escribe tu opinión"></textarea>
+        <button type="submit">Enviar</button>
+        <button type="reset">Borrar formulario</button>
+    </form>
+    <hr>
+    <section id="preview">
+        <h2>Vista Previa</h2>
+        <p><strong>Nombre:</strong><span id="p_nombre">-</span></p>
+        <p><strong>Email:</strong><span id="p_mail">-</span></p>
+        <p><strong>Mensaje:</strong><span id="p_mensaje">-</span></p>
+    <button id="btnBorrar" type="button">Borrar datos guardados</button>
+    
+    </section>
+
+<script src="formDOM.js"></script>
+</body>

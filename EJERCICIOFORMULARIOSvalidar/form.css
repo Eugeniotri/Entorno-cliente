@@ -1,0 +1,84 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    display: grid;
+    place-items: center;
+    /* es lo mismo q en display flex ,align-items center y justify-content center*/
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: rgb(220, 217, 214);
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 8px;
+
+}
+
+section {
+    width: 100%;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+}
+
+label {
+    font-weight: bold;
+    font-size: 14px;
+}
+
+input,
+select {
+    padding: 8px;
+    font-size: 14px;
+    border-radius: 4px;
+    border: 1px solid #aba9a9;
+}
+
+input[type="radio"],
+input[type="checkbox"] {
+    width: auto;
+}
+
+button {
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: blue;
+}
+
+#resultado {
+    text-align: center;
+    font-weight: bold;
+    color: rgb(41, 206, 5);
+}
+
+.grupo_radio {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.error {
+    border: 2px solid red !important;
+}
