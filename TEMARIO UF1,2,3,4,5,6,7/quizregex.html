@@ -1,0 +1,901 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <title>Quiz Regex (DAW) — Validaciones de formularios (40 preguntas)</title>
+  <style>
+    :root{
+      --bg:#0b1220;
+      --card:#121b2e;
+      --muted:#93a4c7;
+      --text:#e8eeff;
+      --accent:#6aa6ff;
+      --ok:#35d07f;
+      --bad:#ff5a7a;
+      --warn:#ffcc66;
+      --border:rgba(255,255,255,.08);
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 800px at 30% 10%, rgba(106,166,255,.25), transparent 60%),
+                  radial-gradient(1000px 700px at 80% 30%, rgba(53,208,127,.18), transparent 55%),
+                  var(--bg);
+      color:var(--text);
+      min-height:100vh;
+      display:flex;
+      padding: 14px;
+      align-items:flex-start;
+      justify-content:center;
+    }
+    .app{
+      width: min(920px, 100%);
+      display:grid;
+      gap:12px;
+    }
+    header{
+      background: rgba(18,27,46,.85);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px 14px 12px;
+      backdrop-filter: blur(8px);
+    }
+    h1{
+      margin:0 0 6px 0;
+      font-size: 18px;
+      letter-spacing:.2px;
+    }
+    .sub{
+      margin:0;
+      color:var(--muted);
+      font-size: 13px;
+      line-height:1.35;
+    }
+    .row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      justify-content:space-between;
+      margin-top:10px;
+      flex-wrap:wrap;
+    }
+    .pill{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      padding:8px 10px;
+      border-radius:999px;
+      font-size:12px;
+      color: var(--muted);
+    }
+    .pill strong{color:var(--text); font-weight:700}
+    .progress{
+      flex: 1 1 260px;
+      height:10px;
+      border-radius:999px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      overflow:hidden;
+      min-width:240px;
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background: linear-gradient(90deg, rgba(106,166,255,.9), rgba(53,208,127,.85));
+      border-radius:999px;
+      transition: width .25s ease;
+    }
+    .card{
+      background: rgba(18,27,46,.88);
+      border:1px solid var(--border);
+      border-radius:16px;
+      padding:14px;
+      backdrop-filter: blur(8px);
+    }
+    .qhead{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      justify-content:space-between;
+      margin-bottom:10px;
+    }
+    .qnum{
+      font-size:12px;
+      color: var(--muted);
+    }
+    .qtitle{
+      margin:6px 0 0 0;
+      font-size: 16px;
+      line-height:1.35;
+    }
+    .hint{
+      margin:10px 0 0;
+      color: var(--muted);
+      font-size: 13px;
+      line-height:1.35;
+      border-left:3px solid rgba(106,166,255,.7);
+      padding-left:10px;
+    }
+    .choices{
+      display:grid;
+      gap:10px;
+      margin-top:12px;
+    }
+    button.choice{
+      width:100%;
+      text-align:left;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      padding:12px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size: 14px;
+      line-height:1.25;
+      transition: transform .03s ease, background .2s ease, border-color .2s ease;
+      touch-action: manipulation;
+    }
+    button.choice:active{transform: scale(.99)}
+    button.choice:hover{background: rgba(255,255,255,.05)}
+    .choice code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12.5px;
+      color:#d7e5ff;
+    }
+    .feedback{
+      margin-top:12px;
+      border-radius:14px;
+      border:1px solid var(--border);
+      padding:12px;
+      display:none;
+    }
+    .feedback.ok{border-color: rgba(53,208,127,.45); background: rgba(53,208,127,.08)}
+    .feedback.bad{border-color: rgba(255,90,122,.45); background: rgba(255,90,122,.08)}
+    .feedback .t{
+      margin:0 0 6px 0;
+      font-weight:800;
+      letter-spacing:.2px;
+    }
+    .feedback .e{
+      margin:0;
+      color: var(--text);
+      line-height:1.45;
+      font-size: 13.5px;
+    }
+    .actions{
+      margin-top:12px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      justify-content:space-between;
+      align-items:center;
+    }
+    .btn{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color:var(--text);
+      padding:11px 12px;
+      border-radius:12px;
+      cursor:pointer;
+      font-size: 14px;
+      touch-action: manipulation;
+    }
+    .btn.primary{
+      background: rgba(106,166,255,.16);
+      border-color: rgba(106,166,255,.35);
+    }
+    .btn:disabled{
+      opacity:.55;
+      cursor:not-allowed;
+    }
+    .tiny{
+      color:var(--muted);
+      font-size:12px;
+    }
+    .summary{
+      display:none;
+    }
+    .sumgrid{
+      display:grid;
+      gap:10px;
+    }
+    .sumcard{
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      border-radius:14px;
+      padding:12px;
+    }
+    .sumcard h3{
+      margin:0 0 6px;
+      font-size:14px;
+    }
+    .sumcard p{
+      margin:0;
+      color:var(--muted);
+      font-size:13px;
+      line-height:1.4;
+    }
+    .tag{
+      display:inline-block;
+      padding:3px 8px;
+      border-radius:999px;
+      font-size:12px;
+      margin-left:8px;
+      border:1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color:var(--muted);
+    }
+    .tag.ok{border-color: rgba(53,208,127,.45); color: rgba(53,208,127,.9)}
+    .tag.bad{border-color: rgba(255,90,122,.45); color: rgba(255,90,122,.95)}
+    .code{
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size: 12.5px;
+      color:#d7e5ff;
+      background: rgba(0,0,0,.15);
+      padding:2px 6px;
+      border-radius:8px;
+      border:1px solid var(--border);
+      display:inline-block;
+      margin-top:6px;
+      white-space: nowrap;
+      max-width: 100%;
+      overflow-x: auto;
+    }
+    @media (max-width:520px){
+      .qtitle{font-size:15px}
+      button.choice{padding:11px}
+      header{padding:12px}
+      .card{padding:12px}
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Quiz de Regex (DAW) — Validación de formularios</h1>
+      <p class="sub">
+        40 preguntas de menos a más. Modo móvil friendly. Te muestra explicación al responder.
+        En validación, recuerda: casi siempre <span class="code">^</span> y <span class="code">$</span>, y evita <span class="code">g</span> con <span class="code">test()</span>.
+      </p>
+      <div class="row">
+        <div class="progress" aria-label="Progreso">
+          <div class="bar" id="bar"></div>
+        </div>
+        <div class="pill"><strong id="score">0</strong> aciertos</div>
+        <div class="pill"><strong id="pos">1</strong>/40</div>
+      </div>
+    </header>
+
+    <section class="card" id="quiz">
+      <div class="qhead">
+        <div>
+          <div class="qnum" id="qnum">Pregunta 1</div>
+          <h2 class="qtitle" id="qtext"></h2>
+        </div>
+        <div class="pill" id="topic">Tema</div>
+      </div>
+
+      <div class="choices" id="choices"></div>
+
+      <div class="feedback" id="fb">
+        <p class="t" id="fbt"></p>
+        <p class="e" id="fbe"></p>
+      </div>
+
+      <div class="actions">
+        <button class="btn" id="prev">⬅️ Anterior</button>
+        <div class="tiny" id="tiny"></div>
+        <button class="btn primary" id="next" disabled>Siguiente ➡️</button>
+      </div>
+    </section>
+
+    <section class="card summary" id="summary">
+      <div class="qhead">
+        <div>
+          <div class="qnum">Resultado</div>
+          <h2 class="qtitle" id="sumTitle"></h2>
+          <p class="hint" id="sumHint"></p>
+        </div>
+        <div class="pill"><strong id="sumScore">0</strong>/40</div>
+      </div>
+
+      <div class="sumgrid" id="review"></div>
+
+      <div class="actions">
+        <button class="btn" id="restart">🔁 Repetir quiz</button>
+        <span class="tiny">Consejo: repite las falladas y reescribe el patrón correcto en un papel.</span>
+      </div>
+    </section>
+  </div>
+
+<script>
+  // 40 preguntas: de fácil (buscar/entender) a difícil (validación real, opciones, grupos, email/teléfono).
+  // Todas están orientadas a validación típica de formularios.
+  const questions = [
+    // 1–8: fundamentos (buscar vs validar, \d, clases)
+    {
+      topic:"Fundamentos",
+      q:"¿Qué devuelve <code>/DAW/.test('Curso DAW 2')</code>?",
+      choices:["false","true","Error: falta la bandera g","Depende del navegador"],
+      a:1,
+      e:"Sin <code>^</code> ni <code>$</code>, la regex busca dentro del texto. Como aparece “DAW”, devuelve <b>true</b>."
+    },
+    {
+      topic:"Fundamentos",
+      q:"¿Qué significa <code>\\d</code> en JavaScript regex?",
+      choices:["Cualquier letra","Cualquier dígito 0–9","Cualquier espacio en blanco","Cualquier carácter"],
+      a:1,
+      e:"<code>\\d</code> es un atajo para un dígito (<code>[0-9]</code>)."
+    },
+    {
+      topic:"Fundamentos",
+      q:"¿Qué hace <code>[abc]</code>?",
+      choices:["Coincide con la palabra “abc” completa","Coincide con una sola letra: a o b o c","Coincide con cualquier letra menos a,b,c","Coincide con “a” seguido de “bc”"],
+      a:1,
+      e:"Los corchetes definen una clase de caracteres: aquí, <b>un solo carácter</b> entre a/b/c."
+    },
+    {
+      topic:"Fundamentos",
+      q:"¿Qué devuelve <code>/\\d/.test('abc')</code>?",
+      choices:["true","false","Error: \\d solo funciona con bandera u","Depende si hay espacios"],
+      a:1,
+      e:"No hay ningún dígito en “abc”, así que <b>false</b>."
+    },
+    {
+      topic:"Fundamentos",
+      q:"¿Qué devuelve <code>/\\d+/.test('Tel: 6 1 2')</code>?",
+      choices:["false","true","Error: + no se puede usar con \\d","true solo si hay 3 números seguidos"],
+      a:1,
+      e:"<code>\\d+</code> busca “una o más cifras seguidas”. En el texto aparece “6”, “1”, “2” (al menos una secuencia), así que <b>true</b>."
+    },
+    {
+      topic:"Fundamentos",
+      q:"Para validar un campo completo (no solo buscar dentro), ¿qué sueles usar?",
+      choices:["Solo la bandera g","Anclas <code>^</code> y <code>$</code>","La bandera i","Corchetes [] siempre"],
+      a:1,
+      e:"En validación de formulario casi siempre necesitas <code>^</code> (inicio) y <code>$</code> (final)."
+    },
+    {
+      topic:"Fundamentos",
+      q:"¿Qué valida <code>/^\\d+$/.test('123a')</code>?",
+      choices:["true, porque contiene números","false, porque hay una letra","true si hay 3 dígitos al principio","false solo si termina en letra"],
+      a:1,
+      e:"<code>^</code> y <code>$</code> exigen que todo sea dígitos. Como hay “a”, es <b>false</b>."
+    },
+    {
+      topic:"Fundamentos",
+      q:"¿Cuál es el cuantificador que permite “cero o más” repeticiones?",
+      choices:["<code>+</code>","<code>*</code>","<code>?</code>","<code>{n}</code>"],
+      a:1,
+      e:"<code>*</code> significa 0 o más. Por eso permite cadena vacía en patrones como <code>^\\d*$</code>."
+    },
+
+    // 9–16: cuantificadores, anclas, escapes
+    {
+      topic:"Cuantificadores",
+      q:"¿Qué devuelve <code>/^\\d*$/.test('')</code>?",
+      choices:["false","true","Error: * no permite vacío","true solo con bandera g"],
+      a:1,
+      e:"<code>*</code> permite 0 repeticiones, y con <code>^...$</code> la cadena vacía cumple. Resultado: <b>true</b>."
+    },
+    {
+      topic:"Cuantificadores",
+      q:"¿Qué devuelve <code>/^\\d{3}$/.test('1234')</code>?",
+      choices:["true","false","true si empieza por 123","Depende de la bandera i"],
+      a:1,
+      e:"<code>{3}</code> exige exactamente 3 dígitos. “1234” tiene 4, por eso <b>false</b>."
+    },
+    {
+      topic:"Cuantificadores",
+      q:"¿Qué significa <code>\\d{3,}</code>?",
+      choices:["Exactamente 3 dígitos","Entre 3 y 9 dígitos","3 o más dígitos","0 a 3 dígitos"],
+      a:2,
+      e:"<code>{3,}</code> significa mínimo 3, sin máximo. Es decir, <b>3 o más</b>."
+    },
+    {
+      topic:"Cuantificadores",
+      q:"¿Qué significa <code>\\d{2,4}</code>?",
+      choices:["2 o 4 dígitos (solo esos)","Entre 2 y 4 dígitos","Exactamente 24 dígitos","2 dígitos seguidos de 4 dígitos"],
+      a:1,
+      e:"<code>{2,4}</code> indica un rango: mínimo 2 y máximo 4."
+    },
+    {
+      topic:"Escape",
+      q:"En regex, el punto <code>.</code> significa…",
+      choices:["Punto literal","Cualquier carácter (excepto salto de línea)","Final de cadena","Espacio en blanco"],
+      a:1,
+      e:"<code>.</code> es comodín. Si quieres punto literal, usa <code>\\.</code>."
+    },
+    {
+      topic:"Escape",
+      q:"¿Cuál busca literalmente “.com” al final?",
+      choices:["<code>/.com$/</code>","<code>/\\.com$/</code>","<code>/com\\.$/</code>","<code>/\\.com^/</code>"],
+      a:1,
+      e:"Hay que escapar el punto: <code>\\.</code>, y usar <code>$</code> para el final."
+    },
+    {
+      topic:"Grupos",
+      q:"¿Para qué sirven los paréntesis <code>( )</code> en regex (principalmente)?",
+      choices:["Para elegir un solo carácter como [ ]","Para agrupar y aplicar cuantificadores/alternativas a un bloque","Para convertir la regex en global","Para ignorar mayúsculas"],
+      a:1,
+      e:"Los paréntesis agrupan: permiten repetir bloques <code>(ab)+</code> o hacer alternativas <code>(com|es)</code>."
+    },
+    {
+      topic:"Grupos",
+      q:"¿Cuál coincide con el texto literal “(612)”?",
+      choices:["<code>/(612)/</code>","<code>/\\(612\\)/</code>","<code>/[612]/</code>","<code>/^612$/</code>"],
+      a:1,
+      e:"Para paréntesis literales hay que escaparlos: <code>\\(</code> y <code>\\)</code>."
+    },
+
+    // 17–24: validaciones típicas (números, letras, alfanumérico, longitud)
+    {
+      topic:"Validación",
+      q:"Regex para validar “solo números (1 o más)” en un campo:",
+      choices:["<code>/\\d+/</code>","<code>/^\\d+$/</code>","<code>/\\d{1}$/</code>","<code>/[0-9]*/</code>"],
+      a:1,
+      e:"Para validar todo el campo: <code>^</code> inicio + <code>\\d+</code> + <code>$</code> fin."
+    },
+    {
+      topic:"Validación",
+      q:"Regex para validar “exactamente 9 dígitos” (teléfono simple):",
+      choices:["<code>/\\d{9}/</code>","<code>/^\\d{9}$/</code>","<code>/^\\d{9,}$/</code>","<code>/\\d{9}$/</code>"],
+      a:1,
+      e:"Sin anclas podría encontrar 9 dígitos dentro de texto. Para validación estricta: <code>^\\d{9}$</code>."
+    },
+    {
+      topic:"Validación",
+      q:"Regex para validar “solo letras (sin espacios), mayús/minús indiferente”:",
+      choices:["<code>/^[a-z]$/i</code>","<code>/^[a-z]+$/i</code>","<code>/[a-z]+/</code>","<code>/^[A-Z]+$/</code>"],
+      a:1,
+      e:"<code>+ </code> es clave: una o más letras. Sin <code>+</code> validas solo una letra."
+    },
+    {
+      topic:"Validación",
+      q:"Regex para validar “letras y números (sin símbolos), mínimo 5 caracteres”:",
+      choices:["<code>/^[a-z0-9]{5,}$/i</code>","<code>/^[a-z]{5,}$/i</code>","<code>/^\\w{5,}$/</code>","<code>/[a-z0-9]{5,}/i</code>"],
+      a:0,
+      e:"<code>^[a-z0-9]{5,}$</code> valida alfanumérico, mínimo 5. <code>\\w</code> incluye “_”, cuidado."
+    },
+    {
+      topic:"Validación",
+      q:"¿Cuál valida “usuario entre 5 y 12 alfanuméricos” (sin guiones ni _) ?",
+      choices:["<code>/^[a-z0-9]{5,12}$/i</code>","<code>/^[a-z0-9]+$/i</code>","<code>/^[a-z0-9]{5,}$/i</code>","<code>/^\\w{5,12}$/</code>"],
+      a:0,
+      e:"La clave es el rango <code>{5,12}</code> y evitar <code>\\w</code> si no quieres guion bajo."
+    },
+    {
+      topic:"Validación",
+      q:"¿Cuál valida “empieza por JS” (y luego cualquier cosa)?",
+      choices:["<code>/JS/</code>","<code>/^JS/</code>","<code>/JS$/</code>","<code>/^JS$/</code>"],
+      a:1,
+      e:"<code>^JS</code> asegura que empieza por JS. Sin <code>^</code> solo busca dentro."
+    },
+    {
+      topic:"Validación",
+      q:"¿Cuál valida “termina en .com”?",
+      choices:["<code>/\\.com$/</code>","<code>/\\.com^/</code>","<code>/.com$/</code>","<code>/com\\.$/</code>"],
+      a:0,
+      e:"Punto escapado + final con <code>$</code>."
+    },
+    {
+      topic:"Validación",
+      q:"Regex para validar “código: JS + exactamente 4 dígitos” (ej: JS2026):",
+      choices:["<code>/^JS\\d{4}$/</code>","<code>/JS\\d{4}/</code>","<code>/^JS\\d+$/</code>","<code>/^JS{4}\\d$/</code>"],
+      a:0,
+      e:"Se valida todo el campo: <code>^JS</code> + <code>\\d{4}</code> + <code>$</code>."
+    },
+
+    // 25–30: teléfono con reglas, prefijo, opcionalidad, alternancias
+    {
+      topic:"Teléfono",
+      q:"Teléfono español que empiece por 6 o 7 y tenga 9 dígitos:",
+      choices:["<code>/^[67]\\d{8}$/</code>","<code>/^\\d{9}$/</code>","<code>/^[67]\\d{9}$/</code>","<code>/^([67])\\d{7}$/</code>"],
+      a:0,
+      e:"El primer dígito (6 o 7) + 8 dígitos más = 9 en total."
+    },
+    {
+      topic:"Teléfono",
+      q:"Prefijo opcional +34 (con o sin espacio) + 9 dígitos:",
+      choices:[
+        "<code>/^(\\+34\\s?)?\\d{9}$/</code>",
+        "<code>/^(34)*\\d{9}$/</code>",
+        "<code>/^\\+34?\\d{9}$/</code>",
+        "<code>/^(\\+34|34)?\\d{9}$/g</code>"
+      ],
+      a:0,
+      e:"<code>(\\+34\\s?)?</code> hace opcional el prefijo, y <code>\\d{9}</code> valida el número. Evita <code>g</code> en <code>test()</code>."
+    },
+    {
+      topic:"Teléfono",
+      q:"Si el teléfono es opcional: ¿qué lógica es correcta en JS?",
+      choices:[
+        "Si está vacío → OK; si no, validar con regex",
+        "Siempre validar, aunque esté vacío",
+        "Usar <code>*</code> para permitir cualquier cosa",
+        "Quitar <code>^</code> y <code>$</code> para que pase más"
+      ],
+      a:0,
+      e:"Patrón típico: <b>si vacío, no errores</b>. Si tiene contenido, entonces <code>regex.test(valor)</code>."
+    },
+    {
+      topic:"Teléfono",
+      q:"Quieres limpiar un teléfono con guiones/espacios/paréntesis y quedarte solo con dígitos. ¿Qué regex usarías con <code>replace</code>?",
+      choices:["<code>/\\d/g</code>","<code>/\\D/g</code>","<code>/^\\d+$/</code>","<code>/[0-9]{9}/</code>"],
+      a:1,
+      e:"<code>\\D</code> = “no dígito”. Reemplazando <code>\\D</code> por vacío te quedas solo con números."
+    },
+    {
+      topic:"Teléfono",
+      q:"¿Cuál es correcta para permitir <b>34</b> o <b>+34</b> opcional antes de 9 dígitos (sin espacio)?",
+      choices:[
+        "<code>/^(\\+34|34)?\\d{9}$/</code>",
+        "<code>/^\\+?34\\d{9}$/</code>",
+        "<code>/^(34|\\+34)*\\d{9}$/</code>",
+        "<code>/^(\\+34||34)?\\d{9}$/</code>"
+      ],
+      a:0,
+      e:"Alternativa con <code>|</code> dentro de un grupo y opcional con <code>?</code>."
+    },
+    {
+      topic:"Teléfono",
+      q:"¿Por qué se recomienda NO usar la bandera <code>g</code> con <code>test()</code> para validar formularios?",
+      choices:[
+        "Porque rompe el DOM",
+        "Porque <code>test()</code> con <code>g</code> puede depender de <code>lastIndex</code> y dar resultados raros",
+        "Porque <code>g</code> desactiva <code>^</code> y <code>$</code>",
+        "Porque <code>g</code> solo funciona con números"
+      ],
+      a:1,
+      e:"Con <code>g</code>, algunas operaciones actualizan <code>lastIndex</code>, lo que puede alternar true/false en llamadas sucesivas."
+    },
+
+    // 31–40: email progresivo y casos típicos de examen
+    {
+      topic:"Email",
+      q:"Email “clase” básico (solo letras) con validación completa:",
+      choices:[
+        "<code>/^[a-z]+@[a-z]+\\.[a-z]+$/i</code>",
+        "<code>/[a-z]+@[a-z]+\\.[a-z]+/i</code>",
+        "<code>/^[a-z]@[a-z]\\.com$/i</code>",
+        "<code>/^\\w+@\\w+\\.\\w+$/</code>"
+      ],
+      a:0,
+      e:"La opción A valida todo el campo. La B solo busca dentro. <code>\\w</code> incluye “_”, ojo."
+    },
+    {
+      topic:"Email",
+      q:"¿Por qué hay que escribir <code>\\.</code> en un email en lugar de <code>.</code>?",
+      choices:[
+        "Porque <code>.</code> es el final del string",
+        "Porque <code>.</code> significa “cualquier carácter”, y queremos un punto literal",
+        "Porque <code>.</code> solo funciona con bandera s",
+        "Porque los puntos no existen en emails"
+      ],
+      a:1,
+      e:"<code>.</code> es comodín. Para un punto literal debes escapar: <code>\\.</code>."
+    },
+    {
+      topic:"Email",
+      q:"Permitir puntos antes de la @ (juan.perez.lopez@...) en el usuario:",
+      choices:[
+        "<code>/^[a-z0-9]+(\\.[a-z0-9]+)*@[a-z0-9]+\\.[a-z]+$/i</code>",
+        "<code>/^[a-z0-9]+\\.[a-z0-9]+@[a-z]+\\.[a-z]+$/i</code>",
+        "<code>/^[a-z0-9]*(\\.[a-z0-9]*)*@/i</code>",
+        "<code>/^[a-z0-9]+(\\.[a-z0-9])?@[a-z]+\\.[a-z]+$/i</code>"
+      ],
+      a:0,
+      e:"<code>(\\.[a-z0-9]+)*</code> permite 0 o más bloques “.algo”."
+    },
+    {
+      topic:"Email",
+      q:"Limitar la extensión a com/es/org (solo esas):",
+      choices:[
+        "<code>/\\.(com|es|org)$/</code>",
+        "<code>/\\.(com||es||org)$/</code>",
+        "<code>/\\.(com|es|org)^/</code>",
+        "<code>/\\.(com,es,org)$/</code>"
+      ],
+      a:0,
+      e:"En regex la alternativa es <code>|</code> (no <code>||</code>), y se usa <code>$</code> para final."
+    },
+    {
+      topic:"Email",
+      q:"Email con puntos antes de @, dominio con números, extensión com/es/org:",
+      choices:[
+        "<code>/^[a-z0-9]+(\\.[a-z0-9]+)*@[a-z0-9]+\\.(com|es|org)$/i</code>",
+        "<code>/^[a-z0-9]+(\\.[a-z0-9]+)*@[a-z0-9]+\\.(com|es|org)$/ig</code>",
+        "<code>/^[a-z0-9]+(\\.[a-z0-9]+)*@[a-z0-9]\\.com$/i</code>",
+        "<code>/^[a-z0-9]+\\.?@[a-z0-9]+\\.(com|es|org)$/i</code>"
+      ],
+      a:0,
+      e:"La A es la forma limpia. Evita <code>g</code> con <code>test()</code>. La C solo permite 1 carácter de dominio."
+    },
+    {
+      topic:"Email",
+      q:"Permitir guiones en el dominio (mi-empresa.com): parte de dominio correcta es…",
+      choices:[
+        "<code>[a-z0-9-]+</code>",
+        "<code>[a-z0-9]+(-[a-z0-9]+)*</code>",
+        "<code>-[a-z0-9]+</code>",
+        "<code>[a-z0-9]+(-)*</code>"
+      ],
+      a:1,
+      e:"La opción B evita que el dominio empiece o termine con guion: bloque repetible “-algo”."
+    },
+    {
+      topic:"Email",
+      q:"Email “DAW avanzado” (usuario con puntos, dominio con guiones, extensión limitada):",
+      choices:[
+        "<code>/^[a-z0-9]+(\\.[a-z0-9]+)*@[a-z0-9]+(-[a-z0-9]+)*\\.(com|es|org)$/i</code>",
+        "<code>/^[a-z0-9]+(\\.[a-z0-9]+)*@[a-z0-9-]+\\.(com|es|org)$/i</code>",
+        "<code>/^[a-z0-9\\.]+@[a-z0-9\\-]+\\.(com|es|org)$/i</code>",
+        "<code>/^[a-z0-9]+(\\.[a-z0-9]+)*@(-[a-z0-9]+)*\\.(com|es|org)$/i</code>"
+      ],
+      a:0,
+      e:"La A es la forma estructurada y segura: evita doble punto/guion mal colocado. La B y C son más permisivas."
+    },
+    {
+      topic:"Examen",
+      q:"¿Qué método es el más típico para validar con regex en formularios (devuelve true/false)?",
+      choices:["<code>match()</code>","<code>replace()</code>","<code>test()</code>","<code>search()</code>"],
+      a:2,
+      e:"Para validar y decidir “pasa/no pasa”, lo típico es <code>regex.test(valor)</code>."
+    },
+    {
+      topic:"Examen",
+      q:"Quieres marcar un campo inválido con borde rojo al enviar. Lo más limpio es…",
+      choices:[
+        "Cambiar estilos inline en 10 sitios",
+        "Crear clase CSS <code>.error</code> y añadir/quitar con <code>classList</code>",
+        "Usar solo alert()",
+        "Quitar <code>required</code> del HTML"
+      ],
+      a:1,
+      e:"Patrón DAW: CSS con <code>.error</code> y en JS <code>element.classList.add('error')</code> / <code>remove</code>."
+    },
+    {
+      topic:"Examen",
+      q:"En un <code>submit</code> de formulario, ¿qué haces para evitar el envío real mientras validas?",
+      choices:[
+        "<code>event.stopPropagation()</code>",
+        "<code>event.preventDefault()</code>",
+        "<code>return false</code> siempre",
+        "No hace falta nada"
+      ],
+      a:1,
+      e:"En el listener de <code>submit</code>, lo típico es <code>event.preventDefault()</code> para validar y decidir."
+    },
+
+    // 40: pregunta final integradora (elige la mejor)
+    {
+      topic:"Final",
+      q:"Elige la mejor validación para: <b>teléfono opcional</b> (si hay texto, debe ser 9 dígitos empezando por 6 o 7).",
+      choices:[
+        "JS: <code>if (!/^[67]\\d{8}$/.test(tel)) error;</code>",
+        "JS: <code>if (tel !== '' && !/^[67]\\d{8}$/.test(tel)) error;</code>",
+        "JS: <code>if (/^[67]\\d{8}$/.test(tel) === false) ok;</code>",
+        "JS: <code>if (tel === '' || /^[67]\\d{8}$/.test(tel)) error;</code>"
+      ],
+      a:1,
+      e:"Como es opcional: si está vacío, OK. Si no está vacío, validas. Por eso: <code>tel !== '' && !regex.test(tel)</code>."
+    }
+  ];
+
+  // State
+  let idx = 0;
+  let score = 0;
+  const answers = Array(questions.length).fill(null); // chosen index
+  const correctness = Array(questions.length).fill(null); // true/false
+
+  const elBar = document.getElementById('bar');
+  const elScore = document.getElementById('score');
+  const elPos = document.getElementById('pos');
+  const elQnum = document.getElementById('qnum');
+  const elQtext = document.getElementById('qtext');
+  const elTopic = document.getElementById('topic');
+  const elChoices = document.getElementById('choices');
+  const elFb = document.getElementById('fb');
+  const elFbt = document.getElementById('fbt');
+  const elFbe = document.getElementById('fbe');
+  const elPrev = document.getElementById('prev');
+  const elNext = document.getElementById('next');
+  const elTiny = document.getElementById('tiny');
+
+  const elQuiz = document.getElementById('quiz');
+  const elSummary = document.getElementById('summary');
+  const elSumTitle = document.getElementById('sumTitle');
+  const elSumHint = document.getElementById('sumHint');
+  const elSumScore = document.getElementById('sumScore');
+  const elReview = document.getElementById('review');
+  const elRestart = document.getElementById('restart');
+
+  function setProgress() {
+    const p = ((idx) / questions.length) * 100;
+    elBar.style.width = p.toFixed(2) + '%';
+    elPos.textContent = (idx + 1);
+    elScore.textContent = String(score);
+  }
+
+  function renderQuestion() {
+    setProgress();
+    const q = questions[idx];
+
+    elQnum.innerHTML = `Pregunta ${idx + 1} de ${questions.length}`;
+    elTopic.textContent = q.topic;
+    elQtext.innerHTML = q.q;
+
+    // Reset feedback
+    elFb.style.display = 'none';
+    elFb.classList.remove('ok','bad');
+    elFbt.textContent = '';
+    elFbe.textContent = '';
+
+    // Render choices
+    elChoices.innerHTML = '';
+    q.choices.forEach((c, i) => {
+      const btn = document.createElement('button');
+      btn.className = 'choice';
+      btn.type = 'button';
+      btn.innerHTML = c;
+      btn.addEventListener('click', () => selectChoice(i));
+      elChoices.appendChild(btn);
+    });
+
+    // Prev/Next state
+    elPrev.disabled = (idx === 0);
+    elNext.disabled = (answers[idx] === null);
+    elTiny.textContent = answers[idx] === null
+      ? 'Responde para desbloquear “Siguiente”.'
+      : 'Puedes cambiar tu respuesta; se recalcula la puntuación.';
+
+    // If already answered, show feedback and highlight
+    if (answers[idx] !== null) {
+      showFeedback(answers[idx]);
+      highlight(answers[idx]);
+    }
+  }
+
+  function highlight(chosen) {
+    const q = questions[idx];
+    const btns = [...elChoices.querySelectorAll('button.choice')];
+    btns.forEach((b, i) => {
+      b.style.borderColor = 'rgba(255,255,255,.10)';
+      b.style.background = 'rgba(255,255,255,.03)';
+    });
+    // chosen
+    btns[chosen].style.borderColor = 'rgba(106,166,255,.55)';
+    btns[chosen].style.background = 'rgba(106,166,255,.10)';
+    // correct (subtle)
+    btns[q.a].style.borderColor = 'rgba(53,208,127,.55)';
+  }
+
+  function selectChoice(choiceIdx) {
+    const q = questions[idx];
+    const prevChoice = answers[idx];
+    const wasCorrectBefore = correctness[idx];
+
+    answers[idx] = choiceIdx;
+    const isCorrectNow = (choiceIdx === q.a);
+    correctness[idx] = isCorrectNow;
+
+    // Update score if changing an already answered question
+    if (prevChoice === null) {
+      if (isCorrectNow) score++;
+    } else {
+      // If previously correct and now incorrect => score--
+      if (wasCorrectBefore && !isCorrectNow) score--;
+      // If previously incorrect and now correct => score++
+      if (!wasCorrectBefore && isCorrectNow) score++;
+    }
+
+    elNext.disabled = false;
+    elTiny.textContent = 'Puedes cambiar tu respuesta; se recalcula la puntuación.';
+    elScore.textContent = String(score);
+
+    highlight(choiceIdx);
+    showFeedback(choiceIdx);
+  }
+
+  function showFeedback(choiceIdx) {
+    const q = questions[idx];
+    const ok = (choiceIdx === q.a);
+    elFb.style.display = 'block';
+    elFb.classList.remove('ok','bad');
+    elFb.classList.add(ok ? 'ok' : 'bad');
+    elFbt.textContent = ok ? '✅ Correcto' : '❌ Incorrecto';
+    const correctHtml = q.choices[q.a].includes('<code>')
+      ? `Respuesta correcta: ${q.choices[q.a]}`
+      : `Respuesta correcta: <b>${q.choices[q.a]}</b>`;
+    elFbe.innerHTML = `${correctHtml}<br><br>${q.e}`;
+  }
+
+  function next() {
+    if (idx < questions.length - 1) {
+      idx++;
+      renderQuestion();
+    } else {
+      finish();
+    }
+  }
+
+  function prev() {
+    if (idx > 0) {
+      idx--;
+      renderQuestion();
+    }
+  }
+
+  function finish() {
+    // Fill progress to 100%
+    elBar.style.width = '100%';
+
+    elQuiz.style.display = 'none';
+    elSummary.style.display = 'block';
+
+    elSumScore.textContent = String(score);
+    elSumTitle.textContent = `Tu resultado: ${score} aciertos de ${questions.length}`;
+    const percent = Math.round((score / questions.length) * 100);
+    let msg = '';
+    if (percent >= 90) msg = 'Nivel muy alto. Ya estás para examen con confianza.';
+    else if (percent >= 75) msg = 'Buen nivel. Repasa especialmente las falladas y repite el quiz.';
+    else if (percent >= 55) msg = 'Vas bien, pero conviene repetir fundamentos: ^ $, + * ?, escapes y alternancias.';
+    else msg = 'Repite desde las primeras preguntas y practica 10 minutos al día: te sube rápido.';
+    elSumHint.textContent = msg;
+
+    // Review list
+    elReview.innerHTML = '';
+    questions.forEach((q, i) => {
+      const card = document.createElement('div');
+      card.className = 'sumcard';
+
+      const ok = (correctness[i] === true);
+      const tag = `<span class="tag ${ok ? 'ok' : 'bad'}">${ok ? 'OK' : 'FALLADA'}</span>`;
+      const chosen = answers[i] === null ? '—' : q.choices[answers[i]];
+      const correct = q.choices[q.a];
+
+      card.innerHTML = `
+        <h3>${i + 1}. ${q.topic} ${tag}</h3>
+        <p><b>Pregunta:</b> ${q.q}</p>
+        <p style="margin-top:8px"><b>Tu respuesta:</b> ${chosen}</p>
+        <p style="margin-top:6px"><b>Correcta:</b> ${correct}</p>
+        <p style="margin-top:8px">${q.e}</p>
+      `;
+      elReview.appendChild(card);
+    });
+  }
+
+  function restart() {
+    idx = 0;
+    score = 0;
+    for (let i=0;i<answers.length;i++){
+      answers[i] = null;
+      correctness[i] = null;
+    }
+    elScore.textContent = '0';
+    elPos.textContent = '1';
+    elBar.style.width = '0%';
+    elQuiz.style.display = 'block';
+    elSummary.style.display = 'none';
+    renderQuestion();
+  }
+
+  elNext.addEventListener('click', next);
+  elPrev.addEventListener('click', prev);
+  elRestart.addEventListener('click', restart);
+
+  // Keyboard (optional): 1-4 select, Enter next
+  document.addEventListener('keydown', (e) => {
+    if (elSummary.style.display === 'block') return;
+    if (e.key >= '1' && e.key <= '4') {
+      const n = parseInt(e.key,10)-1;
+      if (n >= 0 && n < questions[idx].choices.length) selectChoice(n);
+    }
+    if (e.key === 'Enter' && !elNext.disabled) next();
+  });
+
+  renderQuestion();
+</script>
+</body>
+</html>
