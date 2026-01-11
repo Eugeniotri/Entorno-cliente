@@ -2,91 +2,381 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>UF3 · Repaso Completo (DOM · Eventos · Storage)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>UF3 - Repaso completo (Patrones + Formulario final)</title>
   <style>
-    body{
-      margin:0;
-      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
-      background:#0b1020;
-      color:#e9eefc;
-    }
-    header{
-      position:sticky; top:0; z-index:10;
-      background:#0f172a;
-      border-bottom:1px solid rgba(255,255,255,.12);
-      padding:12px;
-    }
-    h1{ font-size:18px; margin:0 0 6px; }
-    nav{
-      display:flex; gap:8px; flex-wrap:wrap;
-    }
-    nav button{
-      background:#1f2a55;
-      color:#e9eefc;
-      border:1px solid rgba(255,255,255,.18);
-      border-radius:10px;
-      padding:8px 12px;
-      cursor:pointer;
-    }
-    nav button.active{
-      background:#3b4fd8;
-    }
-    main{
-      height: calc(100vh - 98px);
-    }
-    iframe{
-      width:100%;
-      height:100%;
-      border:none;
-      display:none;
-      background:white;
-    }
-    iframe.active{ display:block; }
-    footer{
-      padding:8px 12px;
-      font-size:12px;
-      color:#a9b6df;
-      border-top:1px solid rgba(255,255,255,.12);
-      background:#0f172a;
-    }
+    body { font-family: Arial, sans-serif; margin: 18px; line-height: 1.35; }
+    h1 { margin-top: 0; }
+    h2 { margin-top: 26px; padding-top: 10px; border-top: 1px solid #ddd; }
+    .box { background: #f7f7f7; padding: 10px 12px; border-radius: 8px; margin: 10px 0; }
+    code { background: #eee; padding: 2px 5px; border-radius: 4px; }
+    pre { background: #111; color: #eee; padding: 10px; border-radius: 10px; overflow:auto; }
+    .hint { color:#444; font-size: 0.95rem; }
+    .error { border: 2px solid red !important; }
+    .ok { border: 2px solid green !important; }
+    .msg { margin: 6px 0; }
+    .errorTxt { color: red; }
+    .okTxt { color: green; }
+    .fila { margin: 10px 0; }
+    label { display:block; margin-bottom: 4px; }
+    input { padding: 6px; width: 280px; }
+    button { margin: 6px 6px 0 0; }
+    ul { margin-top: 10px; }
+    li { margin: 6px 0; }
+      /* FIX: evita bloques blancos dentro de <pre> */
+  pre code {
+    background: transparent;
+    padding: 0;
+    border-radius: 0;
+    color: inherit;
+  }
+
+  /* Opcional: mejora lectura */
+  pre {
+    white-space: pre-wrap;
+    font-size: 14px;
+    line-height: 1.35;
+  }
+
   </style>
 </head>
 <body>
 
-<header>
-  <h1>UF3 – Repaso Completo (2º DAW)</h1>
-  <nav>
-    <button class="active" data-target="dom">DOM completo</button>
-    <button data-target="eventos">Eventos</button>
-    <button data-target="storage">Storage</button>
-    <button data-target="test">Chuleta + Test DOM</button>
-  </nav>
-</header>
+<h1>UF3 — Repaso completo: patrones clave + formulario final</h1>
+<p class="hint">Este documento resume TODOS los patrones vistos en UF3. Al final tienes un formulario completo que los integra.</p>
 
-<main>
-  <iframe id="dom" class="active" src="UF3_DOM_resumen_con_ejemplos.html"></iframe>
-  <iframe id="eventos" src="UF3_eventos_repaso_examen.html"></iframe>
-  <iframe id="storage" src="UF3_storage_practica_completa.html"></iframe>
-  <iframe id="test" src="UF3_chuleta_y_test_DOM_selectores_remove.html"></iframe>
-</main>
+<!-- 1) DOM y acceso -->
+<h2>1) DOM y acceso a elementos</h2>
+<div class="box">
+  <p><b>Patrones clave</b></p>
+  <pre><code>// Acceso al DOM
+document.getElementById("id");
+document.getElementsByName("name")[0];
+document.querySelector("#id");
+document.querySelectorAll("input");</code></pre>
 
-<footer>
-  UF3 completo · DOM · Eventos · Storage · Pensado para repasar desde el móvil
-</footer>
+  <p><b>Trampas de examen</b></p>
+  <pre><code>document.getElementById("#email");   // ❌ MAL (sin #)
+document.getElementsById("email");   // ❌ NO EXISTE</code></pre>
+</div>
+
+<!-- 2) Manipulación -->
+<h2>2) Manipulación del DOM</h2>
+<div class="box">
+  <p><b>Patrones clave</b></p>
+  <pre><code>// Formularios
+input.value               // leer
+input.value = ""          // limpiar
+
+// Texto (p/div/li/span)
+mensaje.innerText = "..." // recomendado examen
+mensaje.textContent = "..." // también válido
+
+// Clases
+input.classList.add("error");
+input.classList.remove("error");
+
+// Atributos
+input.setAttribute("disabled", "true");
+input.removeAttribute("disabled");</code></pre>
+
+  <p><b>Trampas</b></p>
+  <pre><code>li.value = "hola";        // ❌ MAL (li NO tiene value)
+input.textContent = "x";  // ❌ MAL (en input se usa value)</code></pre>
+</div>
+
+<!-- 3) Crear nodos -->
+<h2>3) Crear elementos (createElement + appendChild) + eliminar</h2>
+<div class="box">
+  <pre><code>// Añadir li a ul
+let li = document.createElement("li");
+li.innerText = "Nuevo elemento";
+ul.appendChild(li);
+
+// Botón eliminar asociado
+let btn = document.createElement("button");
+btn.innerText = "Eliminar";
+btn.addEventListener("click", function () {
+  ul.removeChild(li);
+});
+li.appendChild(btn);</code></pre>
+</div>
+
+<!-- 4) Eventos -->
+<h2>4) Eventos</h2>
+<div class="box">
+  <pre><code>// submit → en el form
+form.addEventListener("submit", function (event) {
+  event.preventDefault(); // clave
+});
+
+// input → mientras escribe
+input.addEventListener("input", function () {});
+
+// click → botones
+button.addEventListener("click", function () {});</code></pre>
+</div>
+
+<!-- 5) Atributos vs propiedades -->
+<h2>5) Atributos vs Propiedades (disabled)</h2>
+<div class="box">
+  <pre><code>// Propiedad (recomendada si dudas)
+input.disabled = true;
+input.disabled = false;
+
+// Atributo (alternativa)
+input.setAttribute("disabled", "true");
+input.removeAttribute("disabled");</code></pre>
+
+  <pre><code>// Usuario escribe
+input.value // ✅ SIEMPRE (no getAttribute("value"))</code></pre>
+</div>
+
+<!-- 6) Validación HTML5 -->
+<h2>6) Validación HTML5</h2>
+<div class="box">
+  <pre><code>&lt;input type="text" required minlength="2"&gt;
+&lt;input type="email" required&gt;
+&lt;input type="number" min="1" required&gt;
+
+&lt;form novalidate&gt; ... &lt;/form&gt;  // desactiva validación HTML5</code></pre>
+</div>
+
+<!-- 7) Regex -->
+<h2>7) Expresiones regulares (Regex)</h2>
+<div class="box">
+  <pre><code>// test() -> true/false
+regex.test(texto);
+
+// Solo letras (todo el texto)
+const soloLetras = /^[a-zA-ZÁÉÍÓÚáéíóúÑñ]+$/;
+
+// Contiene un número
+const contieneNumero = /\d/;
+
+// Solo números
+const soloNumeros = /^\d+$/;
+
+// Email simple examen
+const emailSimple = /^[^@]+@[^@]+\.[a-z]{2,}$/i;</code></pre>
+
+  <p><b>Trampa típica</b>: <code>/\d/</code> (contiene número) ≠ <code>/^\d+$/</code> (solo números).</p>
+</div>
+
+<!-- 8) trim -->
+<h2>8) trim()</h2>
+<div class="box">
+  <pre><code>// Detecta espacios
+if (input.value.trim() === "") {
+  // campo vacío (incluso si hay "   ")
+}</code></pre>
+</div>
+
+<!-- 9) FormData -->
+<h2>9) FormData (name ≠ id)</h2>
+<div class="box">
+  <pre><code>// name es obligatorio
+&lt;input id="emailInput" name="email"&gt;
+
+// Crear FormData (se pasa el form, NO string)
+let datos = new FormData(form);
+
+// Obtener
+datos.get("email");
+
+// Recorrer
+for (let [clave, valor] of datos.entries()) {
+  console.log(clave + ": " + valor);
+}</code></pre>
+</div>
+
+<!-- 10) Storage + JSON -->
+<h2>10) Storage + JSON (stringify / parse)</h2>
+<div class="box">
+  <pre><code>// Guardar (objeto -> string)
+localStorage.setItem("persona", JSON.stringify(obj));
+
+// Recuperar (string -> objeto)
+let obj = JSON.parse(localStorage.getItem("persona"));
+
+// CRUD
+localStorage.removeItem("persona");
+localStorage.clear();</code></pre>
+</div>
+
+<!-- FORMULARIO FINAL -->
+<h2>FORMULARIO FINAL (integra toda la UF3)</h2>
+<p class="hint">Incluye: HTML5 + JS + trim + regex + classList + disabled + FormData + UL/LI + storage + JSON.</p>
+
+<form id="formPersona">
+  <div class="fila">
+    <label for="nombre">Nombre (solo letras)</label>
+    <input id="nombre" name="nombre" type="text" required minlength="2" />
+    <p id="errNombre" class="msg errorTxt"></p>
+  </div>
+
+  <div class="fila">
+    <label for="edad">Edad (>= 1)</label>
+    <input id="edad" name="edad" type="number" required min="1" />
+    <p id="errEdad" class="msg errorTxt"></p>
+  </div>
+
+  <div class="fila">
+    <label for="email">Email</label>
+    <input id="email" name="email" type="email" required />
+    <p id="errEmail" class="msg errorTxt"></p>
+  </div>
+
+  <button id="btnGuardar" type="submit">Guardar persona</button>
+  <button id="btnCargar" type="button">Cargar persona guardada</button>
+  <button id="btnBorrar" type="button">Borrar storage</button>
+
+  <p id="estado" class="msg"></p>
+</form>
+
+<h3>Lista de envíos (FormData → UL/LI)</h3>
+<ul id="listaEnvios"></ul>
 
 <script>
-  const buttons = document.querySelectorAll("nav button");
-  const frames = document.querySelectorAll("iframe");
+  // DOM
+  const form = document.getElementById("formPersona");
+  const nombreInput = document.getElementById("nombre");
+  const edadInput = document.getElementById("edad");
+  const emailInput = document.getElementById("email");
 
-  buttons.forEach(btn => {
-    btn.addEventListener("click", () => {
-      buttons.forEach(b => b.classList.remove("active"));
-      frames.forEach(f => f.classList.remove("active"));
+  const errNombre = document.getElementById("errNombre");
+  const errEdad = document.getElementById("errEdad");
+  const errEmail = document.getElementById("errEmail");
 
-      btn.classList.add("active");
-      document.getElementById(btn.dataset.target).classList.add("active");
+  const estado = document.getElementById("estado");
+  const listaEnvios = document.getElementById("listaEnvios");
+
+  const btnCargar = document.getElementById("btnCargar");
+  const btnBorrar = document.getElementById("btnBorrar");
+  const btnGuardar = document.getElementById("btnGuardar");
+
+  // Regex
+  const regexNombre = /^[a-zA-ZÁÉÍÓÚáéíóúÑñ]+$/;
+  const regexEmailSimple = /^[^@]+@[^@]+\.[a-z]{2,}$/i;
+
+  function setError(input, pError, msg) {
+    pError.innerText = msg;
+    input.classList.add("error");
+    input.classList.remove("ok");
+  }
+  function clearError(input, pError) {
+    pError.innerText = "";
+    input.classList.remove("error");
+    input.classList.add("ok");
+  }
+  function setEstadoOk(msg) {
+    estado.innerText = msg;
+    estado.classList.add("okTxt");
+    estado.classList.remove("errorTxt");
+  }
+  function setEstadoError(msg) {
+    estado.innerText = msg;
+    estado.classList.add("errorTxt");
+    estado.classList.remove("okTxt");
+  }
+
+  function validarNombre() {
+    const v = nombreInput.value.trim();
+    if (v === "") return (setError(nombreInput, errNombre, "Nombre obligatorio."), false);
+    if (!regexNombre.test(v)) return (setError(nombreInput, errNombre, "Solo letras."), false);
+    clearError(nombreInput, errNombre);
+    return true;
+  }
+  function validarEdad() {
+    const v = edadInput.value;
+    if (v === "" || Number(v) < 1) return (setError(edadInput, errEdad, "Edad mínima 1."), false);
+    clearError(edadInput, errEdad);
+    return true;
+  }
+  function validarEmail() {
+    const v = emailInput.value.trim();
+    if (v === "") return (setError(emailInput, errEmail, "Email obligatorio."), false);
+    if (!regexEmailSimple.test(v)) return (setError(emailInput, errEmail, "Formato email incorrecto."), false);
+    clearError(emailInput, errEmail);
+    return true;
+  }
+
+  // Validación al escribir (evento input)
+  nombreInput.addEventListener("input", validarNombre);
+  edadInput.addEventListener("input", validarEdad);
+  emailInput.addEventListener("input", validarEmail);
+
+  // Submit: preventDefault + FormData + JSON + localStorage + UL/LI
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+
+    const ok = validarNombre() & validarEdad() & validarEmail(); // (bitwise) fuerza ejecutar todas
+    if (!ok) {
+      setEstadoError("Corrige errores antes de guardar.");
+      return;
+    }
+
+    // ejemplo disabled (bloqueo mientras "procesa")
+    btnGuardar.disabled = true;
+
+    const datos = new FormData(form);
+
+    const persona = {
+      nombre: (datos.get("nombre") || "").trim(),
+      edad: datos.get("edad"),
+      email: (datos.get("email") || "").trim()
+    };
+
+    // Storage (stringify)
+    localStorage.setItem("persona", JSON.stringify(persona));
+    setEstadoOk("Persona guardada en localStorage.");
+
+    // UL/LI: mostrar resumen con entries()
+    let resumen = "";
+    for (let [k, v] of datos.entries()) resumen += k + ": " + String(v).trim() + " | ";
+
+    const li = document.createElement("li");
+    li.innerText = resumen;
+
+    const btnEliminar = document.createElement("button");
+    btnEliminar.type = "button";
+    btnEliminar.innerText = "Eliminar";
+    btnEliminar.addEventListener("click", function () {
+      listaEnvios.removeChild(li);
     });
+
+    li.appendChild(document.createTextNode(" "));
+    li.appendChild(btnEliminar);
+    listaEnvios.appendChild(li);
+
+    // limpiar
+    nombreInput.value = "";
+    edadInput.value = "";
+    emailInput.value = "";
+    [nombreInput, edadInput, emailInput].forEach(i => i.classList.remove("ok","error"));
+    [errNombre, errEdad, errEmail].forEach(p => p.innerText = "");
+
+    btnGuardar.disabled = false;
+  });
+
+  // Cargar (parse)
+  btnCargar.addEventListener("click", function () {
+    const guardado = localStorage.getItem("persona");
+    if (!guardado) return setEstadoError("No hay persona guardada.");
+
+    const persona = JSON.parse(guardado);
+    nombreInput.value = persona.nombre ?? "";
+    edadInput.value = persona.edad ?? "";
+    emailInput.value = persona.email ?? "";
+
+    setEstadoOk("Persona recuperada (JSON.parse).");
+    validarNombre(); validarEdad(); validarEmail();
+  });
+
+  // Borrar storage
+  btnBorrar.addEventListener("click", function () {
+    localStorage.removeItem("persona");
+    setEstadoOk("Storage borrado (persona).");
   });
 </script>
 

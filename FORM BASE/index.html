@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FORM_BASE</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Gestión de clientes</h1>
+    </header>
+    <main>
+        <form id="formCliente">
+            <label for="nombre">Nombre: </label>
+            <input id="nombre" type="text" name="nombre" required minlength="2">
+            <p id="errNombre"></p>
+            <label for="edad">Edad: </label>
+            <input id="edad" name="edad" type="number" required min="18">
+            <p id="errEdad"></p>
+            <label for="email">Email</label>
+            <input id="email" type="email" name="email" required>
+            <p id="errEmail"></p>
+            <label for="dni">DNI</label>
+            <input id="dni" name="dni" type="text" required>
+            <p id="errDni"></p>
+            <fieldset>
+                <legend>Tipo de cliente</legend>
+                <input id="particular" name="tipo" type="radio" value="particular" checked>
+                <label for="particular">Particular</label>
+                <input id="empresa" name="tipo" type="radio" value="empresa">
+                <label for="empresa">Empresa</label>
+
+                <p id="errTipo" class="errorTxt"></p>
+            </fieldset>
+            <fieldset>
+                <legend>Ubicación</legend>
+                <label for="ciudad">Ciudad</label>
+                <select id="ciudad" name="ciudad">
+                    <option value="" selected disabled>Ciudad de España</option>
+                    <optgroup label="Andalucia">
+                        <option value="ja">Jaén</option>
+                        <option value="se">Sevilla</option>
+                        <option value="hu">Huelva</option>
+
+                    </optgroup>
+                    <optgroup label="Comunidad Valenciana">
+                        <option value="va">Valencia</option>
+                        <option value="cas">Castellón</option>
+                    </optgroup>
+                </select>
+                <p id="errCiudad"></p>
+            </fieldset>
+
+            <label for="comentarios">Comentarios</label>
+            <textarea id="comentarios" name="comentarios" rows="4" cols="40"></textarea>
+            <p id="errComentarios"></p>
+
+            <fieldset>
+                <legend>Condiciones</legend>
+                <input type="checkbox" id="condiciones" name="condiciones">
+                <label for="condiciones">Acepto las condiciones</label>
+                <p id="errCondiciones"></p>
+
+            </fieldset>
+            <div id="botones">
+                <button type="submit" id="btnEnviar">Enviar formulario</button>
+                <button type="button" id="btnAgregar">Agregar clientes</button>
+                <button type="button" id="btnBorrarTodo">Borrar todo</button>
+            </div>
+            <p id="estado"></p>
+        </form>
+        <section>
+            <h2>Listado de clientes</h2>
+            <ul id="listaClientes"></ul>
+        </section>
+    </main>
+    <script src="app.js"></script>
+</body>
+
+</html>

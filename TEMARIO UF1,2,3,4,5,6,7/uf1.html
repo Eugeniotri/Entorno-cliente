@@ -111,7 +111,7 @@
     <div class="top">
       <div>
         <h1>UF1 — Introducción al desarrollo web en entorno cliente</h1>
-        <p>Teoría (primero) + Quiz tipo test (20 preguntas) con explicación para aprender.</p>
+        <p>Teoría (primero) + Quiz tipo test (preguntas originales + ampliación) con explicación para aprender.</p>
       </div>
       <a class="btnlink" href="index.html">← Volver al índice</a>
     </div>
@@ -369,7 +369,7 @@
 
     <!-- ====== QUIZ (20) ====== -->
     <section id="quiz" class="card">
-      <h2>Quiz UF1 — 20 preguntas tipo test</h2>
+      <h2>Quiz UF1 — Test completo (preguntas originales + ampliación)</h2>
 
       <div class="quizTop">
         <div class="pill" title="Progreso del test">
@@ -633,6 +633,232 @@
         correct: 1,
         why: "alert pertenece a las APIs del navegador (window). NodeJS no incluye esas APIs."
       }
+    
+,
+      {
+        q: "Una página HTML con JavaScript y AJAX pero sin lógica de servidor es:",
+        a: [
+          "Dinámica",
+          "Estática",
+          "SPA",
+          "Aplicación multipágina"
+        ],
+        correct: 1,
+        why: "Sigue siendo estática porque el HTML no se genera en el servidor."
+      },
+      {
+        q: "Una SPA se diferencia de una multipágina porque:",
+        a: [
+          "No usa servidor",
+          "Recarga siempre la página",
+          "Carga el cliente una vez y luego solo datos",
+          "No usa JavaScript"
+        ],
+        correct: 2,
+        why: "La SPA descarga el cliente una vez y usa AJAX para los datos."
+      },
+      {
+        q: "¿Cuál NO es una característica del entorno cliente?",
+        a: [
+          "Universalidad",
+          "Compatibilidad entre navegadores",
+          "Independencia total del SO",
+          "Actualizaciones transparentes"
+        ],
+        correct: 2,
+        why: "La independencia del sistema operativo es relativa, no total."
+      },
+      {
+        q: "Una aplicación que devuelve HTML y expone una API REST es:",
+        a: [
+          "Incorrecta",
+          "Solo multipágina",
+          "Una aplicación web con API",
+          "Obligatoriamente SPA"
+        ],
+        correct: 2,
+        why: "Una misma lógica de servidor puede servir HTML y datos."
+      },
+      {
+        q: "En HTTP:",
+        a: [
+          "El servidor inicia la comunicación",
+          "No existe respuesta",
+          "Siempre hay petición previa del cliente",
+          "La comunicación es permanente"
+        ],
+        correct: 2,
+        why: "HTTP es petición-respuesta: el servidor solo responde."
+      }
+
+   
+,
+      {
+        q: "Una página estática puede considerarse interactiva si:",
+        a: [
+          "Usa lógica de servidor",
+          "Incluye JavaScript en el navegador",
+          "Utiliza bases de datos",
+          "Es una SPA"
+        ],
+        correct: 1,
+        why: "La interactividad puede lograrse solo con JavaScript en el cliente."
+      },
+      {
+        q: "¿Qué distingue principalmente a una aplicación web de un sitio web?",
+        a: [
+          "El uso de CSS",
+          "La cantidad de páginas",
+          "La funcionalidad tipo software",
+          "El uso de HTML dinámico"
+        ],
+        correct: 2,
+        why: "La aplicación web permite realizar tareas complejas propias de software."
+      },
+      {
+        q: "En una aplicación multipágina (MPA):",
+        a: [
+          "El cliente se descarga una vez",
+          "Solo se descargan datos",
+          "Cada navegación implica recargar la página",
+          "No existe servidor"
+        ],
+        correct: 2,
+        why: "Las MPA cargan una página completa en cada navegación."
+      },
+      {
+        q: "¿Qué ventaja principal aporta AJAX?",
+        a: [
+          "Eliminar el servidor",
+          "Actualizar partes de la página sin recargarla",
+          "Ejecutar código del servidor en el navegador",
+          "Sustituir HTML por JSON"
+        ],
+        correct: 1,
+        why: "AJAX permite comunicación asíncrona sin recargar toda la página."
+      },
+      {
+        q: "¿Qué papel cumple el front-end?",
+        a: [
+          "Gestionar bases de datos",
+          "Aplicar lógica de negocio",
+          "Interactuar con el usuario",
+          "Gestionar servidores"
+        ],
+        correct: 2,
+        why: "El front-end se encarga de la interfaz y experiencia de usuario."
+      },
+      {
+        q: "Una API REST se caracteriza por:",
+        a: [
+          "Usar protocolos propietarios",
+          "Aprovechar estándares de la Web",
+          "Devolver siempre HTML",
+          "Ejecutarse en el navegador"
+        ],
+        correct: 1,
+        why: "REST aprovecha HTTP y los estándares de la Web."
+      },
+      {
+        q: "¿Qué afirmación sobre JSON es correcta?",
+        a: [
+          "Es un lenguaje de marcado",
+          "Se usa para mostrar información al usuario",
+          "Es un formato de intercambio de datos",
+          "Sustituye a HTML"
+        ],
+        correct: 2,
+        why: "JSON se usa para intercambiar datos entre aplicaciones."
+      },
+      {
+        q: "¿Por qué se utilizan validadores HTML/CSS?",
+        a: [
+          "Para mejorar el SEO únicamente",
+          "Para asegurar la calidad y corrección del código",
+          "Para ejecutar JavaScript",
+          "Para compilar CSS"
+        ],
+        correct: 1,
+        why: "Los validadores detectan errores y malas prácticas."
+      },
+      {
+        q: "¿Qué herramienta permite control de versiones?",
+        a: [
+          "NodeJS",
+          "Git",
+          "NPM",
+          "Live Server"
+        ],
+        correct: 1,
+        why: "Git es la herramienta estándar de control de versiones."
+      },
+      {
+        q: "TDD significa:",
+        a: [
+          "Test Driven Development",
+          "Total Design Development",
+          "Technical Debugging Design",
+          "Test Data Deployment"
+        ],
+        correct: 0,
+        why: "TDD consiste en escribir tests antes del código."
+      },
+      {
+        q: "¿Qué ventaja aporta CI?",
+        a: [
+          "Eliminar pruebas",
+          "Integrar código frecuentemente con tests automáticos",
+          "Evitar el uso de Git",
+          "Desplegar sin revisar"
+        ],
+        correct: 1,
+        why: "CI automatiza la integración y validación del código."
+      },
+      {
+        q: "¿Qué diferencia hay entre CI y CD?",
+        a: [
+          "Ninguna",
+          "CI integra, CD despliega",
+          "CI despliega, CD integra",
+          "CD elimina pruebas"
+        ],
+        correct: 1,
+        why: "CI valida integraciones; CD añade despliegue automático."
+      },
+      {
+        q: "¿Qué es el DOM?",
+        a: [
+          "Una base de datos",
+          "Un modelo de objetos del documento HTML",
+          "Un protocolo",
+          "Un framework"
+        ],
+        correct: 1,
+        why: "El DOM representa la estructura del documento en el navegador."
+      },
+      {
+        q: "¿Qué pestaña de DevTools muestra peticiones HTTP?",
+        a: [
+          "Elements",
+          "Console",
+          "Network",
+          "Sources"
+        ],
+        correct: 2,
+        why: "Network permite inspeccionar peticiones y respuestas."
+      },
+      {
+        q: "¿Qué lenguaje debe compilarse a JavaScript?",
+        a: [
+          "HTML",
+          "CSS",
+          "TypeScript",
+          "JSON"
+        ],
+        correct: 2,
+        why: "TypeScript se transpila a JavaScript para el navegador."
+      }
+
     ];
 
     // =========================

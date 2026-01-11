@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Form tipo</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <header>
+        <h1>Formulario cliente</h1>
+    </header>
+    <main>
+        <form id="form_cliente" novalidate>
+            <label for="nombre">Nombre completo: </label>
+            <input id="nombre" type="text" name="nombre" required minlength="3">
+            <p id="errNombre" class="error"></p>
+            <label for="email">Email: </label>
+            <input id="email" name="email" type="email" required>
+            <p id="errEmail" class="error"></p>
+            <label for="telefono">Teléfono: </label>
+            <input id="telefono" name="telefono" type="tel" inputmode="numeric">
+            <p id="errTelefono" class="error"></p>
+            <label for="fecha_nac">Fecha nacimiento: </label>
+            <input id="fecha_nac" name="fecha_nac" type="date" required>
+            <p id="errFecha" class="error"></p>
+            <fieldset>
+                <legend>Seleccion de género</legend>
+                <input id="genero_masc" name="genero" type="radio" value="masc">
+                <label for="genero_masc">Masculino</label>
+                <input id="genero_fem" name="genero" type="radio" value="fem">
+                <label for="genero_fem">Femenino</label>
+                <input id="genero_otro" name="genero" type="radio" value="otro">
+                <label for="genero_otro">Otro</label>
+                <p id="errGenero" class="error"></p>
+            </fieldset>
+            <fieldset>
+                <legend>Selección de país</legend>
+                <label for="pais">País</label>
+                <select id="pais" name="pais">
+                    <option value="" selected disabled>Selecciona un país</option>
+                    <optgroup label="Europa">
+                        <option value="es">España</option>
+                        <option value="fr">Francia</option>
+                        <option value="port">Portugal</option>
+                    </optgroup>
+                    <optgroup label="África">
+                        <option value="ma">Marruecos</option>
+                    </optgroup>
+
+                </select>
+                <p id="errPais" class="error"></p>
+            </fieldset>
+            <fieldset>
+                <legend>Aceptación términos</legend>
+                <input id="terminos" name="terminos" type="checkbox" required>
+                <label for="terminos">Acepto los términos y condiciones</label>
+                <small class="error" id="errTerminos"></small>
+            </fieldset>
+            <button id="btnEnviar" type="submit">Enviar</button>
+        </form>
+    </main>
+    <script src="app.js"></script>
+</body>
+
+</html>
