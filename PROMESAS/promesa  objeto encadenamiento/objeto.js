@@ -25,7 +25,7 @@ function procesarDatos(persona) {
                 edad: persona.edad + 1
             }
             resolve(procesado);
-        },3000 );
+        },1000 );
     }
     );
 }

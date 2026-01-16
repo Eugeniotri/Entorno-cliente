@@ -35,10 +35,10 @@ function procesarDatos(personas) {
 obtenerDatos()
     .then(personas => {
         console.log(personas)
-        return procesarDatos(personas);
+        return procesarDatos("Alumnos",personas);
     })
     .then(procesados => {
-        console.log(procesados);
+        console.log("Alumnos notas",procesados);
     })
     .catch(error => {
         console.log(error);
