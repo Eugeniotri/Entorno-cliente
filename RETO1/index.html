@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RETO1-DWEC</title>
+    <link rel="stylesheet" href="styles2.css">
+</head>
+
+<body>
+    <header class="header">
+        <h1>Aplicación Entrenamientos</h1>
+
+        <nav class="nav">
+            <!--En el nav pongo botones en lugar de enlaces-->
+            <button type="button" id="btnInicio">Inicio</button>         
+            <button type="button" id="btnForo">Foro</button>           
+            <button type="button" id="btnCerrarSesion" class="oculta">Cerrar sesión</button>
+
+        </nav>
+    </header>
+
+    <main class="main">
+        <!-- Cada sección es una “pantalla” -->
+
+        <section id="inicio">
+            <h2>Inicio</h2>
+            <p>Elige una opción</p>
+            <div class="inicio-opciones">
+                <button type="button" id="btnIrRegistro">Añadir persona</button>
+                <button type="button" id="btnIrLogin">Iniciar sesión</button>
+                <button type="button" id="btnIrForo">Foro</button>
+            </div>
+
+        </section>
+
+        <section id="registro" class="pantalla oculta">
+            <h2>Registro</h2>
+            <p>formulario de alta</p>
+            <h2>Registro</h2>
+
+            <form id="formRegistro">
+                <label for="regNombre">Nombre completo</label>
+                <input type="text" id="regNombre" name="regNombre" minlength="3" required>
+
+                <label for="regCorreo">Correo</label>
+                <input type="email" id="regCorreo" name="regCorreo" required>
+
+                <label for="regAltura">Altura (cm)</label>
+                <input type="number" id="regAltura" name="regAltura" min="50" max="250" required>
+
+                <label for="regPeso">Peso (kg)</label>
+                <input type="number" id="regPeso" name="regPeso" min="20" max="300" step="0.1" required>
+
+                <label for="regEdad">Edad</label>
+                <input type="number" id="regEdad" name="regEdad" min="1" max="120" required>
+
+                <label for="regUsuario">Usuario</label>
+                <input type="text" id="regUsuario" name="regUsuario" minlength="3" required>
+
+                <label for="regPass">Contraseña</label>
+                <input type="password" id="regPass" name="regPass" minlength="4" required>
+
+                <button type="submit">Registrar</button>
+                <p id="regMsg"></p>
+
+            </form>
+
+        </section>
+
+        <section id="login" class="pantalla oculta">
+            <h2>Login</h2>
+            <p>formulario de login</p>
+            <form id="formLogin">
+
+                <label for="loginUsuario">Usuario</label>
+                <input id="loginUsuario" type="text" name="loginUsuario" autocomplete="username" required>
+                <label for="loginPass">Contraseña</label>
+                <input id="loginPass" type="password" name="loginPass" autocomplete="current-password" required>
+                <button type="submit">Enviar</button>
+                <p id="loginMsg"></p>
+
+            </form>
+        </section>
+
+        <section id="panel" class="pantalla oculta">
+            <h2>Panel</h2>
+            <p>opciones de usuario logueado</p>
+
+            <h3>Nuevo entrenamiento</h3>
+
+            <form id="formEntrenamiento">
+                <label for="distancia">Distancia (m)</label>
+                <input type="number" id="distancia" required>
+
+                <label for="tiempo">Tiempo (minutos)</label>
+                <input type="number" id="tiempo" required>
+
+                <button type="submit">Añadir entrenamiento</button>
+
+                <p id="entrenoMsg"></p>
+            </form>
+
+            <h3>Mostrar entrenamientos</h3>
+            <div id="listaEntrenos"></div>
+
+            <h3>Resumen entrenamientos</h3>
+            <p id="resumenEntrenos"></p>
+
+
+            <h3>Mejor entrenamiento</h3>
+
+            <label for="tipoMejor">Elegir criterio</label>
+            <select id="tipoMejor">
+                <option value="tiempo">Mejor tiempo</option>
+                <option value="distancia">Mayor distancia</option>
+                <option value="velocidad">Mejor velocidad</option>
+            </select>
+
+            <button type="button" id="btnMejor">Calcular</button>
+
+            <p id="mejorResultado"></p>
+
+
+
+        </section>
+
+        <section id="foro" class="pantalla oculta">
+            <h2>Foro</h2>
+            <p>Escribe un mensaje (lo verá todo el mundo).</p>
+
+            <form id="formForo">
+                <label for="foroMsg">Mensaje</label>
+                <textarea id="foroMsg" name="foroMsg" rows="3" required></textarea>
+
+                <button type="submit">Publicar</button>
+                <p id="foroInfo"></p>
+            </form>
+
+            <h3>Mensajes</h3>
+            <div id="listaForo"></div>
+        </section>
+
+
+
+    </main>
+
+
+    <footer class="footer">
+  <p>RETO 1 · DWEC · 2º DAW</p>
+  <p>&copy; 2026 · Aplicación de Entrenamientos</p>
+</footer>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
