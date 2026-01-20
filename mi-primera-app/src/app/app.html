@@ -1,0 +1,7 @@
+<h2>Mi primer Angular</h2>
+
+<p>Nombre: {{ nombre }}</p>
+
+<input type="text"
+[value]="nombre"
+(input)="nombre = $any($event.target).value"/>
